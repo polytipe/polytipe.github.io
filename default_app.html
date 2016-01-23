@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <title>My App</title>
+  <meta name="description" content="">
+
+  <!-- Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Chrome / Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="black">
+  <link rel="icon" href="icon.png">
+
+  <!-- Safari / iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+
+  <!-- Web Components -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="elements.html">
+  <link rel="import" href="styles.html">
+</head>
+
+<body unresolved>
+  <paper-drawer-panel disable-swipe>
+    <paper-header-panel drawer>
+      <paper-toolbar>Menu</paper-toolbar>
+
+    </paper-header-panel>
+    <paper-header-panel main mode="seamed">
+      <paper-toolbar>
+        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+        <div class="flex">My App</div>
+      </paper-toolbar>
+      <div id="app_content"></div>
+    </paper-header-panel>
+  </paper-drawer-panel>
+
+  <script>
+    window.addEventListener('WebComponentsReady', function(e) {
+      parent.iframe_ready();
+    });
+  </script>
+
+</body>
+
+</html>

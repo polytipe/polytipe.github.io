@@ -1,0 +1,79 @@
+<style is="custom-style">
+  /*Color variables*/
+  :root {
+    --main-bg-color: #303030;
+    --app-toolbar-color: #212121;
+    --accent-color: #2AB767;
+    --secondary-color: #03A9F4;
+    --sidebar-color: #1A1A1A;
+  }
+
+  html{
+    font-family: "Roboto", 'Helvetica Neue';
+  }
+
+  /*Default typography styles*/
+  .paper-font-display4 {@apply(--paper-font-display4);}
+  .paper-font-display3 {@apply(--paper-font-display3);}
+  .paper-font-display2 {@apply(--paper-font-display2);}
+  .paper-font-display1 {@apply(--paper-font-display1);}
+  .paper-font-headline {@apply(--paper-font-headline);}
+  .paper-font-title {@apply(--paper-font-title);}
+  .paper-font-subhead {@apply(--paper-font-subhead);}
+  .paper-font-body2 {@apply(--paper-font-body1);}
+  .paper-font-body1 {@apply(--paper-font-body1);}
+  .paper-font-caption {@apply(--paper-font-caption);}
+  .paper-font-menu {@apply(--paper-font-menu);}
+  .paper-font-button {@apply(--paper-font-button);}
+
+  /*Element defaults*/
+
+  paper-toolbar{
+    background-color: var(--secondary-color);
+  }
+  paper-tabs{
+    background-color: var(--secondary-color);
+    --paper-tabs-selection-bar-color: yellow;
+    color: #fff;
+  }
+
+  /*Sidebar frame*/
+
+  #sidebar_frame{
+    background-color: var(--sidebar-color);
+  }
+  #sidebar_toolbar{
+    background-color: var(--accent-color);
+  }
+  paper-menu {
+    background-color: inherit;
+    color: #fff;
+  }
+
+  /*Main frame*/
+
+  #main_frame{
+    background-color: var(--main-bg-color);
+  }
+  #screen_view_toolbar{
+    background-color: #212121;
+  }
+  .back_icon{
+    margin-right: 20px;
+  }
+  #drawer_toggle{
+    margin: 0;
+  }
+  #app_container{
+    height: 100%;
+  }
+  #app_iframe{
+    width: 360px;
+    height: 640px;
+    background-color: #E5E5E5;
+    border: none;
+  }
+
+
+
+</style>

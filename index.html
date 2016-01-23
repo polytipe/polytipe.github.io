@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Polytipe</title>
+  <meta name="description" content="">
+
+  <!-- Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Chrome / Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="black">
+  <link rel="icon" sizes="144x144" href="icon.png">
+
+  <!-- Safari / iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+
+  <!-- Web Components -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="elements.html">
+  <link rel="import" href="styles.html">
+</head>
+
+<body unresolved>
+
+  <paper-drawer-panel right-drawer disable-swipe>
+
+    <paper-header-panel drawer id="sidebar_frame">
+      <paper-toolbar id="sidebar_toolbar">
+        <div class="flex paper-font-title">Elementos</div>
+      </paper-toolbar>
+
+      <paper-menu>
+        <paper-item onclick="crearBoton()">Botón</paper-item>
+        <paper-item onclick="crearPestanas()">Pestañas</paper-item>
+      </paper-menu>
+    </paper-header-panel>
+
+    <paper-header-panel main id="main_frame" mode="seamed">
+      <paper-toolbar id="screen_view_toolbar">
+        <paper-icon-button class="back_icon" icon="arrow-back"></paper-icon-button>
+        <div class="flex paper-font-title">Polytipe</div>
+        <span class="flex"></span>
+        <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+      </paper-toolbar>
+
+      <div id="app_container" class="layout vertical center-center test">
+        <iframe id="app_iframe" src="default_app.html"></iframe>
+      </div>
+    </paper-header-panel>
+  </paper-drawer-panel>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
