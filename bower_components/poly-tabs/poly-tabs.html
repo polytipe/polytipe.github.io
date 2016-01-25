@@ -1,0 +1,85 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+
+<dom-module id="poly-tabs">
+
+  <style>
+
+    :host {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    paper-tabs{
+      background-color: var(--secondary-color);
+      --paper-tabs-selection-bar-color: yellow;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+  </style>
+
+  <template>
+    <paper-tabs id="tabs" selected="{{selected}}">
+      <template is="dom-repeat" items="{{tabs_names}}">
+        <paper-tab>{{item.name}}</paper-tab>
+      </template>
+    </paper-tabs>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'poly-tabs',
+
+      listeners: {
+        'tap': 'regularTap'
+      },
+
+      properties: {
+        number: {
+          type: Number,
+          value: 3,
+          observer: '_numberChanged'
+        },
+        tabs_names:{
+          type: Array,
+          value: []
+        },
+        selected: {
+          type: Number,
+          value: 0
+        },
+        noink: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function() {
+        this.$.tabs.noink = this.noink;
+        this.tabs_names = [];
+        for(var i = 1; i<this.number+1; i++){
+          this.push('tabs_names', {name: 'Tab '+ i} );
+        }
+      },
+      attached: function(){
+      },
+
+      regularTap: function() {
+
+      },
+      _numberChanged: function(){
+
+      }
+    });
+
+  </script>
+
+</dom-module>
