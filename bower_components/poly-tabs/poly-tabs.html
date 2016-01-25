@@ -45,12 +45,13 @@
       properties: {
         number: {
           type: Number,
-          value: 3,
+          value: 2,
           observer: '_numberChanged'
         },
         tabs_names:{
           type: Array,
-          value: []
+          value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
+          notify: true
         },
         selected: {
           type: Number,
@@ -64,16 +65,18 @@
 
       ready: function() {
         this.$.tabs.noink = this.noink;
-        this.tabs_names = [];
-        for(var i = 1; i<this.number+1; i++){
-          this.push('tabs_names', {name: 'Tab '+ i} );
-        }
       },
       attached: function(){
       },
 
-      regularTap: function() {
+      addTab: function(){
+        //this.tabs_names = [];
+        for(var i = 1; i<this.number+1; i++){
+          this.tabs_names.push( {name: 'Tab '+ i} );
+        }
+      },
 
+      regularTap: function() {
       },
       _numberChanged: function(){
 

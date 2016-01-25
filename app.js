@@ -16,5 +16,10 @@ function crearBoton (){
 function crearPestanas (){
   var element = iframe_document.createElement("poly-tabs");
   iframe_content.appendChild(element);
-  console.log(element.properties);
+
+  var element_properties = element.properties;
+  for(var key in element_properties) {
+      var value = element_properties[key].value;
+      console.log(value);
+  }
 }
