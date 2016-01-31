@@ -2,24 +2,41 @@ window.addEventListener('WebComponentsReady', function(e) {
 
 });
 
-function iframe_ready(){
+
+
+function iframe_ready() {
   iframe_document = document.getElementById("app_iframe").contentDocument;
   iframe_content = iframe_document.getElementById("app_content");
+
+  iframe_document.addEventListener('regularTap', function(e) {
+    var selected_element = e.target;
+    var element_property_names = Object.keys(selected_element.properties);
+    //console.log(element_property_names);
+
+    var properties_list = document.getElementById('properties_list');
+
+   for (var i in element_property_names) {
+     if(typeof selected_element[element_property_names[i]] === 'object'){
+       for (var j in selected_element[element_property_names[i]]) {
+           var input = document.createElement("paper-input");
+           input.label = Object.keys(selected_element[element_property_names[i]][j])[0];
+           properties_list.appendChild(input);
+       }
+     }else{
+       var input = document.createElement("paper-input");
+       input.label = element_property_names[i];
+       properties_list.appendChild(input);
+     }
+   }
+
+    //selected_element.tab_names = [{name: 'Hello'}, {name: 'World'}]
+  });
 }
 
-function crearBoton (){
-  //var html = "<paper-input label='Input label'>"+"</paper-input>";
-  var html = "<the-keys id='q'>"+"</the-keys>";
-  iframe_content.innerHTML = iframe_content.innerHTML + html;
+function crearBoton() {
 }
 
-function crearPestanas (){
+function crearPestanas() {
   var element = iframe_document.createElement("poly-tabs");
   iframe_content.appendChild(element);
-
-  var element_properties = element.properties;
-  for(var key in element_properties) {
-      var value = element_properties[key].value;
-      console.log(value);
-  }
 }

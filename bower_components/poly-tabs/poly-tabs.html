@@ -25,8 +25,8 @@
   </style>
 
   <template>
-    <paper-tabs id="tabs" selected="{{selected}}">
-      <template is="dom-repeat" items="{{tabs_names}}">
+    <paper-tabs selected="{{selected}}" on-tap="regularTap">
+      <template is="dom-repeat" items="{{tab_names}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
     </paper-tabs>
@@ -38,17 +38,13 @@
 
       is: 'poly-tabs',
 
-      listeners: {
-        'tap': 'regularTap'
-      },
-
       properties: {
         number: {
           type: Number,
           value: 2,
           observer: '_numberChanged'
         },
-        tabs_names:{
+        tab_names:{
           type: Array,
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
           notify: true
@@ -56,30 +52,22 @@
         selected: {
           type: Number,
           value: 0
-        },
-        noink: {
-          type: Boolean,
-          value: false
         }
       },
-
       ready: function() {
-        this.$.tabs.noink = this.noink;
+        //this.$.tabs.noink = this.noink;
       },
       attached: function(){
       },
-
       addTab: function(){
-        //this.tabs_names = [];
-        for(var i = 1; i<this.number+1; i++){
-          this.tabs_names.push( {name: 'Tab '+ i} );
-        }
+        //for(var i = 1; i<this.number+1; i++){
+          this.push("tab_names", {name: 'Tab '+ 1} );
+        //}
       },
-
       regularTap: function() {
+        this.fire("regularTap");
       },
       _numberChanged: function(){
-
       }
     });
 
