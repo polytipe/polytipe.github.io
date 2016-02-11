@@ -20,12 +20,13 @@
       --paper-tabs-selection-bar-color: yellow;
       color: #fff;
       text-transform: uppercase;
+      box-sizing: border-box;
     }
 
   </style>
 
   <template>
-    <paper-tabs selected="{{selected}}" on-tap="regularTap">
+    <paper-tabs id="tabs" selected="{{selected_tab}}" on-tap="regularTap">
       <template is="dom-repeat" items="{{tab_names}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
@@ -49,13 +50,17 @@
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
           notify: true
         },
-        selected: {
+        selected_tab: {
           type: Number,
           value: 0
+        },
+        focused: {
+          type: Boolean,
+          value: false
         }
+
       },
       ready: function() {
-        //this.$.tabs.noink = this.noink;
       },
       attached: function(){
       },
@@ -65,7 +70,11 @@
         //}
       },
       regularTap: function() {
-        this.fire("regularTap");
+        if(!this.focused){
+          this.fire("regularTap");
+          this.$.tabs.style.border = "2px solid white";
+        }
+        this.focused = true;
       },
       _numberChanged: function(){
       }

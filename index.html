@@ -31,15 +31,25 @@
   <paper-drawer-panel right-drawer disable-swipe>
 
     <paper-header-panel drawer id="sidebar_frame">
-      <paper-toolbar id="sidebar_toolbar">
-        <div class="flex paper-font-title">Elementos</div>
-      </paper-toolbar>
 
-      <paper-menu>
-        <paper-item onclick="crearBoton()">Botón</paper-item>
-        <paper-item onclick="crearPestanas()">Pestañas</paper-item>
-      </paper-menu>
-      <div id="properties_list"></div>
+      <paper-header-panel class="sidebar_panel">
+        <paper-toolbar id="sidebar_toolbar">
+          <div class="flex paper-font-title">Propiedades</div>
+        </paper-toolbar>
+        <div id="properties_list"></div>
+      </paper-header-panel>
+
+      <paper-header-panel class="sidebar_panel">
+        <paper-toolbar id="sidebar_toolbar">
+          <div class="flex paper-font-title">Elementos</div>
+        </paper-toolbar>
+        <paper-menu>
+          <paper-item onclick="crearBoton()">Botón</paper-item>
+          <paper-item onclick="crearPestanas()">Pestañas</paper-item>
+        </paper-menu>
+      </paper-header-panel>
+
+
     </paper-header-panel>
 
     <paper-header-panel main id="main_frame" mode="seamed">

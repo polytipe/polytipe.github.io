@@ -37,13 +37,30 @@
   #sidebar_frame{
     background-color: var(--sidebar-color);
   }
+  .sidebar_panel{
+    height: 50%;
+  }
   #sidebar_toolbar{
     background-color: var(--accent-color);
   }
+
+  #properties_list{
+    padding: 0 15px;
+    overflow-y: scroll;
+    height: 100%;
+  }
   paper-menu {
+    padding: 0;
     background-color: inherit;
     color: #fff;
+    height: 100%;
+    overflow-y: scroll;
   }
+
+  paper-input{
+    --paper-input-container-input-color: white;
+		--paper-input-container-focus-color: var(--accent-color);
+	}
 
   /*Main frame*/
 
@@ -70,7 +87,6 @@
     background-color: #E5E5E5;
     border: none;
   }
-
 
 
 </style>
