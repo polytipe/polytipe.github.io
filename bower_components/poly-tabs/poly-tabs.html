@@ -26,7 +26,7 @@
   </style>
 
   <template>
-    <paper-tabs id="tabs" selected="{{selected_tab}}" on-tap="regularTap">
+    <paper-tabs id="tabs" selected="{{selected_tab}}" on-tap="focus">
       <template is="dom-repeat" items="{{tab_names}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
@@ -69,13 +69,19 @@
           this.push("tab_names", {name: 'Tab '+ 1} );
         //}
       },
-      regularTap: function() {
+      focus: function() {
         if(!this.focused){
           this.fire("regularTap");
           this.$.tabs.style.border = "2px solid white";
         }
         this.focused = true;
       },
+
+      unfocus: function() {
+        this.$.tabs.style.border = "2px solid transparent";
+        this.focused = false;
+      },
+
       _numberChanged: function(){
       }
     });

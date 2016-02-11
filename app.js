@@ -15,7 +15,14 @@ function iframe_ready() {
     var element_property_names = Object.keys(selected_element.properties);
     //console.log(element_property_names);
 
+    for (var i = 0; i < iframe_content.children.length; i++) {
+      //console.log(iframe_content.children[i]);
+      if(iframe_content.children[i] != e.target){
+        iframe_content.children[i].unfocus();
+      }
+    }
 
+    //Clear the properties so they don't add up
     while (properties_list.firstChild) {
       properties_list.removeChild(properties_list.firstChild);
     }
@@ -40,7 +47,7 @@ function iframe_ready() {
 
 function crearBoton() {}
 
-function crearPestanas() {
-  var element = iframe_document.createElement("poly-tabs");
+function makeElement(element_name) {
+  var element = iframe_document.createElement(element_name);
   iframe_content.appendChild(element);
 }
