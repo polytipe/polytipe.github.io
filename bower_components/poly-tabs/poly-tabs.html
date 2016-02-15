@@ -50,11 +50,11 @@
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
           notify: true
         },
-        selected_tab: {
+        _selected_tab: {
           type: Number,
           value: 0
         },
-        focused: {
+        _focused: {
           type: Boolean,
           value: false
         }
@@ -74,12 +74,12 @@
           this.fire("regularTap");
           this.$.tabs.style.border = "2px solid white";
         }
-        this.focused = true;
+        this._focused = true;
       },
 
       unfocus: function() {
         this.$.tabs.style.border = "2px solid transparent";
-        this.focused = false;
+        this._focused = false;
       },
 
       _numberChanged: function(){
