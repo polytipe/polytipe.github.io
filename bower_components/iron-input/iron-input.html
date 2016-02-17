@@ -146,7 +146,7 @@ is separate from validation, and `allowed-pattern` does not affect how the input
           this.value = this._previousValidInput;
         }
       }
-      //this.fire("propertyChanged");
+      this.fire("propertyChanged");
 
       this.bindValue = this.value;
       this._previousValidInput = this.value;
