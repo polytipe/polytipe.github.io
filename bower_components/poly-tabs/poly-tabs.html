@@ -15,12 +15,16 @@
       user-select: none;
     }
 
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid white;
+    }
+
     paper-tabs{
       background-color: var(--secondary-color);
       --paper-tabs-selection-bar-color: yellow;
       color: #fff;
       text-transform: uppercase;
-      box-sizing: border-box;
     }
 
   </style>
@@ -72,13 +76,13 @@
       focus: function() {
         if(!this.focused){
           this.fire("regularTap");
-          this.$.tabs.style.border = "2px solid white";
+          this.$.tabs.classList.toggle('outlined_element', true);
         }
         this._focused = true;
       },
 
       unfocus: function() {
-        this.$.tabs.style.border = "2px solid transparent";
+        this.$.tabs.classList.toggle('outlined_element', false);
         this._focused = false;
       },
 
