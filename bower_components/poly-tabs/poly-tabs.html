@@ -47,19 +47,22 @@
         number: {
           type: Number,
           value: 2,
-          observer: '_numberChanged'
+          observer: '_numberChanged',
+          notify: true
         },
         tab_names:{
           type: Array,
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
-          notify: true
+          observer: '_tab_namesChanged'
         },
         _selected_tab: {
           type: Number,
+          observer: '_selected_tabChanged',
           value: 0
         },
         _focused: {
           type: Boolean,
+          observer: '_focused_tabChanged',
           value: false
         }
 
@@ -80,14 +83,23 @@
         }
         this._focused = true;
       },
-
       unfocus: function() {
         this.$.tabs.classList.toggle('outlined_element', false);
         this._focused = false;
       },
 
       _numberChanged: function(){
-      }
+        this.set('number', this.number);
+      },
+      _tab_namesChanged: function(){
+        this.set('tab_names', this.tab_names);
+      },
+      _selected_tabChanged: function(){
+        this.set('_selected_tab', this._selected_tab);
+      },
+      _focused_tabChanged: function(){
+        this.set('_focused', this._focused);
+      },
     });
 
   </script>

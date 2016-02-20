@@ -3,6 +3,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 });
 
 var selected_element;
+var element_properties;
 
 function iframe_ready() {
   iframe_document = document.getElementById("app_iframe").contentDocument;
@@ -12,7 +13,7 @@ function iframe_ready() {
 
   iframe_document.addEventListener('regularTap', function(e) {
     selected_element = e.target;
-    var element_properties = selected_element.properties;
+    element_properties = selected_element.properties;
 
     for (var i = 0; i < iframe_content.children.length; i++) {
       //Unfocus all elements except the one active
@@ -72,13 +73,42 @@ function iframe_ready() {
       }
       //}
     }
+
   });
 }
 
+function propertyChanged() {
+
+}
+
 document.addEventListener('propertyChanged', function(e) {
-  selected_element["tab_names"] = [{name: document.getElementById(e.target.id).value}, {name: document.getElementById(e.target.id).value}];
+  //selected_element["tab_names"] = [{name: document.getElementById(e.target.id).value}, {name: document.getElementById(e.target.id).value}];
   //console.log(document.getElementById(e.target.id).value);
+  //console.log(properties_list.children);
   //selected_element[e.target.id] = document.getElementById(e.target.id).value;
+
+  //console.log(properties_array);
+
+//selected_element["number"] = document.getElementById(e.target.id).value;
+selected_element["number"] = document.getElementById(e.target.id).value;
+element_properties["number"].value = document.getElementById(e.target.id).value;
+console.log(element_properties["number"].value);
+console.log(element_properties);
+
+
+for (var key in element_properties) {
+  //if(!key.startsWith("_")){ //Hide private properties
+  /*if (element_properties[key].type.name == 'Array') {
+    //console.log("array");
+  } else if (element_properties[key].type.name == 'Boolean') {
+    //console.log("Boolean");
+  } else if (element_properties[key].type.name == 'Number') {
+    //console.log("Number");
+    selected_element["number"] = document.getElementById(e.target.id).value;
+  }*/
+  //}
+}
+
 });
 
 function makeElement(element_name) {
