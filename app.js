@@ -13,6 +13,7 @@ function iframe_ready() {
 
   iframe_document.addEventListener('regularTap', function(e) {
     selected_element = e.target;
+    selected_element.number.value = -1;
     element_properties = selected_element.properties;
 
     for (var i = 0; i < iframe_content.children.length; i++) {
@@ -36,12 +37,13 @@ function iframe_ready() {
         div.classList.add("property_name");
         properties_list.appendChild(div);
 
-        var array_elements = element_properties[key].value;
+        var array_elements = selected_element[key];
         for (var i = 0; i < array_elements.length; i++) {
           var input = document.createElement("paper-input");
           input.label = (i + 1);
           input.id = key + (i+1);
           input.value = array_elements[i]["name"];
+          input.addEventListener("change", propertyChanged);
           input.classList.add("sub_property");
           properties_list.appendChild(input);
         }
@@ -61,6 +63,7 @@ function iframe_ready() {
           input.checked = false;
         }
         input.id = key;
+        input.addEventListener("change", propertyChanged);
         div.appendChild(input);
         properties_list.appendChild(div);
       } else if (element_properties[key].type.name == 'Number') {
@@ -68,7 +71,8 @@ function iframe_ready() {
         input.label = key;
         input.id = key;
         input.type = "number";
-        input.value = element_properties[key].value;
+        input.addEventListener("change", propertyChanged);
+        input.value = selected_element[key];
         properties_list.appendChild(input);
       }
       //}
@@ -79,6 +83,18 @@ function iframe_ready() {
 
 function propertyChanged() {
 
+  //if(!(this.id).startsWith("_")){ //Hide private properties
+    if (element_properties[this.id].type.name == 'Array') {
+      console.log("array");
+    } else if (element_properties[this.id].type.name == 'Boolean') {
+      console.log("bool");
+    } else if (element_properties[this.id].type.name == 'Number') {
+      selected_element[this.id] = parseInt(this.value);
+      console.log("number");
+    }
+  //}
+
+
 }
 
 document.addEventListener('propertyChanged', function(e) {
@@ -88,26 +104,6 @@ document.addEventListener('propertyChanged', function(e) {
   //selected_element[e.target.id] = document.getElementById(e.target.id).value;
 
   //console.log(properties_array);
-
-//selected_element["number"] = document.getElementById(e.target.id).value;
-selected_element["number"] = document.getElementById(e.target.id).value;
-element_properties["number"].value = document.getElementById(e.target.id).value;
-console.log(element_properties["number"].value);
-console.log(element_properties);
-
-
-for (var key in element_properties) {
-  //if(!key.startsWith("_")){ //Hide private properties
-  /*if (element_properties[key].type.name == 'Array') {
-    //console.log("array");
-  } else if (element_properties[key].type.name == 'Boolean') {
-    //console.log("Boolean");
-  } else if (element_properties[key].type.name == 'Number') {
-    //console.log("Number");
-    selected_element["number"] = document.getElementById(e.target.id).value;
-  }*/
-  //}
-}
 
 });
 
