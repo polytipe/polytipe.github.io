@@ -30,7 +30,7 @@
   </style>
 
   <template>
-    <paper-tabs id="tabs" selected="[[_selected_tab]]" on-tap="focus">
+    <paper-tabs id="tabs" selected="{{selected_tab}}" on-tap="focus">
       <template is="dom-repeat" items="{{tab_names}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
@@ -44,7 +44,7 @@
       is: 'poly-tabs',
 
       properties: {
-        number: {
+        tabs: {
           type: Number,
           value: 2
         },
@@ -52,14 +52,10 @@
           type: Array,
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}]
         },
-        _selected_tab: {
+        selected_tab: {
           type: Number,
           value: 0,
           observer: '_selected_tabChange'
-        },
-        _focused: {
-          type: Boolean,
-          value: false
         }
 
       },
@@ -67,6 +63,9 @@
         this.fire("regularTap");
       },
       ready: function() {
+        this.min = 1;
+        this.max = 5;
+        this._focused = false;
       },
       attached: function(){
       },
