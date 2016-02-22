@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<dom-module id="poly-button">
+
+  <style>
+    :host {
+      display: block;
+    }
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid white;
+    }
+    paper-button{
+      background-color: var(--accent-color);
+      color: #fff;
+    }
+    paper-button.disabled{
+      background-color: #ddd;
+    }
+  </style>
+
+  <template>
+
+    <paper-button disabled="{{disabled}}" raised id="button" on-tap="focus">
+
+      <template is="dom-if" if="{{hasIcon}}">
+        <iron-icon icon="{{icon}}"></iron-icon>
+      </template>
+      {{text}}
+    </paper-button>
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-button',
+      properties:{
+        text:{
+          type: String,
+          value: "Botón"
+        },
+        icon:{
+          type: String,
+          value: "android"
+        },
+        disabled:{
+          type: Boolean,
+          value: false
+        }
+      },
+      ready: function () {
+        this._focused = false;
+        if(this.icon){
+          this.hasIcon = true;
+        }
+      },
+      focus: function() {
+        if(!this.focused){
+          this.fire("regularTap");
+          this.$.button.classList.toggle('outlined_element', true);
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.$.button.classList.toggle('outlined_element', false);
+        this._focused = false;
+      }
+    });
+  </script>
+</dom-module>

@@ -15,6 +15,7 @@ function iframe_ready() {
     selected_element = e.target;
     element_properties = selected_element.properties;
 
+    //Unfocus all elements except the selected_element
     unfocus(e);
 
     for (var key in element_properties) {
@@ -98,6 +99,14 @@ function iframe_ready() {
           input.value = selected_element[key];
         }
         properties_list.appendChild(input);
+      } else if (element_properties[key].type.name == 'String') {
+        var input = document.createElement("paper-input");
+        input.label = key;
+        input.id = key;
+        input.type = "text";
+        input.addEventListener("change", propertyChanged);
+        input.value = selected_element[key];
+        properties_list.appendChild(input);
       }
       //}
     }
@@ -154,6 +163,8 @@ function propertyChanged() {
     } else {
       selected_element[this.id] = parseInt(this.value);
     }
+  } else if (element_properties[this.id].type.name == 'String') {
+    selected_element[this.id] = this.value;
   }
   //}
 }
