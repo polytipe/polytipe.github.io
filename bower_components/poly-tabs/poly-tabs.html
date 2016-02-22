@@ -44,10 +44,6 @@
       is: 'poly-tabs',
 
       properties: {
-        tabs: {
-          type: Number,
-          value: 2
-        },
         tab_names:{
           type: Array,
           value: [{name: 'Tab 1'}, {name: 'Tab 2'}]
@@ -63,6 +59,7 @@
         this.fire("regularTap");
       },
       ready: function() {
+        this.tabs = 2;
         this.min = 1;
         this.max = 5;
         this._focused = false;
@@ -70,9 +67,18 @@
       attached: function(){
       },
       addTab: function(){
-        //for(var i = 1; i<this.number+1; i++){
-          this.push("tab_names", {name: 'Tab '+ 1} );
-        //}
+        if(this.tabs < this.max){
+          this.tabs = this.tabs + 1;
+          this.push("tab_names", {name: 'Tab '+ this.tabs} );
+          this.fire("regularTap");
+        }
+      },
+      removeTab: function(){
+        if(this.tabs > this.min){
+          this.tabs = this.tabs - 1;
+          this.pop("tab_names");
+          this.fire("regularTap");
+        }
       },
       focus: function() {
         if(!this.focused){

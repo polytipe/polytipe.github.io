@@ -38,23 +38,6 @@
     --paper-toggle-button-checked-ink-color: var(--accent-color);
   }
 
-  /*Sidebar frame*/
-
-  #sidebar_frame{
-    background-color: var(--sidebar-color);
-  }
-  .sidebar_panel{
-    height: 50%;
-  }
-  .sidebar_toolbar{
-    background-color: var(--accent-color);
-  }
-
-  #properties_list{
-    padding: 0 15px;
-    height: 100%
-    overflow-y: scroll;
-  }
   paper-menu {
     padding: 0;
     height: 100%;
@@ -69,8 +52,42 @@
 		--paper-input-container-focus-color: var(--accent-color);
 	}
 
+  paper-fab{
+    --paper-fab-keyboard-focus-background: var(--accent-color);
+  }
+
+  /*Sidebar frame*/
+
+  #sidebar_frame{
+    background-color: var(--sidebar-color);
+  }
+  .sidebar_panel{
+    height: 50%;
+  }
+  .sidebar_toolbar{
+    background-color: var(--accent-color);
+  }
+
+  #properties_list{
+    padding: 0 15px;
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+  .array_fab{
+    padding: 4px;
+    @apply(--shadow-none);
+    --paper-fab-background: #323232;
+    --paper-fab-keyboard-focus-background: #505050;
+    width: 25px;
+    height: 25px;
+    --iron-icon-width: 20px;
+    --iron-icon-height: 20px;
+  }
+
+
   .property_name{
-    padding-top: 8px;
+    margin-top: 8px;
     font-size: 13px;
     font-weight: 400;
     line-height: 24px;
@@ -78,7 +95,7 @@
   }
 
   .sub_property{
-    padding-left: 15px;
+    margin-left: 15px;
   }
 
   /*Main frame*/
