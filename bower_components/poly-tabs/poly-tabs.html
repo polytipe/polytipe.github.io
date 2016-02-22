@@ -61,14 +61,15 @@
       ready: function() {
         this.number = 2;
         this.min = 1;
-        this.max = 5;
+        this.max = this.number;
         this._focused = false;
       },
       attached: function(){
       },
       addTab: function(){
-        if(this.number < this.max){
+        if(this.number < 5){
           this.number = this.number + 1;
+          this.max = this.number;
           this.push("tabs", {name: 'Tab '+ this.number} );
           this.fire("regularTap");
         }
@@ -76,6 +77,7 @@
       removeTab: function(){
         if(this.number > this.min){
           this.number = this.number - 1;
+          this.max = this.number;
           this.pop("tabs");
           this.fire("regularTap");
         }
