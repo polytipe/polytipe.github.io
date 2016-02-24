@@ -1,12 +1,16 @@
-<style is="custom-style">
+<dom-module id="styles">
+<template>
+<style>
   /*Color variables*/
   :root {
-    --main-bg-color: #303030;
+    --polytipe-bg-color: #303030;
     --polytipe-toolbar-color: #212121;
     --polytipe-accent-color: #2AB767;
+    --polytipe-secondary-color: #FFEB3B;
+    --sidebar-bg-color: #1A1A1A;
+
     --app-primary-color: #03A9F4;
     --app-accent-color: #FF5252;
-    --sidebar-color: #1A1A1A;
   }
 
   html{
@@ -59,7 +63,7 @@
   /*Sidebar frame*/
 
   #sidebar_frame{
-    background-color: var(--sidebar-color);
+    background-color: var(--sidebar-bg-color);
   }
   .sidebar_panel{
     height: 50%;
@@ -69,6 +73,7 @@
   }
   .sidebar_tabs, .sidebar_toolbar{
     background-color: var(--polytipe-accent-color);
+    --paper-tabs-selection-bar-color: var(--polytipe-secondary-color);
     color: white;
   }
 
@@ -109,7 +114,7 @@
   /*Main frame*/
 
   #main_frame{
-    background-color: var(--main-bg-color);
+    background-color: var(--polytipe-bg-color);
   }
   #screen_view_toolbar{
     background-color: var(--polytipe-toolbar-color);
@@ -133,3 +138,5 @@
   }
 
 </style>
+</template>
+</dom-module>
