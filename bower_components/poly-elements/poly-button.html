@@ -15,7 +15,7 @@
       border: 2px solid white;
     }
     paper-button{
-      background-color: var(--accent-color);
+      background-color: var(--app-accent-color);
       color: #fff;
     }
     paper-button.disabled{
@@ -43,7 +43,8 @@
         },
         icon:{
           type: String,
-          value: "android"
+          value: "android",
+          observer: "_iconChanged"
         },
         disabled:{
           type: Boolean,
@@ -52,9 +53,6 @@
       },
       ready: function () {
         this._focused = false;
-        if(this.icon){
-          this.hasIcon = true;
-        }
       },
       focus: function() {
         if(!this.focused){
@@ -66,6 +64,14 @@
       unfocus: function() {
         this.$.button.classList.toggle('outlined_element', false);
         this._focused = false;
+      },
+      _iconChanged: function() {
+        //Show or hide the icon depending on the input
+        if(this.icon){
+          this.hasIcon = true;
+        }else{
+          this.hasIcon = false;
+        }
       }
     });
   </script>

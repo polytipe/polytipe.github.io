@@ -2,9 +2,10 @@
   /*Color variables*/
   :root {
     --main-bg-color: #303030;
-    --app-toolbar-color: #212121;
-    --accent-color: #2AB767;
-    --secondary-color: #03A9F4;
+    --polytipe-toolbar-color: #212121;
+    --polytipe-accent-color: #2AB767;
+    --app-primary-color: #03A9F4;
+    --app-accent-color: #FF5252;
     --sidebar-color: #1A1A1A;
   }
 
@@ -29,31 +30,30 @@
   /*Element defaults*/
 
   paper-toolbar{
-    background-color: var(--secondary-color);
+    background-color: var(--app-primary-color);
   }
 
   paper-toggle-button{
-    --paper-toggle-button-checked-bar-color: var(--accent-color);
-    --paper-toggle-button-checked-button-color: var(--accent-color);
-    --paper-toggle-button-checked-ink-color: var(--accent-color);
+    --paper-toggle-button-checked-bar-color: var(--polytipe-accent-color);
+    --paper-toggle-button-checked-button-color: var(--polytipe-accent-color);
+    --paper-toggle-button-checked-ink-color: var(--polytipe-accent-color);
   }
 
   paper-menu {
-    padding: 0;
     height: 100%;
     background-color: inherit;
     color: #fff;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     cursor: pointer;
   }
 
   paper-input{
     --paper-input-container-input-color: white;
-		--paper-input-container-focus-color: var(--accent-color);
+		--paper-input-container-focus-color: var(--polytipe-accent-color);
 	}
 
   paper-fab{
-    --paper-fab-keyboard-focus-background: var(--accent-color);
+    --paper-fab-keyboard-focus-background: var(--polytipe-accent-color);
   }
 
   /*Sidebar frame*/
@@ -64,8 +64,16 @@
   .sidebar_panel{
     height: 50%;
   }
-  .sidebar_toolbar{
-    background-color: var(--accent-color);
+  .sidebar_section{
+    height: 100%;
+  }
+  .sidebar_tabs, .sidebar_toolbar{
+    background-color: var(--polytipe-accent-color);
+    color: white;
+  }
+
+  .sidebar_tabs[selected="0"]{
+      background-color: red;
   }
 
   #properties_list{
@@ -104,7 +112,7 @@
     background-color: var(--main-bg-color);
   }
   #screen_view_toolbar{
-    background-color: #212121;
+    background-color: var(--polytipe-toolbar-color);
   }
   .back_icon{
     margin-right: 20px;

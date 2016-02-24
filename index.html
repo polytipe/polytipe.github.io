@@ -33,13 +33,22 @@
     <paper-scroll-header-panel drawer id="sidebar_frame" class="fit">
 
       <paper-scroll-header-panel class="sidebar_panel" fixed>
-        <paper-toolbar class="sidebar_toolbar">
-          <div class="flex paper-font-title">Elementos</div>
-        </paper-toolbar>
-        <paper-menu>
-          <paper-item onclick="makeElement('poly-tabs')">Pestañas</paper-item>
-          <paper-item onclick="makeElement('poly-button')">Botón</paper-item>
-        </paper-menu>
+        <template id="app_sidebar" is="dom-bind">
+          <paper-tabs class="sidebar_tabs" selected="{{selected_mode}}">
+            <paper-tab>Elementos</paper-tab>
+            <paper-tab>Layout</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{selected_mode}}">
+            <section class="sidebar_section">
+              <paper-menu>
+                <paper-item onclick="makeElement('poly-tabs')">Pestañas</paper-item>
+                <paper-item onclick="makeElement('poly-button')">Botón</paper-item>
+              </paper-menu>
+            </section>
+            <section></section>
+            <section></section>
+          </iron-pages>
+        </template>
       </paper-scroll-header-panel>
 
       <paper-scroll-header-panel class="sidebar_panel" fixed>

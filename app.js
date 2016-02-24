@@ -1,6 +1,8 @@
 window.addEventListener('WebComponentsReady', function(e) {
-
 });
+
+var app_sidebar = document.querySelector("#app_sidebar");
+app_sidebar.selected_mode = 0;
 
 var selected_element;
 var element_properties;
