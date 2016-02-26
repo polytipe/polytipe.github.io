@@ -21,6 +21,14 @@
     Polymer({
       is: 'poly-layout',
       properties:{
+        horizontal:{
+          type: Boolean,
+          value: false
+        },
+        flex:{
+          type: Number,
+          value: 1
+        }
       },
       ready: function () {
         this._focused = false;
