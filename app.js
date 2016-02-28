@@ -6,7 +6,6 @@ var app_sidebar = document.querySelector("#app_sidebar");
 app_sidebar.selected_mode = 0;
 
 var selected_element;
-var selected_layout_frame;
 var element_properties;
 
 function iframe_ready() {
@@ -153,12 +152,26 @@ document.getElementById("app_container").addEventListener('click', function(e) {
 });
 
 function unfocus(e) {
-  //Unfocus all elements except the one active
-  for (var i = 0; i < iframe_content.children.length; i++) {
-    if (iframe_content.children[i] != e.target) {
-      iframe_content.children[i].unfocus();
+  //Reset selected element
+  selected_element = e.target;
+
+  //Unfocus all children elements except the one active
+  for (var i = 0; i < iframe_content.childNodes.length; i++) {
+    if (iframe_content.childNodes[i] != e.target) {
+      iframe_content.childNodes[i].unfocus();
     }
   }
+  //Unfocus children elements with the outlined_element class
+  var children = iframe_content.querySelectorAll(".outlined_element");
+  for (var i = 0; i < children.length; i++) {
+    if (children[i] != e.target) {
+      children[i].unfocus();
+    }
+  }
+
+  console.log("TODO: Fix unfocus of poly-layout inside another poly-layout");
+  //TODO: Fix unfocus of poly-layout inside another poly-layout
+
   //Clear the properties so they don't add up
   while (properties_list.firstChild) {
     properties_list.removeChild(properties_list.firstChild);
@@ -209,5 +222,9 @@ function arrayChanged() {
 
 function makeElement(element_name) {
   var element = iframe_document.createElement(element_name);
-  iframe_content.appendChild(element);
+  if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
+    selected_element.appendChild(element);
+  }else{
+    iframe_content.appendChild(element);
+  }
 }

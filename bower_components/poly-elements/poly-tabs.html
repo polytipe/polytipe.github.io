@@ -7,17 +7,8 @@
   <style>
 
     :host {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    .outlined_element{
-      box-sizing: border-box;
-      border: 2px solid white;
+      display: block;
+      min-width: 100%;
     }
 
     paper-tabs{
@@ -30,7 +21,7 @@
   </style>
 
   <template>
-    <paper-tabs id="tabs" selected="{{selected_tab}}" on-tap="focus">
+    <paper-tabs selected="{{selected_tab}}">
       <template is="dom-repeat" items="{{tabs}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
@@ -40,9 +31,10 @@
   <script>
 
     Polymer({
-
       is: 'poly-tabs',
-
+      listeners: {
+        'click': 'focus'
+      },
       properties: {
         tabs:{
           type: Array,
@@ -86,12 +78,12 @@
       focus: function() {
         if(!this.focused){
           this.fire("elementSelection");
-          this.$.tabs.classList.toggle('outlined_element', true);
+          this.toggleClass('outlined_element', true);
         }
         this._focused = true;
       },
       unfocus: function() {
-        this.$.tabs.classList.toggle('outlined_element', false);
+        this.toggleClass('outlined_element', false);
         this._focused = false;
       }
     });

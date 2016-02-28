@@ -8,15 +8,12 @@
 
   <style>
     :host {
-      display: block;
-    }
-    .outlined_element{
-      box-sizing: border-box;
-      border: 2px solid white;
+      display: inline-block;
     }
     paper-button{
       background-color: var(--app-accent-color);
       color: #fff;
+      margin: 0;
     }
     paper-button.disabled{
       background-color: #ddd;
@@ -25,8 +22,7 @@
 
   <template>
 
-    <paper-button disabled="{{disabled}}" raised id="button" on-tap="focus">
-
+    <paper-button disabled="{{disabled}}" raised>
       <template is="dom-if" if="{{hasIcon}}">
         <iron-icon icon="{{icon}}"></iron-icon>
       </template>
@@ -36,6 +32,9 @@
   <script>
     Polymer({
       is: 'poly-button',
+      listeners: {
+        'tap': 'focus'
+      },
       properties:{
         text:{
           type: String,
@@ -54,15 +53,16 @@
       ready: function () {
         this._focused = false;
       },
-      focus: function() {
+      focus: function(event) {
         if(!this.focused){
           this.fire("elementSelection");
-          this.$.button.classList.toggle('outlined_element', true);
+          this.toggleClass('outlined_element', true);
+          event.stopPropagation();
         }
         this._focused = true;
       },
       unfocus: function() {
-        this.$.button.classList.toggle('outlined_element', false);
+        this.toggleClass('outlined_element', false);
         this._focused = false;
       },
       _iconChanged: function() {

@@ -7,24 +7,21 @@
   <style>
     :host {
       display: block;
-    }
-    #layout{
       width: 100%;
       min-height: 40px;
       background-color: #ccc;
     }
-    .outlined_element{
-      box-sizing: border-box;
-      border: 2px solid white;
-    }
   </style>
 
   <template>
-    <div id="layout" on-tap="focus"></div>
   </template>
+
   <script>
     Polymer({
       is: 'poly-layout',
+      listeners: {
+        'tap': 'focus'
+      },
       properties:{
         layout:{
           type: String
@@ -56,16 +53,14 @@
       },
       focus: function() {
         if(!this.focused){
-          this.fire("layoutSelection");
-          this.$.layout.classList.toggle('outlined_element', true);
+          this.fire("elementSelection");
+          this.toggleClass('outlined_layout', true);
         }
         this._focused = true;
       },
       unfocus: function() {
-        this.$.layout.classList.toggle('outlined_element', false);
+        this.toggleClass('outlined_layout', false);
         this._focused = false;
-      },
-      _iconChanged: function() {
       }
     });
   </script>
