@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="poly-layout">
+
+  <style>
+    :host {
+      display: block;
+    }
+    #layout{
+      width: 100%;
+      min-height: 40px;
+      background-color: #ccc;
+    }
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid white;
+    }
+  </style>
+
+  <template>
+    <div id="layout" on-tap="focus"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-layout',
+      properties:{
+        layout:{
+          type: String
+        },
+        align:{
+          type: String
+        },
+        justify:{
+          type: String
+        },
+        flex:{
+          type: String
+        },
+        wrap:{
+          type: Boolean,
+          value: false
+        },
+        reverse:{
+          type: Boolean,
+          value: false
+        }
+      },
+      ready: function () {
+        this._focused = false;
+        this.layoutDropdown = ["", "horizontal","vertical"];
+        this.alignDropdown = ["", "start","center", "end"];
+        this.justifyDropdown = ["", "start-justified","center-justified","end-justified","justified","around-justified"];
+        this.flexDropdown = ["", "1","2","3","4","5","6","7","8","9","10","11","12"];
+      },
+      focus: function() {
+        if(!this.focused){
+          this.fire("layoutSelection");
+          this.$.layout.classList.toggle('outlined_element', true);
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.$.layout.classList.toggle('outlined_element', false);
+        this._focused = false;
+      },
+      _iconChanged: function() {
+      }
+    });
+  </script>
+</dom-module>

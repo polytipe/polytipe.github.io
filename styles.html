@@ -43,14 +43,6 @@
     --paper-toggle-button-checked-ink-color: var(--polytipe-accent-color);
   }
 
-  paper-menu {
-    height: 100%;
-    background-color: inherit;
-    color: #fff;
-    /*overflow-y: scroll;*/
-    cursor: pointer;
-  }
-
   paper-input{
     --paper-input-container-input-color: white;
 		--paper-input-container-focus-color: var(--polytipe-accent-color);
@@ -77,8 +69,12 @@
     color: white;
   }
 
-  .sidebar_tabs[selected="0"]{
-      background-color: red;
+  #elements_list{
+    height: 100%;
+    background-color: inherit;
+    color: #fff;
+    /*overflow-y: scroll;*/
+    cursor: pointer;
   }
 
   #properties_list{
@@ -100,6 +96,7 @@
 
 
   .property_name{
+    padding: 10px 0;
     margin-top: 8px;
     font-size: 13px;
     font-weight: 400;
