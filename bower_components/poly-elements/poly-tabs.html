@@ -56,7 +56,7 @@
 
       },
       _selected_tabChange: function() {
-        this.fire("regularTap");
+        this.fire("elementSelection");
       },
       ready: function() {
         this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}];
@@ -72,7 +72,7 @@
           this.number = this.number + 1;
           this.max = this.number;
           this.push("tabs", {name: 'Tab '+ this.number} );
-          this.fire("regularTap");
+          this.fire("elementSelection");
         }
       },
       removeTab: function(){
@@ -80,12 +80,12 @@
           this.number = this.number - 1;
           this.max = this.number;
           this.pop("tabs");
-          this.fire("regularTap");
+          this.fire("elementSelection");
         }
       },
       focus: function() {
         if(!this.focused){
-          this.fire("regularTap");
+          this.fire("elementSelection");
           this.$.tabs.classList.toggle('outlined_element', true);
         }
         this._focused = true;

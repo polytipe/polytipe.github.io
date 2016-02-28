@@ -56,7 +56,7 @@
       },
       focus: function() {
         if(!this.focused){
-          this.fire("regularTap");
+          this.fire("elementSelection");
           this.$.button.classList.toggle('outlined_element', true);
         }
         this._focused = true;
