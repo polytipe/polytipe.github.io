@@ -152,25 +152,16 @@ document.getElementById("app_container").addEventListener('click', function(e) {
 });
 
 function unfocus(e) {
-  //Reset selected element
-  selected_element = e.target;
 
   //Unfocus all children elements except the one active
   for (var i = 0; i < iframe_content.childNodes.length; i++) {
-    if (iframe_content.childNodes[i] != e.target) {
       iframe_content.childNodes[i].unfocus();
-    }
   }
   //Unfocus children elements with the outlined_element class
   var children = iframe_content.querySelectorAll(".outlined_element");
   for (var i = 0; i < children.length; i++) {
-    if (children[i] != e.target) {
       children[i].unfocus();
-    }
   }
-
-  console.log("TODO: Fix unfocus of poly-layout inside another poly-layout");
-  //TODO: Fix unfocus of poly-layout inside another poly-layout
 
   //Clear the properties so they don't add up
   while (properties_list.firstChild) {

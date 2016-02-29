@@ -6,11 +6,10 @@
 
   <style>
     :host {
-      display: block;
+      display: inline-block;
       width: 100%;
       min-height: 45px;
 
-      box-sizing: border-box;
       background-color: #ccc;
     }
   </style>
@@ -26,16 +25,20 @@
       },
       properties:{
         layout:{
-          type: String
+          type: String,
+          observer: "_layoutChanged"
         },
         align:{
-          type: String
+          type: String,
+          observer: "_alignChanged"
         },
         justify:{
-          type: String
+          type: String,
+          observer: "_justifyChanged"
         },
         flex:{
-          type: String
+          type: String,
+          observer: "_flexChanged"
         },
         wrap:{
           type: Boolean,
@@ -48,21 +51,40 @@
       },
       ready: function () {
         this._focused = false;
+        this.selector = [];
         this.layoutDropdown = ["", "horizontal","vertical"];
         this.alignDropdown = ["", "start","center", "end"];
         this.justifyDropdown = ["", "start-justified","center-justified","end-justified","justified","around-justified"];
         this.flexDropdown = ["", "1","2","3","4","5","6","7","8","9","10","11","12"];
+        this.toggleClass("layout", true);
       },
-      focus: function() {
+      focus: function(event) {
         if(!this.focused){
           this.fire("elementSelection");
-          this.toggleClass('outlined_layout', true);
+          this.toggleClass('outlined_element', true);
         }
+        event.stopPropagation();
         this._focused = true;
       },
       unfocus: function() {
-        this.toggleClass('outlined_layout', false);
+        this.toggleClass('outlined_element', false);
         this._focused = false;
+      },
+      _layoutChanged: function () {this.selector = this.layoutDropdown; this._pChanged(this.layout)},
+      _alignChanged: function () {this.selector = this.alignDropdown; this._pChanged(this.align)},
+      _justifyChanged: function () {this.selector = this.justifyDropdown; this._pChanged(this.justify)},
+      _flexChanged: function () {this.selector = this.flexDropdown; this._pChanged(this.flex)},
+
+      _pChanged: function (p) {
+        for (var i = 0; i < this.selector.length; i++) {
+          if(this.selector[i] != ""){
+            if(this.selector[i] == p){
+              this.toggleClass(this.selector[i], true);
+            }else{
+              this.toggleClass(this.selector[i], false);
+            }
+          }
+        }
       }
     });
   </script>
