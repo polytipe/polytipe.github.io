@@ -45,7 +45,7 @@ function iframe_ready() {
 
           var input = document.createElement("paper-toggle-button");
           input.classList.add("layout", "vertical", "end");
-          if (element_properties[key].value == true) {
+          if (selected_element[key] == true) {
             input.checked = true;
           } else {
             input.checked = false;
@@ -108,7 +108,7 @@ function iframe_ready() {
           div.appendChild(innerDiv);
 
           var input = document.createElement("paper-toggle-button");
-          if (element_properties[key].value == true) {
+          if (selected_element[key] == true) {
             input.checked = true;
           } else {
             input.checked = false;
@@ -192,7 +192,7 @@ function propertyChanged() {
     }
     selected_element[arrayName] = jsonArray;
   } else if (element_properties[this.id].type.name == 'Boolean') {
-    console.log("TODO: boolean property");
+    selected_element[this.id] = this.checked;
   } else if (element_properties[this.id].type.name == 'Number') {
     if (this.id.startsWith("selected")) { //Prevent first position being 0
       selected_element[this.id] = parseInt(this.value) - 1;

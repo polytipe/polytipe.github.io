@@ -22,7 +22,7 @@
 
   <template>
 
-    <paper-button disabled="{{disabled}}" raised>
+    <paper-button disabled="{{disabled}}" raised="{{raised}}">
       <template is="dom-if" if="{{hasIcon}}">
         <iron-icon icon="{{icon}}"></iron-icon>
       </template>
@@ -45,9 +45,9 @@
           value: "android",
           observer: "_iconChanged"
         },
-        disabled:{
+        raised:{
           type: Boolean,
-          value: false
+          value: true
         }
       },
       ready: function () {
