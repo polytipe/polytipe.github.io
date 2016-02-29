@@ -152,6 +152,8 @@ document.getElementById("app_container").addEventListener('click', function(e) {
 });
 
 function unfocus(e) {
+  //Reset selected element
+  selected_element = e.target;
 
   //Unfocus all children elements except the one active
   for (var i = 0; i < iframe_content.childNodes.length; i++) {
