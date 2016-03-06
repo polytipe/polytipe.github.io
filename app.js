@@ -1,9 +1,13 @@
 window.addEventListener('WebComponentsReady', function(e) {
-
+  //Unfocus all elements when clicking outside the app
+  document.getElementById("app_container").addEventListener('click', function(e) {
+    unfocus(e);
+  });
 });
 
 var app_sidebar = document.querySelector("#app_sidebar");
 app_sidebar.selected_mode = 0;
+app_sidebar.selected_mode2 = 0;
 
 var selected_element;
 var element_properties;
@@ -11,6 +15,7 @@ var element_properties;
 function iframe_ready() {
   iframe_document = document.getElementById("app_iframe").contentDocument;
   iframe_content = iframe_document.getElementById("app_content");
+  document.getElementById("ready_toast").open();
 
   var properties_list = document.getElementById('properties_list');
 
@@ -20,6 +25,37 @@ function iframe_ready() {
 
     //Unfocus all elements except the selected_element
     unfocus(e);
+
+    //Element actions
+    // TODO: Move up / down in the DOM tree
+    var div = document.createElement("div");
+    div.id = "element_actions";
+    div.classList.add("layout", "horizontal", "end-justified");
+
+    var moveUpButton = document.createElement("paper-fab");
+    moveUpButton.title = "Mover arriba";
+    moveUpButton.classList.add("move_button");
+    moveUpButton.icon = "arrow-upward";
+    div.appendChild(moveUpButton);
+
+    var moveDownButton = document.createElement("paper-fab");
+    moveDownButton.title = "Mover abajo";
+    moveDownButton.classList.add("move_button");
+    moveDownButton.icon = "arrow-downward";
+    div.appendChild(moveDownButton);
+
+    var divFlex = document.createElement("div");
+    divFlex.classList.add("flex");
+    div.appendChild(divFlex);
+
+    var deleteButton = document.createElement("paper-fab");
+    deleteButton.title = "Eliminar elemento";
+    deleteButton.id = "delete_button";
+    deleteButton.icon = "delete";
+    deleteButton.addEventListener("click", deleteElement);
+    div.appendChild(deleteButton);
+
+    properties_list.appendChild(div);
 
     //Add inputs for poly-layout elements
     if(selected_element.tagName == "POLY-LAYOUT"){
@@ -146,23 +182,22 @@ function iframe_ready() {
   });
 }
 
-//Unfocus all elements when clicking outside the app
-document.getElementById("app_container").addEventListener('click', function(e) {
-  unfocus(e);
-});
-
 function unfocus(e) {
   //Reset selected element
   selected_element = e.target;
 
   //Unfocus all children elements except the one active
   for (var i = 0; i < iframe_content.childNodes.length; i++) {
+    if (iframe_content.childNodes[i] != e.target) {
       iframe_content.childNodes[i].unfocus();
+    }
   }
   //Unfocus children elements with the outlined_element class
   var children = iframe_content.querySelectorAll(".outlined_element");
   for (var i = 0; i < children.length; i++) {
+    if (children[i] != e.target) {
       children[i].unfocus();
+    }
   }
 
   //Clear the properties so they don't add up
@@ -206,10 +241,10 @@ function propertyChanged() {
 
 function arrayChanged() {
   if (this.icon == "add") {
-    selected_element.addTab();
+    selected_element.addElement();
   }
   if (this.icon == "remove") {
-    selected_element.removeTab();
+    selected_element.removeElement();
   }
 }
 
@@ -220,4 +255,9 @@ function makeElement(element_name) {
   }else{
     iframe_content.appendChild(element);
   }
+}
+
+function deleteElement() {
+  selected_element.remove();
+  unfocus(selected_element);
 }

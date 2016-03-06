@@ -15,14 +15,11 @@
       color: #fff;
       margin: 0;
     }
-    paper-button.disabled{
-      background-color: #ddd;
-    }
   </style>
 
   <template>
 
-    <paper-button disabled="{{disabled}}" raised="{{raised}}">
+    <paper-button raised="{{raised}}">
       <template is="dom-if" if="{{hasIcon}}">
         <iron-icon icon="{{icon}}"></iron-icon>
       </template>

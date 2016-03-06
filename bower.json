@@ -1,7 +1,8 @@
 {
-  "name": "prototype",
+  "name": "polytipe",
   "authors": [
-    "alejost848 <alejost848@gmail.com>"
+    "alejost848 <alejost848@gmail.com>",
+    "andrecastan <andrecastan08@gmail.com>"
   ],
   "description": "",
   "main": "index.html",
@@ -11,8 +12,6 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ]
 }

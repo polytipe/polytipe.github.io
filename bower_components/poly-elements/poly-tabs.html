@@ -51,7 +51,7 @@
         this.fire("elementSelection");
       },
       ready: function() {
-        this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}];
+        this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}]; //Default values when creating multiple elements
         this.number = 2;
         this.min = 1;
         this.max = this.number;
@@ -59,7 +59,7 @@
       },
       attached: function(){
       },
-      addTab: function(){
+      addElement: function(){
         if(this.number < 5){
           this.number = this.number + 1;
           this.max = this.number;
@@ -67,7 +67,7 @@
           this.fire("elementSelection");
         }
       },
-      removeTab: function(){
+      removeElement: function(){
         if(this.number > this.min){
           this.number = this.number - 1;
           this.max = this.number;

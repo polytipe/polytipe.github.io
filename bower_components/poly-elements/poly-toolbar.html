@@ -1,0 +1,107 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<dom-module id="poly-toolbar">
+
+  <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    paper-toolbar{
+      background-color: var(--app-primary-color);
+      color: #fff;
+    }
+    .menuIcon{
+      margin-right: 24px;
+    }
+  </style>
+
+  <template>
+
+    <paper-toolbar>
+      <paper-icon-button id="icon" icon="{{icon}}" on-tap="_toggleDrawer"></paper-icon-button>
+      <div class="flex">{{text}}</div>
+      <template is="dom-repeat" items="{{extra_icons}}">
+        <paper-icon-button icon="{{item.icon}}"></paper-icon-button>
+      </template>
+    </paper-toolbar>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-toolbar',
+      listeners: {
+        'tap': 'focus'
+      },
+      properties:{
+        text:{
+          type: String,
+          value: "Aplicación"
+        },
+        icon:{
+          type: String,
+          value: "menu",
+          observer: "_iconChanged"
+        },
+        extra_icons:{
+          type: Array,
+          value: [{icon: 'refresh'}, {icon: 'search'}]
+        },
+        toggles_drawer:{
+          type: Boolean,
+          value: true
+        }
+      },
+      ready: function() {
+        this.extra_icons = [{icon: 'refresh'}, {icon: 'search'}]; //Default values when creating multiple elements
+        this.number = 2;
+        this.min = 0;
+        this.max = 3;
+        this._focused = false;
+      },
+      focus: function(event) {
+        if(!this.focused){
+          this.fire("elementSelection");
+          this.toggleClass('outlined_element', true);
+          event.stopPropagation();
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.toggleClass('outlined_element', false);
+        this._focused = false;
+      },
+      addElement: function(){
+        if(this.number < this.max){
+          this.number = this.number + 1;
+          this.push("extra_icons", {icon: "add"} );
+          this.fire("elementSelection");
+        }
+      },
+      removeElement: function(){
+        if(this.number > this.min){
+          this.number = this.number - 1;
+          this.pop("extra_icons");
+          this.fire("elementSelection");
+        }
+      },
+      _iconChanged: function(){
+        if(this.icon == "menu"){
+          this.$.icon.toggleClass('menuIcon', true);
+        }else{
+          this.$.icon.toggleClass('menuIcon', false);
+        }
+      },
+      _toggleDrawer: function(){
+        if(this.toggles_drawer){
+          document.getElementById('drawer').togglePanel();
+        }
+      }
+    });
+  </script>
+</dom-module>
