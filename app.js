@@ -209,7 +209,7 @@ function unfocus(e) {
 //Update property values using the value of the inputs
 function propertyChanged() {
   var arrayName;
-  if (/\d/.test(this.id)) { //If the property name has a number (array)
+  if (/\d/.test(this.id)) { //If the property is an array, remove numbers from id to get property name
     arrayName = (this.id).substr(0, (this.id).length - 2);
   } else {
     arrayName = this.id;
@@ -260,4 +260,46 @@ function makeElement(element_name) {
 function deleteElement() {
   selected_element.remove();
   unfocus(selected_element);
+}
+
+function test(node) {
+  var allChildren = node.childNodes;
+  for (var i=0; i < allChildren.length; i++) {
+    if (allChildren[i].tagName != undefined && allChildren[i].tagName.startsWith("POLY")){
+      var child = node.childNodes[i];
+      test(child);
+      console.log(child);
+    }
+  }
+}
+
+function trigger_tree_mode(){
+
+  //test(iframe_document.getElementById("app_content"));
+
+  var treeElements = iframe_document.getElementById("app_content").querySelectorAll('*');
+  var treeArray = [];
+
+  for (var i=0; i < treeElements.length; i++) {
+    var elem = treeElements[i];
+    var element_name = elem.tagName;
+
+    if (element_name.startsWith("POLY")){
+      if (element_name == "POLY-LAYOUT"){
+        var layoutArray = [];
+        for (var j = 0; j < elem.children.length; j++) {
+          var child_name = elem.children[j].tagName;
+          if (child_name != "POLY-LAYOUT"){
+            var child_obj = {"name": child_name, "open": false};
+            layoutArray.push(child_obj);
+          }
+        }
+        var obj = {"name": element_name, "open": false, "children": layoutArray};
+        treeArray.push(obj);
+      }else{
+        var obj = {"name": element_name, "open": false};
+        treeArray.push(obj);
+      }
+    }
+  }
 }

@@ -29,57 +29,58 @@
 </head>
 
 <body unresolved class="fullbleed">
-<template id="app_sidebar" is="dom-bind">
-  <paper-drawer-panel right-drawer disable-swipe>
+  <template id="app_sidebar" is="dom-bind">
+    <paper-drawer-panel right-drawer disable-swipe>
 
-    <paper-header-panel drawer id="sidebar_frame" class="fit">
+      <paper-header-panel drawer id="sidebar_frame" class="fit">
 
-      <section class="sidebar_panel" fixed>
-        <paper-tabs class="sidebar_tabs" selected="{{selected_mode}}">
-          <paper-tab>Elementos</paper-tab>
-          <paper-tab>Tree</paper-tab>
-        </paper-tabs>
-        <iron-pages selected="{{selected_mode}}">
-          <section class="sidebar_section">
-            <paper-menu id="elements_list">
-              <paper-item onclick="makeElement('poly-tabs')">Pestañas</paper-item>
-              <paper-item onclick="makeElement('poly-button')">Botón</paper-item>
-              <paper-item onclick="makeElement('poly-layout')">Layout</paper-item>
-              <paper-item onclick="makeElement('poly-toolbar')">Toolbar</paper-item>
-            </paper-menu>
-          </section>
-          <section></section>
-        </iron-pages>
-      </section>
+        <section class="sidebar_panel" fixed>
+          <paper-tabs class="sidebar_tabs" selected="{{selected_mode}}">
+            <paper-tab>Elementos</paper-tab>
+            <paper-tab onclick="trigger_tree_mode()">Tree</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{selected_mode}}">
+            <section class="sidebar_section">
+              <paper-menu id="elements_list">
+                <paper-item onclick="makeElement('poly-tabs')">Pestañas</paper-item>
+                <paper-item onclick="makeElement('poly-button')">Botón</paper-item>
+                <paper-item onclick="makeElement('poly-layout')">Layout</paper-item>
+                <paper-item onclick="makeElement('poly-toolbar')">Toolbar</paper-item>
+              </paper-menu>
+            </section>
+            <section id="tree_view" class="sidebar_section"></section>
+          </iron-pages>
+        </section>
 
-      <section class="sidebar_panel" fixed>
-        <paper-tabs class="sidebar_tabs" selected="{{selected_mode2}}">
-          <paper-tab>Propiedades</paper-tab>
-          <paper-tab>Estilos</paper-tab>
-        </paper-tabs>
-        <iron-pages selected="{{selected_mode2}}">
-          <section>
-            <div id="properties_list"></div>
-          </section>
-          <section></section>
-        </iron-pages>
-      </section>
-    </paper-header-panel>
+        <section class="sidebar_panel" fixed>
+          <paper-tabs class="sidebar_tabs" selected="{{selected_mode2}}">
+            <paper-tab>Propiedades</paper-tab>
+            <paper-tab>Estilos</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{selected_mode2}}">
+            <section>
+              <div id="properties_list"></div>
+            </section>
+            <section></section>
+          </iron-pages>
+        </section>
+      </paper-header-panel>
 
-    <paper-header-panel main id="main_frame" mode="seamed">
-      <paper-toolbar id="screen_view_toolbar">
-        <paper-icon-button class="back_icon" icon="arrow-back"></paper-icon-button>
-        <div class="flex paper-font-title">Polytipe</div>
-        <span class="flex"></span>
-        <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-      </paper-toolbar>
+      <paper-header-panel main id="main_frame" mode="seamed">
+        <paper-toolbar id="screen_view_toolbar">
+          <paper-icon-button class="back_icon" icon="arrow-back"></paper-icon-button>
+          <div class="flex paper-font-title">Polytipe</div>
+          <span class="flex"></span>
+          <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+        </paper-toolbar>
 
-      <div id="app_container" class="layout horizontal center-center">
-        <iframe id="app_iframe" src="default_app.html"></iframe>
-      </div>
-    </paper-header-panel>
-  </paper-drawer-panel>
-    </template>
+        <div id="app_container" class="layout horizontal center-center">
+          <iframe id="app_iframe" src="default_app.html"></iframe>
+        </div>
+      </paper-header-panel>
+    </paper-drawer-panel>
+  </template>
+
   <paper-toast id="ready_toast" duration="2000">
     <iron-icon id="ready_toast_icon" icon="check"></iron-icon>Cargado
   </paper-toast>
