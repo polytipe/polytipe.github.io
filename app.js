@@ -262,39 +262,15 @@ function deleteElement() {
   unfocus(selected_element);
 }
 
-function test(node) {
+function generateTree(node) {
+  var treeArray = [];
   var allChildren = node.childNodes;
   for (var i=0; i < allChildren.length; i++) {
-    if (allChildren[i].tagName != undefined && allChildren[i].tagName.startsWith("POLY")){
-      var child = node.childNodes[i];
-      test(child);
-      console.log(child);
-    }
-  }
-}
-
-function trigger_tree_mode(){
-
-  test(iframe_document.getElementById("app_content"));
-
-  var treeElements = iframe_document.getElementById("app_content").querySelectorAll('*');
-  var treeArray = [];
-
-  for (var i=0; i < treeElements.length; i++) {
-    var elem = treeElements[i];
-    var element_name = elem.tagName;
-
-    if (element_name.startsWith("POLY")){
+    var element_name = allChildren[i].tagName;
+    if (element_name != undefined && element_name.startsWith("POLY")){
       if (element_name == "POLY-LAYOUT"){
-        var layoutArray = [];
-        for (var j = 0; j < elem.children.length; j++) {
-          var child_name = elem.children[j].tagName;
-          if (child_name != "POLY-LAYOUT"){
-            var child_obj = {"name": child_name, "open": false};
-            layoutArray.push(child_obj);
-          }
-        }
-        var obj = {"name": element_name, "open": false, "children": layoutArray};
+        var child = node.childNodes[i];
+        var obj = {"name": element_name, "open": false, "children": generateTree(child)};
         treeArray.push(obj);
       }else{
         var obj = {"name": element_name, "open": false};
@@ -302,4 +278,10 @@ function trigger_tree_mode(){
       }
     }
   }
+  return treeArray;
+}
+
+function trigger_tree_mode(){
+  //TODO: Set data to the file-tree element using the return value
+  console.log(test(iframe_document.getElementById("app_content")));
 }

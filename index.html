@@ -32,9 +32,8 @@
   <template id="app_sidebar" is="dom-bind">
     <paper-drawer-panel right-drawer disable-swipe>
 
-      <paper-header-panel drawer id="sidebar_frame" class="fit">
-
-        <section class="sidebar_panel" fixed>
+      <paper-scroll-header-panel drawer id="sidebar_frame" class="fit">
+        <paper-scroll-header-panel class="sidebar_panel" fixed>
           <paper-tabs class="sidebar_tabs" selected="{{selected_mode}}">
             <paper-tab>Elementos</paper-tab>
             <paper-tab onclick="trigger_tree_mode()">Tree</paper-tab>
@@ -50,9 +49,9 @@
             </section>
             <section id="tree_view" class="sidebar_section"></section>
           </iron-pages>
-        </section>
+        </paper-scroll-header-panel>
 
-        <section class="sidebar_panel" fixed>
+        <paper-scroll-header-panel class="sidebar_panel" fixed>
           <paper-tabs class="sidebar_tabs" selected="{{selected_mode2}}">
             <paper-tab>Propiedades</paper-tab>
             <paper-tab>Estilos</paper-tab>
@@ -63,8 +62,8 @@
             </section>
             <section></section>
           </iron-pages>
-        </section>
-      </paper-header-panel>
+        </paper-scroll-header-panel>
+      </paper-scroll-header-panel>
 
       <paper-header-panel main id="main_frame" mode="seamed">
         <paper-toolbar id="screen_view_toolbar">
