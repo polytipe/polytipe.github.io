@@ -275,7 +275,7 @@ function test(node) {
 
 function trigger_tree_mode(){
 
-  //test(iframe_document.getElementById("app_content"));
+  test(iframe_document.getElementById("app_content"));
 
   var treeElements = iframe_document.getElementById("app_content").querySelectorAll('*');
   var treeArray = [];
