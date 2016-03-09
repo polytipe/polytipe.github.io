@@ -29,10 +29,10 @@
 </head>
 
 <body unresolved class="fullbleed">
-  <template id="app_sidebar" is="dom-bind">
+  <template id="app" is="dom-bind">
     <paper-drawer-panel right-drawer disable-swipe>
 
-      <paper-scroll-header-panel drawer id="sidebar_frame" class="fit">
+      <paper-scroll-header-panel drawer id="sidebar_frame">
         <paper-scroll-header-panel class="sidebar_panel" fixed>
           <paper-tabs class="sidebar_tabs" selected="{{selected_mode}}">
             <paper-tab>Elementos</paper-tab>
@@ -47,7 +47,9 @@
                 <paper-item onclick="makeElement('poly-toolbar')">Toolbar</paper-item>
               </paper-menu>
             </section>
-            <section id="tree_view" class="sidebar_section"></section>
+            <section id="tree_view" class="sidebar_section">
+              <file-tree data="{{tree_data}}"></file-tree>
+            </section>
           </iron-pages>
         </paper-scroll-header-panel>
 

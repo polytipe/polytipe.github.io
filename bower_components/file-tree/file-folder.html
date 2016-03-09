@@ -20,20 +20,20 @@ Example:
 <dom-module id="file-folder">
 
   <style>
+    *{
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    :host{
+      font-size: 15px;
+    }
     :host.selected > .thisFolder > .folderTitle{
       background-color: rgba(31, 141, 214, 0.4);
       border: 1px solid rgba(31, 141, 214, 0.7);
       border-radius: 5px;
-    }
-
-    .parent.collapsed:before {
-      content: '+ ';
-      padding: 5px;
-    }
-
-    .parent.expanded:before {
-      content: '- ';
-      padding: 5px;
     }
 
     .parent, .name {
@@ -42,6 +42,7 @@ Example:
 
     ul {
       margin: 0;
+      padding-left: 15px;
     }
 
     li {
@@ -52,6 +53,12 @@ Example:
       cursor: pointer;
       width: 24px;
       height: 24px;
+      color: #666;
+    }
+
+    #stateIndicator{
+      width: 15px;
+      height: 15px;
     }
 
     [hidden] {
@@ -63,6 +70,7 @@ Example:
     <div class="thisFolder">
       <div class="folderTitle">
         <span class$="{{_determineClass(data.open, data.children)}}" on-click="toggleChildren">
+          <iron-icon id="stateIndicator" icon=""></iron-icon>
           <iron-icon icon$="{{_determineIcon(data.shared)}}"></iron-icon>
         </span>
         <span class="name" on-click="selectFolder">{{data.name}}</span>
@@ -111,7 +119,12 @@ Example:
      * @param {boolean}, whether or not the folder is open
     */
     _determineClass: function(open, children) {
-      return 'parent ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
+        if(this.state){
+          this.$.stateIndicator.icon = "add";
+        }else{
+          this.$.stateIndicator.icon = "remove";
+        }
+        this.state = !this.state;
     },
 
     /**

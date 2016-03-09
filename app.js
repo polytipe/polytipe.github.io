@@ -5,9 +5,9 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
 });
 
-var app_sidebar = document.querySelector("#app_sidebar");
-app_sidebar.selected_mode = 0;
-app_sidebar.selected_mode2 = 0;
+var app = document.querySelector("#app");
+app.selected_mode = 0;
+app.selected_mode2 = 0;
 
 var selected_element;
 var element_properties;
@@ -270,7 +270,13 @@ function generateTree(node) {
     if (element_name != undefined && element_name.startsWith("POLY")){
       if (element_name == "POLY-LAYOUT"){
         var child = node.childNodes[i];
-        var obj = {"name": element_name, "open": false, "children": generateTree(child)};
+        var obj;
+
+        if(generateTree(child).length > 0){ //If element has children, generate children object
+          obj = {"name": element_name, "open": false, "children": generateTree(child)};
+        }else{
+          obj = {"name": element_name, "open": false};
+        }
         treeArray.push(obj);
       }else{
         var obj = {"name": element_name, "open": false};
@@ -282,6 +288,7 @@ function generateTree(node) {
 }
 
 function trigger_tree_mode(){
-  //TODO: Set data to the file-tree element using the return value
-  console.log(test(iframe_document.getElementById("app_content")));
+  var treeArray = {"name": "APP", "open": false, "children": generateTree(iframe_document.getElementById("app_content"))};
+  var arrayNoBrackets = JSON.stringify(treeArray);
+  app.tree_data = JSON.parse(arrayNoBrackets);
 }
