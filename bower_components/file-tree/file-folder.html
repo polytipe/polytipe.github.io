@@ -73,7 +73,7 @@ Example:
           <iron-icon id="stateIndicator" icon=""></iron-icon>
           <iron-icon icon$="{{_determineIcon(data.shared)}}"></iron-icon>
         </span>
-        <span class="name" on-click="selectFolder">{{data.name}}</span>
+        <span class="name" selector="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
       </div>
       <ul hidden$={{!data.open}}>
         <template is="dom-repeat" items="{{data.children}}">
@@ -103,7 +103,7 @@ Example:
         value: function() {
           return {};
         }
-      },
+      }
 
     },
 
@@ -140,6 +140,13 @@ Example:
      * Highlights folder as the selected folder.
     */
     selectFolder: function(e) {
+      var el = iframe_document.getElementById(e.target.selector);
+      if(el!=null){
+        el.focus(e);
+      }else {
+        unfocus(e);
+      }
+
       this.fire("folderSelected", this);
     },
 

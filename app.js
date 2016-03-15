@@ -248,11 +248,16 @@ function arrayChanged() {
   }
 }
 
+var element_count = 0;
+
 function makeElement(element_name) {
   var element = iframe_document.createElement(element_name);
+  element_count++;
+  element.id = "poly" + element_count;
+  //Adds element inside a layout if any poly-layout element is selected
   if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
     selected_element.appendChild(element);
-  }else{
+  }else{ //If no poly-layout element is selected add it to the main container
     iframe_content.appendChild(element);
   }
 }
@@ -260,6 +265,7 @@ function makeElement(element_name) {
 function deleteElement() {
   selected_element.remove();
   unfocus(selected_element);
+  trigger_tree_mode();
 }
 
 function generateTree(node) {
@@ -273,13 +279,13 @@ function generateTree(node) {
         var obj;
 
         if(generateTree(child).length > 0){ //If element has children, generate children object
-          obj = {"name": element_name, "open": false, "children": generateTree(child)};
+          obj = {"id": allChildren[i].id, "name": element_name, "open": false, "children": generateTree(child)};
         }else{
-          obj = {"name": element_name, "open": false};
+          obj = {"id": allChildren[i].id, "name": element_name, "open": false};
         }
         treeArray.push(obj);
       }else{
-        var obj = {"name": element_name, "open": false};
+        var obj = {"id": allChildren[i].id, "name": element_name, "open": false};
         treeArray.push(obj);
       }
     }
