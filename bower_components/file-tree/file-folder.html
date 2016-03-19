@@ -71,9 +71,9 @@ Example:
       <div class="folderTitle">
         <span class$="{{_determineClass(data.open, data.children)}}" on-click="toggleChildren">
           <iron-icon id="stateIndicator" icon=""></iron-icon>
-          <iron-icon icon$="{{_determineIcon(data.shared)}}"></iron-icon>
+          <iron-icon icon="folder"></iron-icon>
         </span>
-        <span class="name" selector="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
+        <span id="folder_name" class="name" selector="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
       </div>
       <ul hidden$={{!data.open}}>
         <template is="dom-repeat" items="{{data.children}}">
@@ -107,6 +107,13 @@ Example:
 
     },
 
+    ready: function(){
+      this.id = this.$.folder_name.selector;
+      if(this.id == "undefined"){
+        this.id = "main_folder";
+      }
+    },
+
     /**
      * The `folderSelected` event is fired whenever `selectFolder` is called.
      *
@@ -119,29 +126,20 @@ Example:
      * @param {boolean}, whether or not the folder is open
     */
     _determineClass: function(open, children) {
-        if(this.state){
+        if(!this.data.open){
           this.$.stateIndicator.icon = "add";
         }else{
           this.$.stateIndicator.icon = "remove";
         }
-        this.state = !this.state;
-    },
-
-    /**
-     * Returns the necessary folder icon.
-     *
-     * @param {boolean}, whether or not the folder is shared
-    */
-    _determineIcon: function(shared) {
-      return 'folder';
     },
 
     /**
      * Highlights folder as the selected folder.
     */
     selectFolder: function(e) {
-      var el = iframe_document.getElementById(e.target.selector);
-      if(el!=null){
+      // TODO: Fix layout inside layout NULL thingy
+      if(e.target.selector!=undefined && e.target.selector!="" && e.target.selector!=null){
+        var el = iframe_document.getElementById(e.target.selector);
         el.focus(e);
       }else {
         unfocus(e);

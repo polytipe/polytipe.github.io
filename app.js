@@ -2,6 +2,8 @@ window.addEventListener('WebComponentsReady', function(e) {
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
     unfocus(e);
+    //Select app folder in tree
+    document.getElementById("main_folder").selectFolder(e);
   });
 });
 
@@ -25,6 +27,9 @@ function iframe_ready() {
 
     //Unfocus all elements except the selected_element
     unfocus(e);
+
+    //Update selected item in tree
+    document.getElementById(e.target.id).selectFolder(e);
 
     //Element actions
     // TODO: Move up / down in the DOM tree
@@ -260,12 +265,13 @@ function makeElement(element_name) {
   }else{ //If no poly-layout element is selected add it to the main container
     iframe_content.appendChild(element);
   }
+  update_tree();
 }
 
 function deleteElement() {
   selected_element.remove();
   unfocus(selected_element);
-  trigger_tree_mode();
+  update_tree();
 }
 
 function generateTree(node) {
@@ -279,13 +285,13 @@ function generateTree(node) {
         var obj;
 
         if(generateTree(child).length > 0){ //If element has children, generate children object
-          obj = {"id": allChildren[i].id, "name": element_name, "open": false, "children": generateTree(child)};
+          obj = {"id": allChildren[i].id, "name": element_name, "open": true, "children": generateTree(child)};
         }else{
-          obj = {"id": allChildren[i].id, "name": element_name, "open": false};
+          obj = {"id": allChildren[i].id, "name": element_name, "open": true};
         }
         treeArray.push(obj);
       }else{
-        var obj = {"id": allChildren[i].id, "name": element_name, "open": false};
+        var obj = {"id": allChildren[i].id, "name": element_name, "open": true};
         treeArray.push(obj);
       }
     }
@@ -293,8 +299,7 @@ function generateTree(node) {
   return treeArray;
 }
 
-function trigger_tree_mode(){
-  var treeArray = {"name": "APP", "open": false, "children": generateTree(iframe_document.getElementById("app_content"))};
-  var arrayNoBrackets = JSON.stringify(treeArray);
-  app.tree_data = JSON.parse(arrayNoBrackets);
+function update_tree(){
+  var treeArray = {"name": "APP", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
+  app.tree_data = JSON.parse(JSON.stringify(treeArray));
 }
