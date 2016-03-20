@@ -109,6 +109,7 @@ Example:
 
     ready: function(){
       this.id = this.$.folder_name.selection;
+
       if(this.id == "undefined"){
         this.id = "main_folder";
       }
@@ -137,13 +138,18 @@ Example:
      * Highlights folder as the selected folder.
     */
     selectFolder: function(e) {
-      if(e.target.selection!=undefined && e.target.selection!=""){
-        var el = iframe_document.getElementById(e.target.selection);
-        el.focus(e);
-      }else {
+      if(e.target.selection == "main_folder"){ //Select the main folder fix
         unfocus(e);
+        document.getElementById("app_iframe").classList.add('outlined_element');
+      }else{
+        if(e.target.selection!=undefined && e.target.selection!=""){
+          var el = iframe_document.getElementById(e.target.selection);
+          el.focus(e);
+        }
       }
-
+      this.fire("folderSelected", this);
+    },
+    highlightFolder: function() {
       this.fire("folderSelected", this);
     },
 

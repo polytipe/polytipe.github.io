@@ -33,8 +33,8 @@
     <paper-drawer-panel right-drawer disable-swipe>
 
       <paper-scroll-header-panel drawer id="sidebar_frame">
-        <paper-toolbar id="sidebar_polytipe_toolbar" class="medium-tall">
-          <iron-icon id="sidebar_polytipe_logo" icon="polytipe-icons:icon"></iron-icon>
+        <paper-toolbar id="sidebar_polytipe_toolbar">
+          <iron-icon id="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
         </paper-toolbar>
         <paper-scroll-header-panel class="sidebar_panel" fixed>
           <paper-tabs class="sidebar_tabs paper-header" selected="{{selected_mode}}">
@@ -63,7 +63,7 @@
               </paper-menu>
             </section>
             <section id="tree_view" class="sidebar_section">
-              <file-tree data="{{tree_data}}"></file-tree>
+
             </section>
           </iron-pages>
         </paper-scroll-header-panel>

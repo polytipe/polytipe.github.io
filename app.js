@@ -9,7 +9,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 
 var app = document.querySelector("#app");
 app.selected_mode = 0;
-app.selected_mode2 = 1;
+app.selected_mode2 = 0;
 
 var selected_element;
 var element_properties;
@@ -20,6 +20,11 @@ function iframe_ready() {
 
   //Display ready toast
   document.getElementById("ready_toast").open();
+
+  //Create tree and highlight main folder
+  update_tree();
+  document.getElementById("main_folder").highlightFolder();
+
   //Add iframe outline
   document.getElementById("app_iframe").classList.add('outlined_element');
 
@@ -33,9 +38,12 @@ function iframe_ready() {
     unfocus(e);
 
     //Update selected item in tree
-    document.getElementById(e.target.id).selectFolder(e);
+    if(document.getElementById(selected_element.id) != null){
+      document.getElementById(selected_element.id).highlightFolder(e);
+    }
 
     //Remove placeholder when no elements are selected
+    document.getElementById('styles_list').style.display = "block";
     document.getElementById('properties_placeholder').style.display = "none";
 
     //Element actions
@@ -211,7 +219,8 @@ function unfocus(e) {
 
 
   //Add placeholder when no elements are selected
-  //document.getElementById('properties_placeholder').style.display = "flex";
+  document.getElementById('styles_list').style.display = "none";
+  document.getElementById('properties_placeholder').style.display = "flex";
 
   //Unfocus all children elements except the one active
   for (var i = 0; i < iframe_content.childNodes.length; i++) {
@@ -290,10 +299,12 @@ function makeElement(element_name) {
   update_tree();
 }
 
-function deleteElement() {
-  document.getElementById(selected_element.id).remove();
+function deleteElement(e) {
   selected_element.remove();
-  unfocus(selected_element);
+  update_tree();
+  unfocus(e);
+  document.getElementById("main_folder").highlightFolder();
+  document.getElementById("app_iframe").classList.add('outlined_element');
 }
 
 function generateTree(node) {
@@ -322,6 +333,13 @@ function generateTree(node) {
 }
 
 function update_tree(){
-  var treeArray = {"name": "APP", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
-  app.tree_data = JSON.parse(JSON.stringify(treeArray));
+  //Clear the tree
+  var tree_view = document.getElementById('tree_view');
+  while (tree_view.firstChild) {
+    tree_view.removeChild(tree_view.firstChild);
+  }
+
+  var treeObj = document.createElement("file-tree");
+  treeObj.data = {"id": "main_folder", "name": "APP", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
+  document.getElementById('tree_view').appendChild(treeObj);
 }
