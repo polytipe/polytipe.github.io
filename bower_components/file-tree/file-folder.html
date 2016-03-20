@@ -73,7 +73,7 @@ Example:
           <iron-icon id="stateIndicator" icon=""></iron-icon>
           <iron-icon icon="folder"></iron-icon>
         </span>
-        <span id="folder_name" class="name" selector="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
+        <span id="folder_name" class="name" selection="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
       </div>
       <ul hidden$={{!data.open}}>
         <template is="dom-repeat" items="{{data.children}}">
@@ -108,7 +108,7 @@ Example:
     },
 
     ready: function(){
-      this.id = this.$.folder_name.selector;
+      this.id = this.$.folder_name.selection;
       if(this.id == "undefined"){
         this.id = "main_folder";
       }
@@ -137,9 +137,8 @@ Example:
      * Highlights folder as the selected folder.
     */
     selectFolder: function(e) {
-      // TODO: Fix layout inside layout NULL thingy
-      if(e.target.selector!=undefined && e.target.selector!="" && e.target.selector!=null){
-        var el = iframe_document.getElementById(e.target.selector);
+      if(e.target.selection!=undefined && e.target.selection!=""){
+        var el = iframe_document.getElementById(e.target.selection);
         el.focus(e);
       }else {
         unfocus(e);

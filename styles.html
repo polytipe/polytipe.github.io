@@ -15,7 +15,6 @@
 
   html{
     font-family: "Roboto", 'Helvetica Neue';
-    line-height: 0px;
   }
 
   /*Default typography styles*/
@@ -57,7 +56,21 @@
 
   #sidebar_frame{
     background-color: var(--sidebar-bg-color);
+    font-size: 20px;
   }
+
+  #sidebar_polytipe_logo{
+    margin-top: 50px;
+    margin-left: 10px;
+    width: 80px;
+    height: 80px;
+    color: rgba(0, 0, 0, 0.15);
+  }
+
+  #sidebar_polytipe_toolbar{
+    background-color: var(--polytipe-accent-color);
+  }
+
   .sidebar_panel{
     height: 50%;
   }
@@ -77,9 +90,40 @@
     cursor: pointer;
   }
 
-  #properties_list{
-    padding: 0 15px;
+  .element_icon{
+    margin-right: 20px;
+  }
+
+  .sidebar_list{
+    padding: 15px;
     height: 100%;
+  }
+
+  #properties_placeholder{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    display: none;
+  }
+
+  #properties_placeholder div{
+    margin-top: 10px;
+    width: 150px;
+    font-size: 16px;
+  }
+
+  paper-swatch-picker {
+    --paper-swatch-picker-color-size: 12px;
+    --paper-swatch-picker-icon-size: 35px;
+    margin-right: 15px;
+    margin-top: 12px;
+  }
+
+  #no_elements_selected{
+    width: 75px;
+    height: 75px;
   }
 
   .array_fab{
@@ -95,7 +139,7 @@
 
   .outlined_element{
     box-sizing: border-box;
-    border: 2px solid yellow;
+    border: 2px solid yellow !important;
   }
 
   .property_name{
@@ -123,7 +167,7 @@
   /*Element actions*/
 
   #element_actions{
-    margin: 15px 0;
+    margin-bottom: 15px;
   }
   .move_button{
     background-color: var(--polytipe-bg-color);
@@ -189,22 +233,32 @@
       min-height: 550px;
     }
     #app_iframe{
-      width: 288px;
-      height: 512px;
+      transform: scale(0.8);
     }
 	}
 
   @media (max-width: 850px) {
     #app_iframe{
-      width: 270px;
-      height: 480px;
+      transform: scale(0.75);
+    }
+    #sidebar_polytipe_logo{
+      margin: 0;
+      width: 40px;
+      height: 40px;
+    }
+    #sidebar_polytipe_toolbar{
+      display: none;
+      height: 0;
+      padding: 0;
     }
 	}
 
   @media (max-width: 500px) {
+    #app_container{
+      min-height: 400px;
+    }
     #app_iframe{
-      width: 216px;
-      height: 384px;
+      transform: scale(0.6);
     }
   }
 

@@ -9,7 +9,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 
 var app = document.querySelector("#app");
 app.selected_mode = 0;
-app.selected_mode2 = 0;
+app.selected_mode2 = 1;
 
 var selected_element;
 var element_properties;
@@ -17,7 +17,11 @@ var element_properties;
 function iframe_ready() {
   iframe_document = document.getElementById("app_iframe").contentDocument;
   iframe_content = iframe_document.getElementById("app_content");
+
+  //Display ready toast
   document.getElementById("ready_toast").open();
+  //Add iframe outline
+  document.getElementById("app_iframe").classList.add('outlined_element');
 
   var properties_list = document.getElementById('properties_list');
 
@@ -30,6 +34,9 @@ function iframe_ready() {
 
     //Update selected item in tree
     document.getElementById(e.target.id).selectFolder(e);
+
+    //Remove placeholder when no elements are selected
+    document.getElementById('properties_placeholder').style.display = "none";
 
     //Element actions
     // TODO: Move up / down in the DOM tree
@@ -191,6 +198,21 @@ function unfocus(e) {
   //Reset selected element
   selected_element = e.target;
 
+  //Add iframe outline
+  if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
+    if(selected_element.id == "app_container" || selected_element.id == "folder_name"){
+      document.getElementById("app_iframe").classList.add('outlined_element');
+    }else{
+      document.getElementById("app_iframe").classList.remove('outlined_element');
+    }
+  }else{
+    document.getElementById("app_iframe").classList.add('outlined_element');
+  }
+
+
+  //Add placeholder when no elements are selected
+  //document.getElementById('properties_placeholder').style.display = "flex";
+
   //Unfocus all children elements except the one active
   for (var i = 0; i < iframe_content.childNodes.length; i++) {
     if (iframe_content.childNodes[i] != e.target) {
@@ -269,9 +291,9 @@ function makeElement(element_name) {
 }
 
 function deleteElement() {
+  document.getElementById(selected_element.id).remove();
   selected_element.remove();
   unfocus(selected_element);
-  update_tree();
 }
 
 function generateTree(node) {
