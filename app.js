@@ -16,7 +16,9 @@ var element_properties;
 
 function iframe_ready() {
   iframe_document = document.getElementById("app_iframe").contentDocument;
-  iframe_content = iframe_document.getElementById("app_content");
+  iframe_app_content = iframe_document.getElementById("app_content");
+  iframe_drawer_content = iframe_document.getElementById("drawer_content");
+  selected_iframe_panel = iframe_app_content;
 
   //Display ready toast
   document.getElementById("ready_toast").open();
@@ -223,13 +225,13 @@ function unfocus(e) {
   document.getElementById('properties_placeholder').style.display = "flex";
 
   //Unfocus all children elements except the one active
-  for (var i = 0; i < iframe_content.childNodes.length; i++) {
-    if (iframe_content.childNodes[i] != e.target) {
-      iframe_content.childNodes[i].unfocus();
+  for (var i = 0; i < selected_iframe_panel.childNodes.length; i++) {
+    if (selected_iframe_panel.childNodes[i] != e.target) {
+      selected_iframe_panel.childNodes[i].unfocus();
     }
   }
   //Unfocus children elements with the outlined_element class
-  var children = iframe_content.querySelectorAll(".outlined_element");
+  var children = selected_iframe_panel.querySelectorAll(".outlined_element");
   for (var i = 0; i < children.length; i++) {
     if (children[i] != e.target) {
       children[i].unfocus();
@@ -294,7 +296,7 @@ function makeElement(element_name) {
   if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
     selected_element.appendChild(element);
   }else{ //If no poly-layout element is selected add it to the main container
-    iframe_content.appendChild(element);
+    selected_iframe_panel.appendChild(element);
   }
   update_tree();
 }

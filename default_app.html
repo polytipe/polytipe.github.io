@@ -25,9 +25,14 @@
   <link rel="import" href="elements.html">
   <link rel="import" href="styles.html">
   <style is="custom-style" include="styles"></style>
+  <style>
+    html{
+      background-color: var(--app-bg-color) !important;
+    }
+  </style>
 </head>
 
-<body unresolved>
+<body unresolved class="fullbleed">
   <paper-drawer-panel id="drawer" disable-swipe force-narrow>
     <paper-header-panel drawer>
       <div id="drawer_content"></div>
