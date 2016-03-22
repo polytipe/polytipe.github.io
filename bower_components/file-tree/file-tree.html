@@ -25,7 +25,7 @@ Example:
 
   <template>
     <div>
-    <file-folder id="topFolder" data="{{data}}"></file-folder>
+    <file-folder id="{{identifier}}" data="{{data}}"></file-folder>
     </div>
   </template>
 
@@ -44,8 +44,7 @@ Example:
       */
       data: {
         type: Object,
-        value: {"name": "APP", "open": false, "children": []},
-        observer: "_dataChanged"
+        value: {"name": "app", "open": false, "children": []}
       },
 
       /**
@@ -54,18 +53,15 @@ Example:
       selected: {
         type: Object,
         value: null
+      },
+      identifier:{
+        type: String,
+        value: ""
       }
     },
 
     listeners: {
       "folderSelected": "_selectFolder"
-    },
-
-    /**
-     * Called whenever the data is changed to notify the lower folders
-    */
-    _dataChanged: function()  {
-      this.$.topFolder.data = this.data;
     },
 
     /**
@@ -79,10 +75,6 @@ Example:
       }
       this.selected = e.target;
       this.toggleClass("selected", true, this.selected);
-    },
-
-    ready: function() {
-      this._dataChanged();
     }
 
   });

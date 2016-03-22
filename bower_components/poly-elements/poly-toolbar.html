@@ -70,7 +70,6 @@
         if(!this.focused){
           this.fire("elementSelection");
           this.toggleClass('outlined_element', true);
-          event.stopPropagation();
         }
         this._focused = true;
       },
@@ -101,7 +100,7 @@
       },
       _toggleDrawer: function(){
         if(this.toggles_drawer){
-          document.getElementById('drawer').togglePanel();
+          document.querySelector('paper-drawer-panel').togglePanel();
         }
       }
     });

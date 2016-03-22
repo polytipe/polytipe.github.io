@@ -103,15 +103,16 @@ Example:
         value: function() {
           return {};
         }
+      },
+      id:{
+        type: String
       }
 
     },
 
-    ready: function(){
-      this.id = this.$.folder_name.selection;
-
-      if(this.id == "undefined"){
-        this.id = "main_folder";
+    attached: function(){
+      if(this.id != "app_tree" || this.id != "drawer_tree"){
+        this.id = this.$.folder_name.selection;
       }
     },
 
@@ -138,7 +139,10 @@ Example:
      * Highlights folder as the selected folder.
     */
     selectFolder: function(e) {
-      if(e.target.selection == "main_folder"){ //Select the main folder fix
+      if(e.target.selection == "app_folder"){ //Select the main folder fix
+        unfocus(e);
+        document.getElementById("app_iframe").classList.add('outlined_element');
+      }else if(e.target.selection == "drawer_folder"){ //Select the main folder fix
         unfocus(e);
         document.getElementById("app_iframe").classList.add('outlined_element');
       }else{

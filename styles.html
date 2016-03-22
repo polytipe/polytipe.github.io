@@ -118,8 +118,12 @@
   }
 
   paper-swatch-picker {
-    --paper-swatch-picker-color-size: 12px;
-    --paper-swatch-picker-icon-size: 35px;
+    --paper-swatch-picker-color-size: 15px;
+    --paper-swatch-picker-icon: {
+      width: 35px;
+      height: 35px;
+      padding: 0;
+    }
     margin-right: 15px;
     margin-top: 12px;
     color: rgba(255, 255, 255, 0.5);
@@ -226,11 +230,11 @@
 
   /*Iframe frame*/
 
-  #app_content{
-    line-height: 0;
+  #drawer_content{
+    margin: 0;
+    height: 100vh;
+    box-sizing: border-box;
   }
-
-  /* TODO: Resize iframe using scale, not using width and height */
 
   @media (max-width: 1500px) {
     #app_container{

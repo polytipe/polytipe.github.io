@@ -3,7 +3,8 @@ window.addEventListener('WebComponentsReady', function(e) {
   document.getElementById("app_container").addEventListener('click', function(e) {
     unfocus(e);
     //Select app folder in tree
-    document.getElementById("main_folder").selectFolder(e);
+    document.getElementById("app_folder").selectFolder(e);
+    iframe_document.querySelector('paper-drawer-panel').closeDrawer();
   });
 });
 
@@ -23,14 +24,32 @@ function iframe_ready() {
   //Display ready toast
   document.getElementById("ready_toast").open();
 
-  //Create tree and highlight main folder
+  //Create tree and highlight main folder on ready
   update_tree();
-  document.getElementById("main_folder").highlightFolder();
+  setTimeout(function(){
+    document.getElementById("app_folder").highlightFolder();
+  },10);
 
   //Add iframe outline
   document.getElementById("app_iframe").classList.add('outlined_element');
 
   var properties_list = document.getElementById('properties_list');
+
+
+  drawer_panel = iframe_document.getElementById('drawer_panel');
+  drawer_panel.addEventListener('selected-changed', function(e) {
+    setTimeout(function(){
+      if(drawer_panel.selected == "drawer"){
+        iframe_drawer_content.style.border = "2px solid yellow";
+        selected_iframe_panel = iframe_drawer_content;
+        unfocus("main");
+      }else if(drawer_panel.selected == "main"){
+        iframe_drawer_content.style.border = "none";
+        selected_iframe_panel = iframe_app_content;
+        unfocus("drawer");
+      }
+    },1);
+  });
 
   iframe_document.addEventListener('elementSelection', function(e) {
     selected_element = e.target;
@@ -205,36 +224,59 @@ function iframe_ready() {
 }
 
 function unfocus(e) {
-  //Reset selected element
-  selected_element = e.target;
+  var tree_content = document.getElementsByTagName('file-folder');
+  for (var i = 0; i < tree_content.length; i++) {
+    tree_content[i].classList.remove("selected");
+  }
 
-  //Add iframe outline
-  if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
-    if(selected_element.id == "app_container" || selected_element.id == "folder_name"){
-      document.getElementById("app_iframe").classList.add('outlined_element');
-    }else{
-      document.getElementById("app_iframe").classList.remove('outlined_element');
+  //Reset selected element
+  if(typeof e == "string"){
+    if(e == "drawer"){
+      for (var i = 0; i < iframe_drawer_content.children.length; i++) {
+        iframe_drawer_content.children[i].unfocus();
+      }
+      unfocus(this);
+      document.getElementById("app_folder").highlightFolder();
+    }else if(e == "main"){
+      document.getElementById('drawer_folder').highlightFolder();
+      for (var i = 0; i < iframe_app_content.children.length; i++) {
+        iframe_app_content.children[i].unfocus();
+      }
     }
   }else{
-    document.getElementById("app_iframe").classList.add('outlined_element');
-  }
-
-
-  //Add placeholder when no elements are selected
-  document.getElementById('styles_list').style.display = "none";
-  document.getElementById('properties_placeholder').style.display = "flex";
-
-  //Unfocus all children elements except the one active
-  for (var i = 0; i < selected_iframe_panel.childNodes.length; i++) {
-    if (selected_iframe_panel.childNodes[i] != e.target) {
-      selected_iframe_panel.childNodes[i].unfocus();
+    selected_element = e.target;
+    //Add iframe outline
+    if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
+      if(selected_element.id == "app_container" || selected_element.id == "folder_name"){
+        document.getElementById("app_iframe").classList.add('outlined_element');
+      }else{
+        document.getElementById("app_iframe").classList.remove('outlined_element');
+      }
+    }else{
+      document.getElementById("app_iframe").classList.add('outlined_element');
     }
-  }
-  //Unfocus children elements with the outlined_element class
-  var children = selected_iframe_panel.querySelectorAll(".outlined_element");
-  for (var i = 0; i < children.length; i++) {
-    if (children[i] != e.target) {
-      children[i].unfocus();
+
+    //Add placeholder when no elements are selected
+    document.getElementById('styles_list').style.display = "none";
+    document.getElementById('properties_placeholder').style.display = "flex";
+
+    //Unfocus all children elements except the one active
+    for (var i = 0; i < iframe_app_content.children.length; i++) {
+      if (iframe_app_content.children[i] != selected_element) {
+        iframe_app_content.children[i].unfocus();
+      }
+    }
+    for (var i = 0; i < iframe_drawer_content.children.length; i++) {
+      if (iframe_drawer_content.children[i] != selected_element) {
+        iframe_drawer_content.children[i].unfocus();
+      }
+    }
+    //Unfocus children elements with the outlined_element class
+    var children = drawer_panel.querySelectorAll(".outlined_element");
+    for (var i = 0; i < children.length; i++) {
+      if (children[i] != selected_element) {
+        children[i].unfocus();
+      }
     }
   }
 
@@ -305,18 +347,18 @@ function deleteElement(e) {
   selected_element.remove();
   update_tree();
   unfocus(e);
-  document.getElementById("main_folder").highlightFolder();
+  document.getElementById("app_folder").highlightFolder();
   document.getElementById("app_iframe").classList.add('outlined_element');
 }
 
 function generateTree(node) {
   var treeArray = [];
-  var allChildren = node.childNodes;
+  var allChildren = node.children;
   for (var i=0; i < allChildren.length; i++) {
     var element_name = allChildren[i].tagName;
     if (element_name != undefined && element_name.startsWith("POLY")){
       if (element_name == "POLY-LAYOUT"){
-        var child = node.childNodes[i];
+        var child = node.children[i];
         var obj;
 
         if(generateTree(child).length > 0){ //If element has children, generate children object
@@ -341,7 +383,13 @@ function update_tree(){
     tree_view.removeChild(tree_view.firstChild);
   }
 
-  var treeObj = document.createElement("file-tree");
-  treeObj.data = {"id": "main_folder", "name": "APP", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
-  document.getElementById('tree_view').appendChild(treeObj);
+  var app_tree = document.createElement("file-tree");
+  app_tree.identifier = "app_tree";
+  app_tree.data = {"id": "app_folder", "name": "app", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
+  document.getElementById('tree_view').appendChild(app_tree);
+
+  var drawer_tree = document.createElement("file-tree");
+  drawer_tree.identifier = "drawer_tree";
+  drawer_tree.data = {"id": "drawer_folder", "name": "drawer", "open": true, "children": generateTree(iframe_document.getElementById("drawer_content"))};
+  document.getElementById('tree_view').appendChild(drawer_tree);
 }
