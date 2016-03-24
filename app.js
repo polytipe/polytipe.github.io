@@ -220,6 +220,10 @@ function iframe_ready() {
         }
       }
     }
+    var element_styles = document.getElementById('styles_list').getElementsByTagName("paper-input");
+    for (var i = 0; i < element_styles.length; i++) {
+      element_styles[i].value = getComputedStyle(selected_element)[element_styles[i].label];
+    }
   });
 }
 
@@ -347,8 +351,12 @@ function deleteElement(e) {
   selected_element.remove();
   update_tree();
   unfocus(e);
-  document.getElementById("app_folder").highlightFolder();
-  document.getElementById("app_iframe").classList.add('outlined_element');
+  setTimeout(function(){
+    document.getElementById("app_folder").highlightFolder();
+  },10);
+  if(drawer_panel.selected == "main"){
+    document.getElementById("app_iframe").classList.add('outlined_element');
+  }
 }
 
 function generateTree(node) {
@@ -385,7 +393,7 @@ function update_tree(){
 
   var app_tree = document.createElement("file-tree");
   app_tree.identifier = "app_tree";
-  app_tree.data = {"id": "app_folder", "name": "app", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
+  app_tree.data = {"id": "app_folder", "name": "main", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
   document.getElementById('tree_view').appendChild(app_tree);
 
   var drawer_tree = document.createElement("file-tree");
