@@ -222,8 +222,10 @@ function iframe_ready() {
     }
     var element_styles = document.getElementById('styles_list').getElementsByTagName("paper-input");
     for (var i = 0; i < element_styles.length; i++) {
-      element_styles[i].value = getComputedStyle(selected_element)[element_styles[i].label];
+      element_styles[i].value = selected_element[element_styles[i].label];
     }
+    bgPicker.color = selected_element["background"];
+    colorPicker.color = selected_element["color"];
   });
 }
 

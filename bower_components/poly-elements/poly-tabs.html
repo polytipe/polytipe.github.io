@@ -21,7 +21,7 @@
   </style>
 
   <template>
-    <paper-tabs selected="{{selected_tab}}">
+    <paper-tabs id="tabs" selected="{{selected_tab}}">
       <template is="dom-repeat" items="{{tabs}}">
         <paper-tab>{{item.name}}</paper-tab>
       </template>
@@ -76,6 +76,7 @@
         }
       },
       focus: function() {
+        this.getStyles();
         if(!this.focused){
           this.fire("elementSelection");
           this.toggleClass('outlined_element', true);
@@ -85,6 +86,30 @@
       unfocus: function() {
         this.toggleClass('outlined_element', false);
         this._focused = false;
+      },
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.tabs)["width"];
+        this.height = getComputedStyle(this.$.tabs)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.tabs)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.tabs)["color"]);;
+        this.display = getComputedStyle(this.$.tabs)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.tabs)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.tabs)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       }
     });
 

@@ -61,6 +61,7 @@
         this.toggleClass("layout", true);
       },
       focus: function(event) {
+        this.getStyles();
         if(!this.focused){
           this.fire("elementSelection");
           this.toggleClass('outlined_element', true);
@@ -87,6 +88,30 @@
             }
           }
         }
+      },
+      getStyles: function(){
+        this.width = getComputedStyle(this)["width"];
+        this.height = getComputedStyle(this)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this)["color"]);;
+        this.display = getComputedStyle(this)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this)["margin"+values[j]]);
+          padding.push(getComputedStyle(this)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       }
     });
   </script>

@@ -25,7 +25,7 @@
 
   <template>
 
-    <paper-toolbar>
+    <paper-toolbar id="toolbar">
       <paper-icon-button id="icon" icon="{{icon}}" on-tap="_toggleDrawer"></paper-icon-button>
       <div class="flex">{{text}}</div>
       <template is="dom-repeat" items="{{extra_icons}}">
@@ -67,6 +67,7 @@
         this._focused = false;
       },
       focus: function(event) {
+        this.getStyles();
         if(!this.focused){
           this.fire("elementSelection");
           this.toggleClass('outlined_element', true);
@@ -102,6 +103,30 @@
         if(this.toggles_drawer){
           document.querySelector('paper-drawer-panel').togglePanel();
         }
+      },
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.toolbar)["width"];
+        this.height = getComputedStyle(this.$.toolbar)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.toolbar)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.toolbar)["color"]);;
+        this.display = getComputedStyle(this.$.toolbar)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.toolbar)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.toolbar)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       }
     });
   </script>

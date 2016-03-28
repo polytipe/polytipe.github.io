@@ -19,7 +19,7 @@
 
   <template>
 
-    <paper-button raised="{{raised}}">
+    <paper-button id="button" raised="{{raised}}">
       <template is="dom-if" if="{{hasIcon}}">
         <iron-icon icon="{{icon}}"></iron-icon>
       </template>
@@ -39,7 +39,7 @@
         },
         icon:{
           type: String,
-          value: "android",
+          value: "",
           observer: "_iconChanged"
         },
         raised:{
@@ -51,6 +51,7 @@
         this._focused = false;
       },
       focus: function(event) {
+        this.getStyles();
         if(!this.focused){
           this.fire("elementSelection");
           this.toggleClass('outlined_element', true);
@@ -69,6 +70,30 @@
         }else{
           this.hasIcon = false;
         }
+      },
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.button)["width"];
+        this.height = getComputedStyle(this.$.button)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
+        this.display = getComputedStyle(this.$.button)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.button)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.button)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       }
     });
   </script>
