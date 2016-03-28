@@ -227,6 +227,11 @@ function iframe_ready() {
     bgPicker.color = selected_element["background"];
     colorPicker.color = selected_element["color"];
   });
+  //Add event listener when styles are changed
+  var style_inputs = document.getElementById('styles_list').querySelectorAll('paper-input');
+  for (var i = 0; i < style_inputs.length; i++) {
+    style_inputs[i].addEventListener("change", styleChanged);
+  }
 }
 
 function unfocus(e) {
@@ -323,6 +328,10 @@ function propertyChanged() {
   } else if (element_properties[this.id].type.name == 'String') {
     selected_element[this.id] = this.value;
   }
+}
+
+function styleChanged() {
+  selected_element.updateStyles(this.label, this.value);
 }
 
 function arrayChanged() {

@@ -11,9 +11,14 @@
       display: inline-block;
     }
     paper-button{
+      background-color: transparent;
+      color: #333;
+      margin: 0;
+    }
+
+    paper-button[raised]{
       background-color: var(--app-accent-color);
       color: #fff;
-      margin: 0;
     }
   </style>
 
@@ -94,6 +99,9 @@
         ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      },
+      updateStyles: function (property, value) {
+        this.$.button.style[property] = value;
       }
     });
   </script>
