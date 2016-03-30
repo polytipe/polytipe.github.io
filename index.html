@@ -56,22 +56,15 @@
           <iron-pages selected="{{selected_mode}}">
             <section class="sidebar_section">
               <paper-menu id="elements_list">
-                <paper-item onclick="makeElement('poly-tabs')">
-                  <iron-icon icon="tab" class="element_icon"></iron-icon>
-                  <div>Pestañas</div>
-                </paper-item>
-                <paper-item onclick="makeElement('poly-button')">
-                  <iron-icon icon="image:crop-landscape" class="element_icon"></iron-icon>
-                  <div>Botón</div>
-                </paper-item>
-                <paper-item onclick="makeElement('poly-layout')">
-                  <iron-icon icon="dashboard" class="element_icon"></iron-icon>
-                  <div>Layout</div>
-                </paper-item>
-                <paper-item onclick="makeElement('poly-toolbar')">
-                  <iron-icon icon="av:web-asset" class="element_icon"></iron-icon>
-                  <div>Toolbar</div>
-                </paper-item>
+
+                <polytipe-item icon="image:crop-landscape" onclick="makeElement('poly-button')">Button</polytipe-item>
+                <polytipe-item icon="credit-card" onclick="makeElement('poly-card')">Card</polytipe-item>
+                <polytipe-item icon="check-box" onclick="makeElement('poly-checkbox')">Checkbox</polytipe-item>
+                <polytipe-item icon="add-circle" onclick="makeElement('poly-fab')">Floating Action Button</polytipe-item>
+                <polytipe-item icon="star" onclick="makeElement('poly-icon-button')">Icon</polytipe-item>
+                <polytipe-item icon="dashboard" onclick="makeElement('poly-layout')">Layout</polytipe-item>
+                <polytipe-item icon="tab" onclick="makeElement('poly-tabs')">Tabs</polytipe-item>
+                <polytipe-item icon="av:web-asset" onclick="makeElement('poly-toolbar')">Toolbar</polytipe-item>
               </paper-menu>
             </section>
             <section id="tree_view" class="sidebar_section">

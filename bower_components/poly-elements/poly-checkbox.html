@@ -1,0 +1,84 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<dom-module id="poly-checkbox">
+
+  <style>
+    :host {
+      display: inline-block;
+      padding: 5px;
+    }
+    paper-checkbox{
+      --paper-checkbox-checked-color: var(--app-accent-color);
+      --paper-checkbox-checked-ink-color: var(--app-accent-color);
+    }
+  </style>
+
+  <template>
+    <paper-checkbox id="checkbox" checked="{{checked}}">{{text}}</paper-checkbox>
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-checkbox',
+      listeners: {
+        'tap': 'focus'
+      },
+      properties:{
+        text:{
+          type: String,
+          value: "Ítem"
+        },
+        checked:{
+          type: Boolean,
+          value: false
+        }
+      },
+      ready: function () {
+        this._focused = false;
+      },
+      focus: function(event) {
+        this.getStyles();
+        if(!this.focused){
+          this.fire("elementSelection");
+          this.toggleClass('outlined_element', true);
+          event.stopPropagation();
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.toggleClass('outlined_element', false);
+        this._focused = false;
+      },
+
+
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.checkbox)["width"];
+        this.height = getComputedStyle(this.$.checkbox)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.checkbox)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.checkbox)["color"]);;
+        this.display = getComputedStyle(this.$.checkbox)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.checkbox)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.checkbox)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      },
+      updateStyles: function (property, value) {
+        this.$.checkbox.style[property] = value;
+      }
+    });
+  </script>
+</dom-module>

@@ -1,56 +1,38 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 
-<dom-module id="poly-button">
+<dom-module id="poly-icon-button">
 
   <style>
     :host {
       display: inline-block;
-      box-sizing: border-box;
-    }
-    paper-button{
-      background-color: transparent;
-      color: #333;
-      margin: 0;
-    }
-
-    paper-button[raised]{
-      background-color: var(--app-accent-color);
-      color: #fff;
     }
   </style>
 
   <template>
-
-    <paper-button id="button" raised="{{raised}}">
-      <template is="dom-if" if="{{hasIcon}}">
-        <iron-icon icon="{{icon}}"></iron-icon>
-      </template>
-      {{text}}
-    </paper-button>
+    <paper-icon-button id="icon" icon="{{icon}}" disabled="{{disabled}}" src="{{src}}"></paper-icon-button>
   </template>
   <script>
     Polymer({
-      is: 'poly-button',
+      is: 'poly-icon-button',
       listeners: {
         'tap': 'focus'
       },
       properties:{
-        text:{
-          type: String,
-          value: "Botón"
-        },
         icon:{
           type: String,
-          value: "",
-          observer: "_iconChanged"
+          value: "favorite"
         },
-        raised:{
+        src:{
+          type: String,
+          value: ""
+        },
+        disabled:{
           type: Boolean,
-          value: true
+          value: false
         }
       },
       ready: function () {
@@ -69,27 +51,21 @@
         this.toggleClass('outlined_element', false);
         this._focused = false;
       },
-      _iconChanged: function() {
-        //Show or hide the icon depending on the input
-        if(this.icon){
-          this.hasIcon = true;
-        }else{
-          this.hasIcon = false;
-        }
-      },
+
+
       getStyles: function(){
-        this.width = getComputedStyle(this.$.button)["width"];
-        this.height = getComputedStyle(this.$.button)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
-        this.display = getComputedStyle(this.$.button)["display"];
+        this.width = getComputedStyle(this.$.icon)["width"];
+        this.height = getComputedStyle(this.$.icon)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.icon)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.icon)["color"]);;
+        this.display = getComputedStyle(this.$.icon)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this.$.button)["margin"+values[j]]);
-          padding.push(getComputedStyle(this.$.button)["padding"+values[j]]);
+          margin.push(getComputedStyle(this.$.icon)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.icon)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
         this.padding = padding.join(' ');
@@ -102,7 +78,7 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       updateStyles: function (property, value) {
-        this.$.button.style[property] = value;
+        this.$.icon.style[property] = value;
       }
     });
   </script>

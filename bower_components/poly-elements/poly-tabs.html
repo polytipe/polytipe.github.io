@@ -9,6 +9,7 @@
     :host {
       display: block;
       min-width: 100%;
+      box-sizing: border-box;
     }
 
     paper-tabs{
@@ -112,7 +113,7 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       updateStyles: function (property, value) {
-        this.$.button.style[property] = value;
+        this.$.tabs.style[property] = value;
       }
     });
 

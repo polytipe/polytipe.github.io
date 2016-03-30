@@ -13,6 +13,7 @@
     :host {
       display: block;
       width: 100%;
+      box-sizing: border-box;
     }
     paper-toolbar{
       background-color: var(--app-primary-color);
@@ -60,7 +61,8 @@
         }
       },
       ready: function() {
-        this.extra_icons = [{icon: 'refresh'}, {icon: 'search'}]; //Default values when creating multiple elements
+        //Default values when creating multiple elements
+        this.extra_icons = [{icon: 'refresh'}, {icon: 'search'}];
         this.number = 2;
         this.min = 0;
         this.max = 3;
@@ -129,7 +131,7 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       updateStyles: function (property, value) {
-        this.$.button.style[property] = value;
+        this.$.toolbar.style[property] = value;
       }
     });
   </script>

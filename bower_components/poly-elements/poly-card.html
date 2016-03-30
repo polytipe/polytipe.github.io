@@ -1,0 +1,135 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<dom-module id="poly-card">
+
+  <style>
+    :host {
+      display: block;
+      font-size: 14px;
+      padding: 8px;
+    }
+    paper-card {
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
+      padding: 0;
+      width: 100%;
+    }
+    paper-button{
+      margin: 0;
+    }
+  </style>
+
+  <template>
+
+    <paper-card id="card" heading="{{title}}" image="{{image}}" preload-image fade-image>
+      <div class="card-content">
+        {{text}}
+      </div>
+      <div class="card-actions">
+        <template is="dom-repeat" items="{{action_buttons}}">
+          <paper-button>{{item.text}}</paper-button>
+        </template>
+      </div>
+    </paper-card>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-card',
+      listeners: {
+        'tap': 'focus'
+      },
+      properties:{
+        title:{
+          type: String,
+          value: "Título"
+        },
+        text:{
+          type: String,
+          value: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere voluptas illo inventore debitis et sit molestiae pariatur doloremque dicta."
+        },
+        image:{
+          type: String,
+          value: "http://placehold.it/350x150/2AB767/33000000"
+        },
+        action_buttons:{
+          type: Array,
+          value: [{text: 'Me gusta'}, {text: 'Comentar'}]
+        }
+      },
+      ready: function () {
+        //Default values when creating multiple elements
+        this.action_buttons = [{text: 'Me gusta'}, {text: 'Comentar'}];
+        this.number = 2;
+        this.min = 0;
+        this.max = 3;
+        this._focused = false;
+      },
+      focus: function(event) {
+        this.getStyles();
+        if(!this.focused){
+          this.fire("elementSelection");
+          this.toggleClass('outlined_element', true);
+          event.stopPropagation();
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.toggleClass('outlined_element', false);
+        this._focused = false;
+      },
+      addElement: function(){
+        if(this.number < this.max){
+          this.number = this.number + 1;
+          this.push("action_buttons", {text: 'Nuevo'} );
+          this.fire("elementSelection");
+        }
+      },
+      removeElement: function(){
+        if(this.number > this.min){
+          this.number = this.number - 1;
+          this.pop("action_buttons");
+          this.fire("elementSelection");
+        }
+      },
+
+
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.card)["width"];
+        this.height = getComputedStyle(this.$.card)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.card)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.card)["color"]);;
+        this.display = getComputedStyle(this.$.card)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this)["margin"+values[j]]);
+          padding.push(getComputedStyle(this)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      },
+      updateStyles: function (property, value) {
+        if(property=="padding" || property=="margin"){
+          this.style[property] = value;
+        }else{
+          this.$.card.style[property] = value;
+        }
+      }
+    });
+  </script>
+</dom-module>

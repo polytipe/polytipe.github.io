@@ -1,0 +1,34 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../iron-icons/av-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+
+<dom-module id="polytipe-item">
+
+  <style>
+    .element_icon{
+      margin-right: 20px;
+    }
+  </style>
+
+  <template>
+    <paper-item>
+      <iron-icon icon="{{icon}}" class="element_icon"></iron-icon>
+      <content></content>
+    </paper-item>
+  </template>
+  <script>
+    Polymer({
+      is: 'polytipe-item',
+      properties:{
+        icon:{
+          type: String,
+          value: ""
+        }
+      }
+    });
+  </script>
+</dom-module>

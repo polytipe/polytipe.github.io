@@ -1,56 +1,43 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 
-<dom-module id="poly-button">
+<dom-module id="poly-fab">
 
   <style>
     :host {
       display: inline-block;
-      box-sizing: border-box;
     }
-    paper-button{
-      background-color: transparent;
-      color: #333;
-      margin: 0;
-    }
-
-    paper-button[raised]{
+    paper-fab{
       background-color: var(--app-accent-color);
-      color: #fff;
+      color: white;
     }
   </style>
 
   <template>
-
-    <paper-button id="button" raised="{{raised}}">
-      <template is="dom-if" if="{{hasIcon}}">
-        <iron-icon icon="{{icon}}"></iron-icon>
-      </template>
-      {{text}}
-    </paper-button>
+    <paper-fab id="fab" icon="{{icon}}" mini="{{mini}}"></paper-fab>
   </template>
   <script>
     Polymer({
-      is: 'poly-button',
+      is: 'poly-fab',
       listeners: {
         'tap': 'focus'
       },
       properties:{
-        text:{
-          type: String,
-          value: "Botón"
-        },
         icon:{
           type: String,
-          value: "",
-          observer: "_iconChanged"
+          value: "add"
         },
-        raised:{
+        mini:{
           type: Boolean,
-          value: true
+          value: false
+        },
+        bottom_right:{
+          type: Boolean,
+          value: false,
+          observer: "_bottom_right_Changed"
         }
       },
       ready: function () {
@@ -69,27 +56,34 @@
         this.toggleClass('outlined_element', false);
         this._focused = false;
       },
-      _iconChanged: function() {
-        //Show or hide the icon depending on the input
-        if(this.icon){
-          this.hasIcon = true;
+
+      _bottom_right_Changed:function () {
+        if (this.bottom_right) {
+          this.style.position = "fixed";
+          this.style.zIndex = "9";
+          this.style.bottom = "17px";
+          this.style.right = "17px";
         }else{
-          this.hasIcon = false;
+          this.style.position = "static";
+          this.style.bottom = "auto";
+          this.style.right = "auto";
         }
       },
+
+
       getStyles: function(){
-        this.width = getComputedStyle(this.$.button)["width"];
-        this.height = getComputedStyle(this.$.button)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
-        this.display = getComputedStyle(this.$.button)["display"];
+        this.width = getComputedStyle(this.$.fab)["width"];
+        this.height = getComputedStyle(this.$.fab)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.fab)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.fab)["color"]);;
+        this.display = getComputedStyle(this.$.fab)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this.$.button)["margin"+values[j]]);
-          padding.push(getComputedStyle(this.$.button)["padding"+values[j]]);
+          margin.push(getComputedStyle(this.$.fab)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.fab)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
         this.padding = padding.join(' ');
@@ -102,7 +96,7 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       updateStyles: function (property, value) {
-        this.$.button.style[property] = value;
+        this.$.fab.style[property] = value;
       }
     });
   </script>
