@@ -1,0 +1,63 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../iron-icons/av-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+
+<dom-module id="polytipe-screen-iframe">
+
+  <style>
+    :host{
+      margin: 20px;
+      cursor: pointer;
+    }
+    .screens_view_iframe{
+      width: 216px;
+      height: 384px;
+      overflow: hidden;
+    }
+    .screens_view_iframe iframe{
+      width: 200%;
+      height: 200%;
+      background-color: var(--app-bg-color);
+      border: none;
+      transform: scale(0.5);
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+    div{
+      margin-top: 15px;
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
+    }
+  </style>
+
+  <template>
+    <paper-material elevation="2" class="screens_view_iframe">
+      <iframe src="{{screen}}"></iframe>
+      <paper-ripple recenters></paper-ripple>
+    </paper-material>
+    <div>{{screen}}</div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polytipe-screen-iframe',
+      properties:{
+        screen:{
+          type: String,
+          value: ""
+        }
+      }
+    });
+  </script>
+</dom-module>

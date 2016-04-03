@@ -9,13 +9,16 @@ window.addEventListener('WebComponentsReady', function(e) {
 });
 
 var app = document.querySelector("#app");
-app.selected_mode = 0;
-app.selected_mode2 = 0;
+app.polytipe_section = "user_view";
+app.screen_editor_top_mode = "elements_view";
+app.screen_editor_bottom_mode = "editor_properties";
 
 var selected_element;
 var element_properties;
+var iframeReady = false;
 
 function iframe_ready() {
+  iframeReady = true;
   iframe_document = document.getElementById("app_iframe").contentDocument;
   iframe_app_content = iframe_document.getElementById("app_content");
   iframe_drawer_content = iframe_document.getElementById("drawer_content");
@@ -346,16 +349,18 @@ function arrayChanged() {
 var element_count = 0;
 
 function makeElement(element_name) {
-  var element = iframe_document.createElement(element_name);
-  element_count++;
-  element.id = "poly" + element_count;
-  //Adds element inside a layout if any poly-layout element is selected
-  if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
-    selected_element.appendChild(element);
-  }else{ //If no poly-layout element is selected add it to the main container
-    selected_iframe_panel.appendChild(element);
+  if(iframeReady){
+    var element = iframe_document.createElement(element_name);
+    element_count++;
+    element.id = "poly" + element_count;
+    //Adds element inside a layout if any poly-layout element is selected
+    if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
+      selected_element.appendChild(element);
+    }else{ //If no poly-layout element is selected add it to the main container
+      selected_iframe_panel.appendChild(element);
+    }
+    update_tree();
   }
-  update_tree();
 }
 
 function deleteElement(e) {
@@ -412,3 +417,90 @@ function update_tree(){
   drawer_tree.data = {"id": "drawer_folder", "name": "drawer", "open": true, "children": generateTree(iframe_document.getElementById("drawer_content"))};
   document.getElementById('tree_view').appendChild(drawer_tree);
 }
+
+function goto(section) {
+  app.polytipe_section = section;
+}
+
+function addScreenDialog(){
+  document.getElementById('add_screen_dialog').open();
+}
+function addProjectDialog(){
+  document.getElementById('add_project_dialog').open();
+}
+
+/* Github sign in */
+
+function keyDown(event) { //Sign in when pressing enter in the token input
+  if (event.keyCode == 13) {
+    sign_in();
+  }
+}
+
+function sign_in() {
+  var valid_user = document.getElementById('sign_in_user').validate();
+  var valid_token = document.getElementById('sign_in_token').validate();
+  if(!valid_user && !valid_token){
+    return;
+  }
+  user_input = document.getElementById('sign_in_user').value;
+  token_input = document.getElementById('sign_in_token').value;
+
+  github = new Github({
+    username: user_input,
+    password: token_input,
+    auth: "basic"
+  });
+
+  user = github.getUser();
+
+  //Checks if credentials are correct and signs in
+  user.notifications(function(err, notifications) {
+    if(err == null){
+      app.user = user_input;
+      app.polytipe_section = "user_view";
+    }else{
+      //Display fail toast
+      document.getElementById("sign_in_fail_toast").open();
+    }
+  });
+}
+
+function createProject() {
+  var repo = github.getRepo("polytipe", "project-base");
+  repo.fork(function(err,res) {
+    app.project_url = ["https://api.github.com/repos", app.user, "project-base"].join("/") + "?access_token=" + token_input;
+    app.ajax_body = JSON.stringify({"name": "poly-"+app.project_name});
+  });
+}
+
+
+//Login in Github
+var github = new Github({
+    token: "c09ffecb5992ac6cbf7c4028643ce5665716944c",
+    auth: "oauth"
+});
+
+user = github.getUser();
+
+user.repos(function(err, repos) {
+  var user_repos = [];
+  for (var i = 0; i < repos.length; i++) {
+    if(repos[i]["name"].startsWith("poly-")){
+      user_repos.push({"name": repos[i]["name"], "description": repos[i]["description"]});
+    }
+  }
+  app.user_repos = user_repos;
+
+  if(app.user_repos.length == 0){
+    setTimeout(function(){ //This is in the meantime because elements haven't loaded TODO: delete this later
+      document.getElementById("new_project_box").style.display = "flex";
+    },1000);
+  }
+});
+//TODO: Create structure for the poly-base repository on polytipe organization
+var repo = github.getRepo("alejost848", "polytipe");
+
+repo.contents('gh-pages', 'images/touch', function(err, data) {
+  console.log(data);
+});

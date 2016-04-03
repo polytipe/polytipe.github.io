@@ -45,18 +45,17 @@
     <paper-drawer-panel right-drawer disable-swipe drawer-width="290px">
 
       <paper-scroll-header-panel drawer id="sidebar_frame">
-        <paper-toolbar id="sidebar_polytipe_toolbar">
-          <iron-icon id="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
+        <paper-toolbar class="sidebar_polytipe_toolbar">
+          <iron-icon class="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
         </paper-toolbar>
         <paper-scroll-header-panel class="sidebar_panel" fixed>
-          <paper-tabs class="sidebar_tabs paper-header" selected="{{selected_mode}}">
-            <paper-tab>Elementos</paper-tab>
-            <paper-tab>Tree</paper-tab>
+          <paper-tabs attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
+            <paper-tab name="elements_view">Elementos</paper-tab>
+            <paper-tab name="tree_view">Tree</paper-tab>
           </paper-tabs>
-          <iron-pages selected="{{selected_mode}}">
-            <section class="sidebar_section">
+          <iron-pages attr-for-selected="id" selected="{{screen_editor_top_mode}}">
+            <section id="elements_view" class="sidebar_section">
               <paper-menu id="elements_list">
-
                 <polytipe-item icon="image:crop-landscape" onclick="makeElement('poly-button')">Button</polytipe-item>
                 <polytipe-item icon="credit-card" onclick="makeElement('poly-card')">Card</polytipe-item>
                 <polytipe-item icon="check-box" onclick="makeElement('poly-checkbox')">Checkbox</polytipe-item>
@@ -67,26 +66,24 @@
                 <polytipe-item icon="av:web-asset" onclick="makeElement('poly-toolbar')">Toolbar</polytipe-item>
               </paper-menu>
             </section>
-            <section id="tree_view" class="sidebar_section">
-
-            </section>
+            <section id="tree_view" class="sidebar_section"></section>
           </iron-pages>
         </paper-scroll-header-panel>
 
         <paper-scroll-header-panel class="sidebar_panel" fixed>
-          <paper-tabs class="sidebar_tabs paper-header" selected="{{selected_mode2}}">
-            <paper-tab>Propiedades</paper-tab>
-            <paper-tab>Estilos</paper-tab>
+          <paper-tabs attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
+            <paper-tab name="editor_properties">Propiedades</paper-tab>
+            <paper-tab name="editor_styles">Estilos</paper-tab>
           </paper-tabs>
           <div id="properties_placeholder" class="layout vertical center-center">
             <iron-icon id="no_elements_selected" icon="touch-app"></iron-icon>
             <div>Selecciona un elemento</div>
           </div>
-          <iron-pages selected="{{selected_mode2}}">
-            <section>
+          <iron-pages attr-for-selected="id" selected="{{screen_editor_bottom_mode}}">
+            <section id="editor_properties">
               <div id="properties_list" class="sidebar_list"></div>
             </section>
-            <section>
+            <section id="editor_styles">
               <div id="styles_list" class="sidebar_list">
                 <paper-input label="width"></paper-input>
                 <paper-input label="height"></paper-input>
@@ -108,7 +105,7 @@
       </paper-scroll-header-panel>
 
       <paper-header-panel main id="main_frame" mode="seamed">
-        <paper-toolbar id="screen_view_toolbar">
+        <paper-toolbar class="screen_view_toolbar">
           <paper-icon-button class="back_icon" icon="arrow-back"></paper-icon-button>
           <div class="flex paper-font-title">Pantalla 1</div>
           <span class="flex"></span>

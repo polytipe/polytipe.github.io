@@ -43,7 +43,9 @@
 
   <script>
     window.addEventListener('WebComponentsReady', function(e) {
-      parent.iframe_ready();
+      if(parent.app.polytipe_section == "screen_editor"){
+        parent.iframe_ready();
+      }
     });
   </script>
 
