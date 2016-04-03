@@ -9,7 +9,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 });
 
 var app = document.querySelector("#app");
-app.polytipe_section = "user_view";
+app.polytipe_section = "sign_in_screen";
 app.screen_editor_top_mode = "elements_view";
 app.screen_editor_bottom_mode = "editor_properties";
 
@@ -474,10 +474,10 @@ function createProject() {
   });
 }
 
-
+/*
 //Login in Github
 var github = new Github({
-    token: "c09ffecb5992ac6cbf7c4028643ce5665716944c",
+    token: "",
     auth: "oauth"
 });
 
@@ -503,4 +503,4 @@ var repo = github.getRepo("alejost848", "polytipe");
 
 repo.contents('gh-pages', 'images/touch', function(err, data) {
   console.log(data);
-});
+});*/
