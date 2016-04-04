@@ -466,6 +466,23 @@ function sign_in() {
       document.getElementById("sign_in_fail_toast").open();
     }
   });
+  var hasProjects = false;
+  user.repos(function(err, repos) {
+    for (var i = 0; i < repos.length; i++) {
+      if(repos[i]["name"] == "polytipe-projects"){
+        hasProjects = true;
+      }
+    }
+  });
+
+  if(!hasProjects){
+    var baseRepo = github.getRepo("polytipe", "polytipe-projects");
+    baseRepo.fork(function(err,res) {
+      document.getElementById("created_repo_toast").open();
+    });
+  }else{
+    //getRepoContents();
+  }
 }
 
 /*
@@ -495,20 +512,10 @@ function createProject() {
   document.getElementById("new_project_fab").style.display = "none";
   document.getElementById("loading_projects_box").style.display = "flex";
 
-  var baseRepo = github.getRepo("polytipe", "project-base");
-  baseRepo.fork(function(err,res) {
-
-    //TODO: change user and token later for a variable
-    app.project_url = ["https://api.github.com/repos", user_input, "project-base"].join("/") + "?access_token="+token_input;
-    app.ajax_body = JSON.stringify({"name": "poly-"+app.project_name});
-
-    //Checks if the newRepo is already created and updates the user repos
-    getRepoContents();
-  });
 }
 
 function deleteProject(){
-  var naRepo = github.getRepo(user_input, "poly-lol");
+  var naRepo = github.getRepo(user_input, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {});
 }
 
@@ -537,7 +544,7 @@ function getRepos() {
 }
 
 function getRepoContents() {
-  var newRepo = github.getRepo(user_input, "poly-"+app.project_name);
+  var newRepo = github.getRepo(user_input, "polytipe-projects");
   newRepo.contents("master", "", function(err, contents) {
     poll(getRepos,3000,3000);
   });
