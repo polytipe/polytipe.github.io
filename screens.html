@@ -87,7 +87,7 @@
               <div class="layout horizontal">
                 <iron-selector attr-for-selected="project" selected="{{selected_project}}" class="layout horizontal">
                   <template is="dom-repeat" items="{{user_repos}}">
-                    <paper-material elevation="2" project="{{item.name}}" onclick="goto('project_view')" class="project_box layout vertical center-center">
+                    <paper-material elevation="2" project="{{item.name}}" onclick="goto('project_view')" class="project_box layout vertical">
                       <div class="flex layout vertical center end-justified">
                         <iron-icon icon="description"></iron-icon>
                       </div>
@@ -99,9 +99,14 @@
                     </paper-material>
                   </template>
                 </iron-selector>
-                <div id="new_project_box" class="screen_placeholder layout horizontal center-center">
-                  <paper-fab onclick="addProjectDialog()" icon="add" title="Agregar una pantalla"></paper-fab>
+                <div id="new_project_box" class="project_box layout vertical center-center">
+                  <paper-fab id="new_project_fab" onclick="addProjectDialog()" icon="add" title="Crear proyecto nuevo"></paper-fab>
+                  <div id="loading_projects_box" class="layout vertical center">
+                    <paper-spinner active></paper-spinner>
+                    <div id="loading_projects_text">Creando proyecto</div>
+                  </div>
                 </div>
+
               </div>
             </div>
 

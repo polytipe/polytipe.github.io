@@ -279,7 +279,26 @@
     margin-top: 15px;
   }
   #new_project_box{
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: default;
+  }
+  #new_project_box paper-fab{
+    background-color: var(--polytipe-accent-color);
+    @apply(--shadow-none);
+  }
+  #loading_projects_box{
     display: none;
+  }
+  #loading_projects_box paper-spinner{
+    width: 45px;
+    height: 45px;
+    margin-top: 20px;
+  }
+  #loading_projects_text{
+    margin-top: 20px;
+    width: 100px;
+    text-align: center;
+    color: #aaa;
   }
 
   /*Main frame*/

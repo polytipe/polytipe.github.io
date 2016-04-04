@@ -440,7 +440,7 @@ function keyDown(event) { //Sign in when pressing enter in the token input
 function sign_in() {
   var valid_user = document.getElementById('sign_in_user').validate();
   var valid_token = document.getElementById('sign_in_token').validate();
-  if(!valid_user && !valid_token){
+  if(!valid_user || !valid_token){
     return;
   }
   user_input = document.getElementById('sign_in_user').value;
@@ -454,9 +454,14 @@ function sign_in() {
 
   user = github.getUser();
 
+
   //Checks if credentials are correct and signs in
   user.notifications(function(err, notifications) {
-    if(err == null){
+
+    if(err == null){ //If success
+
+      //Adds polytipe projects to the user_view
+      getRepos();
       app.user = user_input;
       app.polytipe_section = "user_view";
     }else{
@@ -466,41 +471,98 @@ function sign_in() {
   });
 }
 
-function createProject() {
-  var repo = github.getRepo("polytipe", "project-base");
-  repo.fork(function(err,res) {
-    app.project_url = ["https://api.github.com/repos", app.user, "project-base"].join("/") + "?access_token=" + token_input;
-    app.ajax_body = JSON.stringify({"name": "poly-"+app.project_name});
-  });
-}
-
 /*
+var token_input = "";
+
 //Login in Github
 var github = new Github({
-    token: "",
+    token: token_input,
     auth: "oauth"
 });
 
 user = github.getUser();
 
-user.repos(function(err, repos) {
-  var user_repos = [];
-  for (var i = 0; i < repos.length; i++) {
-    if(repos[i]["name"].startsWith("poly-")){
-      user_repos.push({"name": repos[i]["name"], "description": repos[i]["description"]});
-    }
-  }
-  app.user_repos = user_repos;
-
-  if(app.user_repos.length == 0){
-    setTimeout(function(){ //This is in the meantime because elements haven't loaded TODO: delete this later
-      document.getElementById("new_project_box").style.display = "flex";
-    },1000);
-  }
-});
+getRepos();
+*/
+/*
 //TODO: Create structure for the poly-base repository on polytipe organization
 var repo = github.getRepo("alejost848", "polytipe");
 
 repo.contents('gh-pages', 'images/touch', function(err, data) {
-  console.log(data);
-});*/
+  //console.log(data);
+});
+
+*/
+
+function createProject() {
+  document.getElementById("new_project_fab").style.display = "none";
+  document.getElementById("loading_projects_box").style.display = "flex";
+
+  var baseRepo = github.getRepo("polytipe", "project-base");
+  baseRepo.fork(function(err,res) {
+
+    //TODO: change user and token later for a variable
+    app.project_url = ["https://api.github.com/repos", "alejost848", "project-base"].join("/") + "?access_token="+token_input;
+    app.ajax_body = JSON.stringify({"name": "poly-"+app.project_name});
+
+    //Checks if the newRepo is already created and updates the user repos
+    getRepoContents();
+  });
+}
+
+function deleteProject(){
+  var naRepo = github.getRepo("alejost848", "poly-lol");
+  naRepo.deleteRepo(function(err, res) {});
+}
+
+//Adds polytipe projects to the user_view
+var result;
+function getRepos() {
+  //TODO: This is too slow. Might want to try a GET request with iron-ajax
+  user.repos(function(err, repos) {
+    result = false;
+    var user_repos = [];
+    for (var i = 0; i < repos.length; i++) {
+      if(repos[i]["name"].startsWith("poly-")){
+        user_repos.push({"name": repos[i]["name"], "description": repos[i]["description"]});
+      }
+    }
+    app.user_repos = user_repos;
+
+    if(app.user_repos.length != 0){
+      //setTimeout(function(){ //This is in the meantime because elements haven't loaded TODO: delete this later
+        document.getElementById("new_project_box").style.display = "none";
+      //},2000);
+      result = true;
+    }
+  });
+  return result;
+}
+
+function getRepoContents() {
+  var newRepo = github.getRepo("alejost848", "poly-"+app.project_name);
+  newRepo.contents("master", "", function(err, contents) {
+    poll(getRepos,3000,3000);
+  });
+}
+
+function poll(fn, timeout, interval) {
+  var endTime = Number(new Date()) + (timeout || 2000);
+  interval = interval || 100;
+
+  (function p() {
+      // If the condition is met, we're done!
+      if(fn()) {
+        document.getElementById("new_project_box").style.display = "none";
+        clearTimeout(p);
+      }
+      // If the condition isn't met but the timeout hasn't elapsed, go again
+      else if (Number(new Date()) < endTime) {
+        setTimeout(p, interval);
+      }
+      // Didn't match and too much time, reject!
+      else {
+        setTimeout(p, interval);
+      }
+  })();
+}
