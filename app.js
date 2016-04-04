@@ -454,12 +454,9 @@ function sign_in() {
 
   user = github.getUser();
 
-
   //Checks if credentials are correct and signs in
   user.notifications(function(err, notifications) {
-
     if(err == null){ //If success
-
       //Adds polytipe projects to the user_view
       getRepos();
       app.user = user_input;
@@ -502,7 +499,7 @@ function createProject() {
   baseRepo.fork(function(err,res) {
 
     //TODO: change user and token later for a variable
-    app.project_url = ["https://api.github.com/repos", "alejost848", "project-base"].join("/") + "?access_token="+token_input;
+    app.project_url = ["https://api.github.com/repos", user_input, "project-base"].join("/") + "?access_token="+token_input;
     app.ajax_body = JSON.stringify({"name": "poly-"+app.project_name});
 
     //Checks if the newRepo is already created and updates the user repos
@@ -511,7 +508,7 @@ function createProject() {
 }
 
 function deleteProject(){
-  var naRepo = github.getRepo("alejost848", "poly-lol");
+  var naRepo = github.getRepo(user_input, "poly-lol");
   naRepo.deleteRepo(function(err, res) {});
 }
 
@@ -540,7 +537,7 @@ function getRepos() {
 }
 
 function getRepoContents() {
-  var newRepo = github.getRepo("alejost848", "poly-"+app.project_name);
+  var newRepo = github.getRepo(user_input, "poly-"+app.project_name);
   newRepo.contents("master", "", function(err, contents) {
     poll(getRepos,3000,3000);
   });
