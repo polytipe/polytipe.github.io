@@ -1,13 +1,3 @@
-window.addEventListener('WebComponentsReady', function(e) {
-  //Unfocus all elements when clicking outside the app
-  document.getElementById("app_container").addEventListener('click', function(e) {
-    unfocus(e);
-    //Select app folder in tree
-    document.getElementById("app_folder").selectFolder(e);
-    iframe_document.querySelector('paper-drawer-panel').closeDrawer();
-  });
-});
-
 var app = document.querySelector("#app");
 app.polytipe_section = "sign_in_screen";
 app.screen_editor_top_mode = "elements_view";
@@ -18,6 +8,13 @@ var element_properties;
 var iframeReady = false;
 
 function iframe_ready() {
+  //Unfocus all elements when clicking outside the app
+  document.getElementById("app_container").addEventListener('click', function(e) {
+    unfocus(e);
+    document.getElementById("app_folder").selectFolder(e); //Select app folder in tree
+    iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
+  });
+
   iframeReady = true;
   iframe_document = document.getElementById("app_iframe").contentDocument;
   iframe_app_content = iframe_document.getElementById("app_content");
@@ -437,6 +434,7 @@ function keyDown(event) { //Sign in when pressing enter in the token input
   }
 }
 
+//Validates the inputs and creates the Github object
 function sign_in() {
   var valid_user = document.getElementById('sign_in_user').validate();
   var valid_token = document.getElementById('sign_in_token').validate();
@@ -452,121 +450,92 @@ function sign_in() {
     auth: "basic"
   });
 
-  user = github.getUser();
+  validate_user();
+}
 
-  //Checks if credentials are correct and signs in
+window.addEventListener('WebComponentsReady', function(e) {
+  user_input = "alejost848";
+  token_input = "";
+
+  //Login in Github
+  github = new Github({
+      token: token_input,
+      auth: "oauth"
+  });
+  validate_user();
+});
+
+//Checks if credentials are correct and signs in
+function validate_user() {
+  user = github.getUser();
   user.notifications(function(err, notifications) {
-    if(err == null){ //If success
-      //Adds polytipe projects to the user_view
-      getRepos();
+    if(err == null){ //If no errors, advance to the next screen
+      user.show(null, function(err, user) {
+        app.avatar = user["avatar_url"];
+      });
       app.user = user_input;
       app.polytipe_section = "user_view";
-    }else{
-      //Display fail toast
+      fork_polytipe_repo();
+    }else{ //If errors display the fail toast
       document.getElementById("sign_in_fail_toast").open();
     }
   });
+}
+
+//Forks the the polytipe-projects repo if it doesn't have it
+function fork_polytipe_repo() {
+  document.getElementById("new_project_fab").style.display = "none";
+  document.getElementById("loading_projects_box").style.display = "flex";
+  document.getElementById("loading_projects_text").style.display = "none";
   var hasProjects = false;
   user.repos(function(err, repos) {
     for (var i = 0; i < repos.length; i++) {
-      if(repos[i]["name"] == "polytipe-projects"){
+      if(repos[i]["full_name"] == user_input + "/polytipe-projects"){
         hasProjects = true;
       }
     }
+    if(!hasProjects){
+      var baseRepo = github.getRepo("polytipe", "polytipe-projects");
+      baseRepo.fork(function(err,res) {
+        document.getElementById("created_repo_toast").open();
+      });
+    }else{
+      getProjects();
+    }
+    document.getElementById("new_project_fab").style.display = "flex";
+    document.getElementById("loading_projects_box").style.display = "none";
+    document.getElementById("loading_projects_text").style.display = "flex";
   });
-
-  if(!hasProjects){
-    var baseRepo = github.getRepo("polytipe", "polytipe-projects");
-    baseRepo.fork(function(err,res) {
-      document.getElementById("created_repo_toast").open();
-    });
-  }else{
-    //getRepoContents();
-  }
 }
-
-/*
-var token_input = "";
-
-//Login in Github
-var github = new Github({
-    token: token_input,
-    auth: "oauth"
-});
-
-user = github.getUser();
-
-getRepos();
-*/
-/*
-//TODO: Create structure for the poly-base repository on polytipe organization
-var repo = github.getRepo("alejost848", "polytipe");
-
-repo.contents('gh-pages', 'images/touch', function(err, data) {
-  //console.log(data);
-});
-
-*/
 
 function createProject() {
   document.getElementById("new_project_fab").style.display = "none";
   document.getElementById("loading_projects_box").style.display = "flex";
-
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.branch(app.project_name, function(err) {
+    document.getElementById("new_project_fab").style.display = "flex";
+    document.getElementById("loading_projects_box").style.display = "none";
+    getProjects();
+  });
 }
-
+//Adds polytipe projects to the user_view
+function getProjects() {
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.listBranches(function(err, branches) {
+    var user_projects = [];
+    for (var i = 0; i < branches.length; i++) {
+      if(branches[i] != "master"){
+        user_projects.push({"name": branches[i]});
+      }
+    }
+    app.user_projects = user_projects;
+  });
+}
 function deleteProject(){
   var naRepo = github.getRepo(user_input, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {});
 }
 
-//Adds polytipe projects to the user_view
-var result;
-function getRepos() {
-  //TODO: This is too slow. Might want to try a GET request with iron-ajax
-  user.repos(function(err, repos) {
-    result = false;
-    var user_repos = [];
-    for (var i = 0; i < repos.length; i++) {
-      if(repos[i]["name"].startsWith("poly-")){
-        user_repos.push({"name": repos[i]["name"], "description": repos[i]["description"]});
-      }
-    }
-    app.user_repos = user_repos;
+function createScreen() {
 
-    if(app.user_repos.length != 0){
-      //setTimeout(function(){ //This is in the meantime because elements haven't loaded TODO: delete this later
-        document.getElementById("new_project_box").style.display = "none";
-      //},2000);
-      result = true;
-    }
-  });
-  return result;
-}
-
-function getRepoContents() {
-  var newRepo = github.getRepo(user_input, "polytipe-projects");
-  newRepo.contents("master", "", function(err, contents) {
-    poll(getRepos,3000,3000);
-  });
-}
-
-function poll(fn, timeout, interval) {
-  var endTime = Number(new Date()) + (timeout || 2000);
-  interval = interval || 100;
-
-  (function p() {
-      // If the condition is met, we're done!
-      if(fn()) {
-        document.getElementById("new_project_box").style.display = "none";
-        clearTimeout(p);
-      }
-      // If the condition isn't met but the timeout hasn't elapsed, go again
-      else if (Number(new Date()) < endTime) {
-        setTimeout(p, interval);
-      }
-      // Didn't match and too much time, reject!
-      else {
-        setTimeout(p, interval);
-      }
-  })();
 }
