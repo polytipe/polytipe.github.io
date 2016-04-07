@@ -10,9 +10,6 @@
   <!-- No zooming! -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="images/touch/chrome-touch-icon-192x192_dark.png" />
-
   <!-- Chrome / Android -->
   <meta id="bar" name="theme-color" content="#212121">
   <meta name="mobile-web-app-capable" content="yes">
@@ -23,7 +20,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- Tile color for Win8/10 -->
-  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-TileColor" content="">
   <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
   <!-- Add to homescreen for Safari on iOS -->
@@ -49,7 +46,7 @@
 
       <section id="sign_in_screen" class="layout horizontal">
         <div id="sign_in_left" class="flex layout horizontal center end-justified">
-          <iron-icon id="sign_in_logo" icon="polytipe-icons:logo"></iron-icon>
+          <iron-icon id="sign_in_logo" icon="polytipe-icons:logo-square"></iron-icon>
         </div>
         <div id="sign_in_box_container" class="flex layout horizontal center start-justified">
 
@@ -63,7 +60,7 @@
               <paper-fab mini icon="arrow-forward" onclick="sign_in()"></paper-fab>
             </div>
           </paper-material>
-          <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo"></iron-icon>
+          <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
         </div>
       </section>
 
@@ -117,10 +114,10 @@
 
             <paper-dialog id="add_project_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
               <h2>Nuevo proyecto</h2>
-              <paper-input label="nombre-cool" value="{{project_name}}" allowed-pattern="[a-z0-9-_]"></paper-input>
+              <paper-input id="add_project_input" label="nombre-cool" value="{{project_name}}" allowed-pattern="[a-z0-9-_]" required error-message="Este campo no puede dejarse en blanco"></paper-input>
               <div class="buttons">
                 <paper-button noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button onclick="createProject()" noink dialog-confirm autofocus>Crear</paper-button>
+                <paper-button onclick="createProject()" noink autofocus>Crear</paper-button>
               </div>
             </paper-dialog>
 
@@ -156,10 +153,10 @@
             </div>
             <paper-dialog id="add_screen_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
               <h2>Nueva pantalla</h2>
-              <paper-input label="Nombre pantalla"></paper-input>
+              <paper-input id="add_screen_input" label="Nombre pantalla" value="{{screen_name}}" allowed-pattern="[a-z0-9-_]" required error-message="Este campo no puede dejarse en blanco"></paper-input>
               <div class="buttons">
                 <paper-button noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button noink dialog-confirm autofocus>Agregar</paper-button>
+                <paper-button noink onclick="createScreen()" autofocus>Agregar</paper-button>
               </div>
             </paper-dialog>
           </paper-header-panel>
@@ -205,6 +202,12 @@
               </div>
               <iron-pages attr-for-selected="id" selected="{{screen_editor_bottom_mode}}">
                 <section id="editor_properties">
+                  <div id="element_actions" class="sidebar_list layout horizontal end-justified">
+                    <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button"></paper-fab>
+                    <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button"></paper-fab>
+                    <div class="flex"></div>
+                    <paper-fab id="delete_button" icon="delete" title="Eliminar elemento" onclick="deleteElement()"></paper-fab>
+                  </div>
                   <div id="properties_list" class="sidebar_list"></div>
                 </section>
                 <section id="editor_styles">

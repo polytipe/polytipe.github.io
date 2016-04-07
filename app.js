@@ -35,7 +35,6 @@ function iframe_ready() {
 
   var properties_list = document.getElementById('properties_list');
 
-
   drawer_panel = iframe_document.getElementById('drawer_panel');
   drawer_panel.addEventListener('selected-changed', function(e) {
     setTimeout(function(){
@@ -67,36 +66,9 @@ function iframe_ready() {
     document.getElementById('styles_list').style.display = "block";
     document.getElementById('properties_placeholder').style.display = "none";
 
-    //Element actions
+    //Display element actions
     // TODO: Move up / down in the DOM tree
-    var div = document.createElement("div");
-    div.id = "element_actions";
-    div.classList.add("layout", "horizontal", "end-justified");
-
-    var moveUpButton = document.createElement("paper-fab");
-    moveUpButton.title = "Mover arriba";
-    moveUpButton.classList.add("move_button");
-    moveUpButton.icon = "arrow-upward";
-    div.appendChild(moveUpButton);
-
-    var moveDownButton = document.createElement("paper-fab");
-    moveDownButton.title = "Mover abajo";
-    moveDownButton.classList.add("move_button");
-    moveDownButton.icon = "arrow-downward";
-    div.appendChild(moveDownButton);
-
-    var divFlex = document.createElement("div");
-    divFlex.classList.add("flex");
-    div.appendChild(divFlex);
-
-    var deleteButton = document.createElement("paper-fab");
-    deleteButton.title = "Eliminar elemento";
-    deleteButton.id = "delete_button";
-    deleteButton.icon = "delete";
-    deleteButton.addEventListener("click", deleteElement);
-    div.appendChild(deleteButton);
-
-    properties_list.appendChild(div);
+    document.getElementById('element_actions').style.display = "flex";
 
     //Add inputs for poly-layout elements
     if(selected_element.tagName == "POLY-LAYOUT"){
@@ -268,6 +240,7 @@ function unfocus(e) {
     }
 
     //Add placeholder when no elements are selected
+    document.getElementById('element_actions').style.display = "none";
     document.getElementById('styles_list').style.display = "none";
     document.getElementById('properties_placeholder').style.display = "flex";
 
@@ -508,7 +481,13 @@ function fork_polytipe_repo() {
   });
 }
 
+/* Project actions */
+
 function createProject() {
+  var validate_project = document.getElementById('add_project_input').validate();
+  if(!validate_project){
+    return;
+  }
   document.getElementById("new_project_fab").style.display = "none";
   document.getElementById("loading_projects_box").style.display = "flex";
   var repo = github.getRepo(user_input, "polytipe-projects");
@@ -517,6 +496,8 @@ function createProject() {
     document.getElementById("loading_projects_box").style.display = "none";
     getProjects();
   });
+  var dialog = document.getElementById("add_project_dialog");
+  dialog.close();
 }
 //Adds polytipe projects to the user_view
 function getProjects() {
@@ -536,6 +517,29 @@ function deleteProject(){
   naRepo.deleteRepo(function(err, res) {});
 }
 
-function createScreen() {
+/* Screen actions */
 
+function createScreen() {
+  var validate_screen = document.getElementById('add_screen_input').validate();
+  if(!validate_screen){
+    return;
+  }
+ var section = iframe_document.createElement("section");
+ section.id = app.screen_name;
+ iframe_app_content.appendChild(section);
+
+ var dialog = document.getElementById("add_screen_dialog");
+ dialog.close();
+}
+function getScreens() {
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.read("test", 'index.html', function(err, data) {
+    var data_wrapper = document.createElement('div');
+    data_wrapper.innerHTML= data;
+    if (data_wrapper.querySelector("#app_content").children.length > 0) {
+      console.log("children");
+    }else{
+      console.log("no children here");
+    }
+  });
 }
