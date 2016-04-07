@@ -15,15 +15,6 @@ function iframe_ready() {
     iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
   });
 
-  iframeReady = true;
-  iframe_document = document.getElementById("app_iframe").contentDocument;
-  iframe_app_content = iframe_document.getElementById("app_content");
-  iframe_drawer_content = iframe_document.getElementById("drawer_content");
-  selected_iframe_panel = iframe_app_content;
-
-  //Display ready toast
-  document.getElementById("ready_toast").open();
-
   //Create tree and highlight main folder on ready
   update_tree();
   setTimeout(function(){
@@ -427,6 +418,7 @@ function sign_in() {
 }
 
 window.addEventListener('WebComponentsReady', function(e) {
+  //TODO: Remove this when done testing
   user_input = "alejost848";
   token_input = "";
 
@@ -435,7 +427,20 @@ window.addEventListener('WebComponentsReady', function(e) {
       token: token_input,
       auth: "oauth"
   });
-  validate_user();
+
+  //Focus user input
+  document.getElementById('sign_in_user').focus();
+
+  //Add project selection listener
+  document.getElementById('project_selector').addEventListener('iron-select', function () {
+    getScreens();
+  });
+  //Add screen selection listener
+  document.getElementById('screen_selector').addEventListener('iron-select', function () {
+    editScreen();
+  });
+
+  //validate_user();
 });
 
 //Checks if credentials are correct and signs in
@@ -528,18 +533,42 @@ function createScreen() {
  section.id = app.screen_name;
  iframe_app_content.appendChild(section);
 
+ displayScreens();
+
  var dialog = document.getElementById("add_screen_dialog");
  dialog.close();
 }
 function getScreens() {
+  app.project_screens = [];
   var repo = github.getRepo(user_input, "polytipe-projects");
-  repo.read("test", 'index.html', function(err, data) {
-    var data_wrapper = document.createElement('div');
-    data_wrapper.innerHTML= data;
-    if (data_wrapper.querySelector("#app_content").children.length > 0) {
-      console.log("children");
-    }else{
-      console.log("no children here");
-    }
+  repo.read(app.selected_project, 'index.html', function(err, data) {
+    iframe_document = document.getElementById("app_iframe").contentDocument;
+    iframe_document.open();
+    iframe_document.write(data);
+    iframe_document.close();
+
+    setTimeout(function(){ //Wait until elements load
+      iframe_app_content = iframe_document.getElementById("app_content");
+      iframe_drawer_content = iframe_document.getElementById("drawer_content");
+      selected_iframe_panel = iframe_app_content;
+      if (iframe_app_content.children.length > 0) { //If there are screens on the remote
+        displayScreens();
+      }else{
+        displayScreens();
+      }
+      iframeReady = true;
+      iframe_ready();
+    },100);
   });
+}
+function displayScreens() {
+  var screens = iframe_app_content.children;
+  var project_screens = [];
+  for (var i=0; i < screens.length; i++) {
+    project_screens.push({"name": screens[i].id});
+  }
+  app.project_screens = project_screens;
+}
+function editScreen() {
+  iframe_app_content.selected = app.selected_screen;
 }
