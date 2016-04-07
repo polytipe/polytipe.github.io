@@ -37,7 +37,9 @@
       <div id="drawer_content"></div>
     </paper-header-panel>
     <paper-header-panel main mode="seamed">
-      <div id="app_content"></div>
+    <iron-selector id="app_content" attr-for-selected="id" selected="{{selected_screen}}">
+
+    </iron-selector>
     </paper-header-panel>
   </paper-drawer-panel>
 

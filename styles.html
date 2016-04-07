@@ -20,6 +20,9 @@
 
   html{
     font-family: "Roboto", 'Helvetica Neue';
+  }
+
+  body.main{
     background-color: var(--polytipe-bg-color);
   }
 
@@ -39,10 +42,6 @@
 
   /*Element defaults*/
 
-  paper-toolbar{
-    background-color: var(--app-primary-color);
-  }
-
   .sidebar_panel paper-toggle-button{
     --paper-toggle-button-checked-bar-color: var(--polytipe-accent-color);
     --paper-toggle-button-checked-button-color: var(--polytipe-accent-color);
@@ -58,11 +57,6 @@
     --paper-fab-keyboard-focus-background: var(--polytipe-accent-color);
   }
 
-  poly-layout{
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-  }
-
   /*Sidebar frame*/
 
   #sidebar_frame{
@@ -71,8 +65,8 @@
   }
 
   .sidebar_polytipe_logo{
-    width: 100%;
-    height: 100%;
+    width: 230px;
+    height: 60px;
     color: rgba(0, 0, 0, 0.15);
   }
 
@@ -184,7 +178,7 @@
   /*Element actions*/
 
   #element_actions{
-    margin-bottom: 15px;
+    display: none;
   }
   .move_button{
     background-color: var(--polytipe-bg-color);
@@ -199,6 +193,37 @@
     width: 35px;
     height: 35px;
     margin-left: 10px;
+  }
+
+  /*App frame*/
+
+  .main_frame{
+    background-color: var(--polytipe-bg-color);
+  }
+  .screen_view_toolbar{
+    background-color: var(--polytipe-toolbar-color);
+  }
+  .back_icon{
+    margin-right: 20px;
+  }
+  .drawer_toggle{
+    margin: 0;
+  }
+  #app_container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    min-height: 700px;
+  }
+  #app_iframe{
+    width: 360px;
+    height: 640px;
+    background-color: var(--app-bg-color);
+    border: none;
+  }
+  paper-toast{
+    background-color: var(--polytipe-toolbar-color);
+    color: white;
   }
 
   /* Sign in screen */
@@ -247,12 +272,15 @@
   #sign_in_bottom paper-fab{
     background-color: var(--polytipe-accent-color);
   }
-  #sign_in_fail_toast_icon{
-    margin-right: 10px;
-    color: var(--paper-amber-700);
-  }
 
   /* User view */
+
+  #user_box{
+    margin-right: 20px;
+  }
+  #avatar{
+    margin-left: 10px;
+  }
   .project_box{
     width: 250px;
     height: 250px;
@@ -301,43 +329,8 @@
     color: #aaa;
   }
 
-  /*Main frame*/
-
-  .main_frame{
-    background-color: var(--polytipe-bg-color);
-  }
-  .screen_view_toolbar{
-    background-color: var(--polytipe-toolbar-color);
-  }
-  .back_icon{
-    margin-right: 20px;
-  }
-  .drawer_toggle{
-    margin: 0;
-  }
-  #app_container{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    min-height: 700px;
-  }
-  #app_iframe{
-    width: 360px;
-    height: 640px;
-    background-color: var(--app-bg-color);
-    border: none;
-  }
-
-  #ready_toast{
-    background-color: var(--polytipe-toolbar-color);
-    color: white;
-  }
-  #ready_toast_icon{
-    margin-right: 10px;
-    color: var(--polytipe-accent-color);
-  }
-
   /*Screens view*/
+
   .elements_label{
     color: #888;
     margin-bottom: 10px;
@@ -348,15 +341,33 @@
   .elements_group iron-selector{
     flex-wrap: wrap;
   }
-  .screen_placeholder{
+  .screen_box{
     width: 216px;
     height: 384px;
-    margin: 20px;
-    background-color: rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    background-color: var(--app-bg-color);
+    cursor: pointer;
+    padding: 15px;
+    box-sizing: border-box;
   }
-  .screen_placeholder paper-fab{
+  .screen_box paper-fab{
     background-color: var(--polytipe-accent-color);
     @apply(--shadow-none);
+  }
+  .screen_box div{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  .screen_box iron-icon{
+    color: rgba(0, 0, 0, 0.2);
+    width: 50px;
+    height: 50px;
+  }
+  #screen_placeholder{
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   .add_dialog{
@@ -419,6 +430,10 @@
       height: auto;
       color: rgb(255, 255, 255);
       display: inline;
+    }
+    /* User view */
+    #user_box{
+      margin-right: 10px;
     }
 	}
 
