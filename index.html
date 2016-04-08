@@ -113,7 +113,7 @@
 
             <paper-dialog id="add_project_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
               <h2>Nuevo proyecto</h2>
-              <paper-input id="add_project_input" label="nombre-cool" value="{{project_name}}" allowed-pattern="[a-z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+              <paper-input id="add_project_input" label="nombre-cool" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
               <div class="buttons">
                 <paper-button noink dialog-dismiss>Cancelar</paper-button>
                 <paper-button onclick="createProject()" noink autofocus>Crear</paper-button>
@@ -152,7 +152,7 @@
             </div>
             <paper-dialog id="add_screen_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
               <h2>Nueva pantalla</h2>
-              <paper-input id="add_screen_input" label="Nombre pantalla" value="{{screen_name}}" allowed-pattern="[a-z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+              <paper-input id="add_screen_input" label="Nombre pantalla" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
               <div class="buttons">
                 <paper-button noink dialog-dismiss>Cancelar</paper-button>
                 <paper-button noink onclick="createScreen()" autofocus>Agregar</paper-button>
@@ -203,7 +203,7 @@
                         <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button"></paper-fab>
                         <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button"></paper-fab>
                         <div class="flex"></div>
-                        <paper-fab id="delete_button" icon="delete" title="Eliminar elemento" onclick="deleteElement()"></paper-fab>
+                        <paper-fab id="delete_button" icon="delete" title="Eliminar elemento" onclick="deleteElement(event)"></paper-fab>
                       </div>
                       <div id="properties_list" class="sidebar_list"></div>
                     </section>

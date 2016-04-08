@@ -15,12 +15,6 @@ function iframe_ready() {
     iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
   });
 
-  //Create tree and highlight main folder on ready
-  update_tree();
-  setTimeout(function(){
-    document.getElementById("app_folder").highlightFolder();
-  },10);
-
   //Add iframe outline
   document.getElementById("app_iframe").classList.add('outlined_element');
 
@@ -35,8 +29,10 @@ function iframe_ready() {
         unfocus("main");
       }else if(drawer_panel.selected == "main"){
         iframe_drawer_content.style.border = "none";
-        selected_iframe_panel = iframe_app_content;
-        unfocus("drawer");
+        if(selected_iframe_panel == iframe_drawer_content){
+          selected_iframe_panel = screen_target;
+          unfocus("drawer");
+        }
       }
     },1);
   });
@@ -213,8 +209,8 @@ function unfocus(e) {
       document.getElementById("app_folder").highlightFolder();
     }else if(e == "main"){
       document.getElementById('drawer_folder').highlightFolder();
-      for (var i = 0; i < iframe_app_content.children.length; i++) {
-        iframe_app_content.children[i].unfocus();
+      for (var i = 0; i < screen_target.children.length; i++) {
+        screen_target.children[i].unfocus();
       }
     }
   }else{
@@ -236,9 +232,9 @@ function unfocus(e) {
     document.getElementById('properties_placeholder').style.display = "flex";
 
     //Unfocus all children elements except the one active
-    for (var i = 0; i < iframe_app_content.children.length; i++) {
-      if (iframe_app_content.children[i] != selected_element) {
-        iframe_app_content.children[i].unfocus();
+    for (var i = 0; i < screen_target.children.length; i++) {
+      if (screen_target.children[i] != selected_element) {
+        screen_target.children[i].unfocus();
       }
     }
     for (var i = 0; i < iframe_drawer_content.children.length; i++) {
@@ -317,8 +313,8 @@ function makeElement(element_name) {
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
       selected_element.appendChild(element);
-    }else{ //If no poly-layout element is selected add it to the main container
-      selected_iframe_panel.appendChild(element);
+    }else{ //If no poly-layout element is selected add it to the selected screen
+      screen_target.appendChild(element);
     }
     update_tree();
   }
@@ -370,7 +366,7 @@ function update_tree(){
 
   var app_tree = document.createElement("file-tree");
   app_tree.identifier = "app_tree";
-  app_tree.data = {"id": "app_folder", "name": "main", "open": true, "children": generateTree(iframe_document.getElementById("app_content"))};
+  app_tree.data = {"id": "app_folder", "name": "main", "open": true, "children": generateTree(screen_target)};
   document.getElementById('tree_view').appendChild(app_tree);
 
   var drawer_tree = document.createElement("file-tree");
@@ -531,6 +527,8 @@ function createScreen() {
   }
  var section = iframe_document.createElement("section");
  section.id = app.screen_name;
+
+ Polymer.dom(iframe_app_content).appendChild(section);
  iframe_app_content.appendChild(section);
 
  displayScreens();
@@ -571,4 +569,6 @@ function displayScreens() {
 }
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
+  screen_target = iframe_document.getElementById(app.selected_screen);
+  update_tree();
 }
