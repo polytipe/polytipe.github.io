@@ -42,7 +42,7 @@
 
 <body unresolved class="fullbleed main">
   <template id="app" is="dom-bind">
-    <paper-drawer-panel disable-swipe force-narrow drawer-width="290px">
+    <paper-drawer-panel disable-swipe force-narrow drawer-width="290px" drawer-toggle-attribute="paper-drawer-left">
       <paper-header-panel drawer mode="seamed">
         <paper-toolbar class="sidebar_polytipe_toolbar medium-tall">
           <iron-icon class="sidebar_polytipe_logo bottom" icon="polytipe-icons:logo"></iron-icon>
@@ -51,7 +51,7 @@
 
       <paper-header-panel main class="main_frame" mode="seamed">
         <iron-pages attr-for-selected="id" selected="{{polytipe_section}}">
-          <section id="sign_in_screen" class="layout horizontal">
+          <section id="sign_in_screen" class="layout flex horizontal center-center">
             <div id="sign_in_left" class="flex layout horizontal center end-justified">
               <iron-icon id="sign_in_logo" icon="polytipe-icons:logo-square"></iron-icon>
             </div>
@@ -74,7 +74,7 @@
 
           <section id="user_view">
             <paper-toolbar class="screen_view_toolbar">
-              <paper-icon-button class="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+              <paper-icon-button icon="menu" paper-drawer-left></paper-icon-button>
               <div class="paper-font-title">Polytipe</div>
               <div class="flex"></div>
               <div id="user_box" class="layout horizontal">
@@ -93,7 +93,7 @@
                         <iron-icon icon="description"></iron-icon>
                       </div>
                       <div class="flex layout vertical center-center">
-                        <div class="paper-font-headline">{{item.name}}</div>
+                        <div class="project_name paper-font-headline">{{item.name}}</div>
                       </div>
                       <paper-ripple recenters></paper-ripple>
                     </paper-material>
@@ -111,12 +111,12 @@
 
             <iron-ajax auto url="{{project_url}}" method="POST" body="{{ajax_body}}"></iron-ajax>
 
-            <paper-dialog id="add_project_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-              <h2>Nuevo proyecto</h2>
-              <paper-input id="add_project_input" label="nombre-cool" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+            <paper-dialog id="add_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+              <h2>Crear proyecto</h2>
+              <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
               <div class="buttons">
-                <paper-button noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button onclick="createProject()" noink autofocus>Crear</paper-button>
+                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+                <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
               </div>
             </paper-dialog>
           </section>
@@ -126,6 +126,7 @@
               <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('user_view')"></paper-icon-button>
               <div class="flex paper-font-title">{{selected_project}}</div>
               <span class="flex"></span>
+              <paper-icon-button class="delete_icon" icon="delete" title="Eliminar proyecto" onclick="promptDeleteProject()"></paper-icon-button>
             </paper-toolbar>
 
             <div class="elements_group">
@@ -138,7 +139,7 @@
                         <iron-icon icon="hardware:smartphone"></iron-icon>
                       </div>
                       <div class="flex layout vertical center-center">
-                        <div class="paper-font-headline">{{item.name}}</div>
+                        <div class="project_name paper-font-headline">{{item.name}}</div>
                       </div>
                       <paper-ripple recenters></paper-ripple>
                     </paper-material>
@@ -150,18 +151,30 @@
                 </div>
               </div>
             </div>
-            <paper-dialog id="add_screen_dialog" class="add_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-              <h2>Nueva pantalla</h2>
-              <paper-input id="add_screen_input" label="Nombre pantalla" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+            <paper-dialog id="delete_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+              <h2>Eliminar proyecto</h2>
+              <p>
+                ¿Estás seguro de que deseas eliminar el proyecto
+                <strong>{{user}}/{{selected_project}}</strong>?
+              </p>
               <div class="buttons">
-                <paper-button noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button noink onclick="createScreen()" autofocus>Agregar</paper-button>
+                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+                <paper-button class="red_button" onclick="deleteProject()" noink autofocus>Eliminar</paper-button>
+              </div>
+            </paper-dialog>
+
+            <paper-dialog id="add_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+              <h2>Crear pantalla</h2>
+              <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+              <div class="buttons">
+                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+                <paper-button class="accept_button" noink onclick="createScreen()" autofocus>Crear</paper-button>
               </div>
             </paper-dialog>
           </section>
 
           <section id="screen_editor">
-            <paper-drawer-panel right-drawer disable-swipe drawer-width="290px">
+            <paper-drawer-panel right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
               <paper-scroll-header-panel drawer id="sidebar_frame">
                 <paper-toolbar class="sidebar_polytipe_toolbar">
                   <iron-icon class="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
@@ -233,12 +246,25 @@
                   <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <div class="flex paper-font-title">{{selected_screen}}</div>
                   <span class="flex"></span>
-                  <paper-icon-button class="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                  <paper-icon-button class="delete_icon" icon="delete" title="Eliminar pantalla" onclick="promptDeleteScreen()"></paper-icon-button>
+                  <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                 </paper-toolbar>
 
                 <div id="app_container" class="layout horizontal center-center">
                   <iframe id="app_iframe"></iframe>
                 </div>
+
+                <paper-dialog id="delete_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+                  <h2>Eliminar pantalla</h2>
+                  <p>
+                    ¿Estás seguro de que deseas eliminar la pantalla
+                    <strong>{{selected_screen}}</strong>?
+                  </p>
+                  <div class="buttons">
+                    <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+                    <paper-button class="red_button" onclick="deleteScreen()" noink autofocus>Eliminar</paper-button>
+                  </div>
+                </paper-dialog>
               </paper-header-panel>
             </paper-drawer-panel>
           </section>

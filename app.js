@@ -436,7 +436,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     editScreen();
   });
 
-  //validate_user();
+  validate_user();
 });
 
 //Checks if credentials are correct and signs in
@@ -493,12 +493,14 @@ function createProject() {
   document.getElementById("loading_projects_box").style.display = "flex";
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.branch(app.project_name, function(err) {
+    getProjects();
     document.getElementById("new_project_fab").style.display = "flex";
     document.getElementById("loading_projects_box").style.display = "none";
-    getProjects();
   });
   var dialog = document.getElementById("add_project_dialog");
   dialog.close();
+
+  app.project_name = "";
 }
 //Adds polytipe projects to the user_view
 function getProjects() {
@@ -513,7 +515,25 @@ function getProjects() {
     app.user_projects = user_projects;
   });
 }
+function promptDeleteProject() {
+  var dialog = document.getElementById("delete_project_dialog");
+  dialog.open();
+}
 function deleteProject(){
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.deleteRef('heads/'+app.selected_project, function(err) {
+
+    var dialog = document.getElementById("delete_project_dialog");
+    dialog.close();
+
+    app.selected_project = "";
+    goto('user_view');
+    getProjects();
+  });
+}
+
+
+function deleteRepo(){
   var naRepo = github.getRepo(user_input, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {});
 }
@@ -521,6 +541,7 @@ function deleteProject(){
 /* Screen actions */
 
 function createScreen() {
+  //TODO: Check that the screen doesn't exist first
   var validate_screen = document.getElementById('add_screen_input').validate();
   if(!validate_screen){
     return;
@@ -533,6 +554,7 @@ function createScreen() {
 
  displayScreens();
 
+ app.screen_name = "";
  var dialog = document.getElementById("add_screen_dialog");
  dialog.close();
 }
@@ -571,4 +593,26 @@ function editScreen() {
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
   update_tree();
+}
+function promptDeleteScreen() {
+  var dialog = document.getElementById("delete_screen_dialog");
+  dialog.open();
+}
+function deleteScreen() {
+  var section = iframe_document.getElementById(app.selected_screen);
+  Polymer.dom(iframe_app_content).removeChild(section)
+  section.remove();
+
+  var dialog = document.getElementById("delete_screen_dialog");
+  dialog.close();
+
+  update_tree();
+  app.selected_screen = "";
+  goto('project_view');
+  displayScreens();
+}
+
+
+if (window.location.hash == "" || window.location.hash == "#") {
+  window.location.hash = "#/";
 }

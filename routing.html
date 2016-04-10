@@ -1,0 +1,39 @@
+<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/iron-demo-helpers/demo-snippet.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-right-animation.html">
+<link rel="import" href="bower_components/carbon-route/carbon-route.html">
+<link rel="import" href="bower_components/carbon-route/carbon-location.html">
+<link rel="import" href="bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+<link rel="import" href="bower_components/iron-demo-helpers/url-bar.html">
+<link rel="import" href="bower_components/iron-pages/iron-pages.html">
+
+<body>
+
+  <template is="dom-bind">
+    <carbon-location use-hash-as-path route="{{route}}"></carbon-location>
+    <carbon-route route="{{route}}" pattern="/:selected_project" data="{{data}}" tail="{{tail}}"></carbon-route>
+
+    <paper-tabs selected='{{data.selected_project}}' attr-for-selected="name">
+      <paper-tab name='foo'>Foo</paper-tab>
+      <paper-tab name='bar'>Bar</paper-tab>
+      <paper-tab name='baz'>Baz!</paper-tab>
+    </paper-tabs>
+
+    <script>
+      window.addEventListener('WebComponentsReady', function(e) {
+        if (window.location.hash == "" || window.location.hash == "#") {
+          window.location.hash = "#/";
+        }
+      });
+    </script>
+  </template>
+</body>
