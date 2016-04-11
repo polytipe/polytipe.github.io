@@ -30,13 +30,20 @@
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
   <!-- Web Components -->
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-  <!-- TODO: Load webcomponents-lite only on Firefox. On Chrome load webcomponents.js -->
   <script src="is.min.js"></script>
+  <script>
+    var magic = document.createElement('script');
+    if (is.chrome()) {
+      magic.setAttribute("src", "bower_components/webcomponentsjs/webcomponents.js");
+    }else{
+      magic.setAttribute("src", "bower_components/webcomponentsjs/webcomponents-lite.js");
+    }
+    document.getElementsByTagName("head")[0].appendChild(magic);
+  </script>
+  <!-- <script src="bower_components/webcomponentsjs/webcomponents.js"></script> -->
+  <!-- TODO: Load webcomponents-lite only on Firefox. On Chrome load webcomponents.js -->
   <script src="github.js"></script>
   <script src="github.bundle.min.js"></script>
-
-  <script>console.log(is.firefox());</script>
 
   <link rel="import" href="elements.html">
   <link rel="import" href="styles.html">
