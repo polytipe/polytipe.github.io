@@ -31,8 +31,11 @@
 
   <!-- Web Components -->
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="is.min.js"></script>
   <script src="github.js"></script>
   <script src="github.bundle.min.js"></script>
+
+  <script>console.log(is.firefox());</script>
 
   <link rel="import" href="elements.html">
   <link rel="import" href="styles.html">
@@ -108,24 +111,20 @@
                 </div>
               </div>
             </div>
-
             <iron-ajax auto url="{{project_url}}" method="POST" body="{{ajax_body}}"></iron-ajax>
-
-            <paper-dialog id="add_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-              <h2>Crear proyecto</h2>
-              <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
-              <div class="buttons">
-                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
-              </div>
-            </paper-dialog>
           </section>
 
           <section id="project_view">
             <paper-toolbar class="screen_view_toolbar">
-              <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('user_view')"></paper-icon-button>
+              <paper-icon-button class="back_icon" icon="arrow-back" onclick="promptLeaveProject()"></paper-icon-button>
               <div class="flex paper-font-title">{{selected_project}}</div>
               <span class="flex"></span>
+              <template is="dom-if" if="{{unsaved_changes}}">
+                <div style="display:inline-block">
+                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
+                  <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
+                </div>
+              </template>
               <paper-icon-button class="delete_icon" icon="delete" title="Eliminar proyecto" onclick="promptDeleteProject()"></paper-icon-button>
             </paper-toolbar>
 
@@ -151,26 +150,6 @@
                 </div>
               </div>
             </div>
-            <paper-dialog id="delete_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-              <h2>Eliminar proyecto</h2>
-              <p>
-                ¿Estás seguro de que deseas eliminar el proyecto
-                <strong>{{user}}/{{selected_project}}</strong>?
-              </p>
-              <div class="buttons">
-                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button class="red_button" onclick="deleteProject()" noink autofocus>Eliminar</paper-button>
-              </div>
-            </paper-dialog>
-
-            <paper-dialog id="add_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-              <h2>Crear pantalla</h2>
-              <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
-              <div class="buttons">
-                <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-                <paper-button class="accept_button" noink onclick="createScreen()" autofocus>Crear</paper-button>
-              </div>
-            </paper-dialog>
           </section>
 
           <section id="screen_editor">
@@ -180,7 +159,7 @@
                   <iron-icon class="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
                 </paper-toolbar>
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
-                  <paper-tabs attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
+                  <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
                     <paper-tab name="elements_view">Elementos</paper-tab>
                     <paper-tab name="tree_view">Tree</paper-tab>
                   </paper-tabs>
@@ -202,7 +181,7 @@
                 </paper-scroll-header-panel>
 
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
-                  <paper-tabs attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
+                  <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
                     <paper-tab name="editor_properties">Propiedades</paper-tab>
                     <paper-tab name="editor_styles">Estilos</paper-tab>
                   </paper-tabs>
@@ -246,6 +225,12 @@
                   <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <div class="flex paper-font-title">{{selected_screen}}</div>
                   <span class="flex"></span>
+                  <template is="dom-if" if="{{unsaved_changes}}">
+                    <div style="display:inline-block">
+                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
+                      <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
+                    </div>
+                  </template>
                   <paper-icon-button class="delete_icon" icon="delete" title="Eliminar pantalla" onclick="promptDeleteScreen()"></paper-icon-button>
                   <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                 </paper-toolbar>
@@ -253,44 +238,96 @@
                 <div id="app_container" class="layout horizontal center-center">
                   <iframe id="app_iframe"></iframe>
                 </div>
-
-                <paper-dialog id="delete_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-                  <h2>Eliminar pantalla</h2>
-                  <p>
-                    ¿Estás seguro de que deseas eliminar la pantalla
-                    <strong>{{selected_screen}}</strong>?
-                  </p>
-                  <div class="buttons">
-                    <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-                    <paper-button class="red_button" onclick="deleteScreen()" noink autofocus>Eliminar</paper-button>
-                  </div>
-                </paper-dialog>
               </paper-header-panel>
             </paper-drawer-panel>
           </section>
-
         </iron-pages>
       </paper-header-panel>
     </paper-drawer-panel>
+
+    <div class="dialogs">
+      <!-- User view dialogs -->
+      <paper-dialog id="add_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <h2>Crear proyecto</h2>
+        <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
+        </div>
+      </paper-dialog>
+
+      <!-- Project view dialogs -->
+      <paper-dialog id="delete_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <h2>Eliminar proyecto</h2>
+        <p>
+          ¿Estás seguro de que deseas eliminar el proyecto
+          <strong>{{user}}/{{selected_project}}</strong>?
+        </p>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="red_button" onclick="deleteProject()" noink autofocus>Eliminar</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="leave_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <h2>Salir sin guardar</h2>
+        <p>
+          ¿Estás seguro de que deseas salir sin guardar los cambios en el proyecto?
+        </p>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="red_button" onclick="leaveProject()" noink autofocus>Salir</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="add_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <h2>Crear pantalla</h2>
+        <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="accept_button" noink onclick="createScreen()" autofocus>Crear</paper-button>
+        </div>
+      </paper-dialog>
+
+      <!-- Screen editor dialogs -->
+      <paper-dialog id="delete_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <h2>Eliminar pantalla</h2>
+        <p>
+          ¿Estás seguro de que deseas eliminar la pantalla
+          <strong>{{selected_screen}}</strong>?
+        </p>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="red_button" onclick="deleteScreen()" noink autofocus>Eliminar</paper-button>
+        </div>
+      </paper-dialog>
+
+      <!-- Shared dialogs -->
+      <paper-dialog id="save_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Guardar cambios</h2>
+          <paper-spinner id="saving_spinner"></paper-spinner>
+        </div>
+        <paper-input id="save_project_input" label="Mensaje del commit" maxlength="50" char-counter value="{{commit_message}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Guardar</paper-button>
+        </div>
+      </paper-dialog>
+    </div>
+
+    <div class="toasts">
+      <paper-toast id="created_repo_toast" duration="6000" text="El repositorio 'polytipe-projects' fue agregado a Github">
+        <a tabindex="-1" href="https://github.com/{{user}}/polytipe-projects" target="_blank">
+          <paper-button noink>Ver</paper-button>
+        </a>
+      </paper-toast>
+      <paper-toast id="ready_toast" duration="2500" text="Bienvenido a Polytipe"></paper-toast>
+      <paper-toast id="project_taken_toast" duration="3500" text="Ya existe un proyecto con este nombre"></paper-toast>
+      <paper-toast id="screen_taken_toast" duration="3500" text="Ya existe una pantalla con este nombre"></paper-toast>
+      <paper-toast id="sign_in_fail_toast" duration="3000" text="Usuario o token incorrectos"></paper-toast>
+    </div>
   </template>
-
-  <paper-toast id="created_repo_toast" duration="6000">
-    <div class="layout horizontal center">
-      <div>El repositorio "polytipe-projects" fue creado en tu cuenta de Github</div>
-    </div>
-  </paper-toast>
-
-  <paper-toast id="ready_toast" duration="2000">
-    <div class="layout horizontal center">
-      <div>Cargado</div>
-    </div>
-  </paper-toast>
-
-  <paper-toast id="sign_in_fail_toast" duration="3000">
-    <div class="layout horizontal center">
-      <div>Usuario o token incorrectos</div>
-    </div>
-  </paper-toast>
 
   <script src="app.js"></script>
 </body>
