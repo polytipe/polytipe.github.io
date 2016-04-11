@@ -31,6 +31,7 @@
 
   <!-- Web Components -->
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <!-- TODO: Load webcomponents-lite only on Firefox. On Chrome load webcomponents.js -->
   <script src="is.min.js"></script>
   <script src="github.js"></script>
   <script src="github.bundle.min.js"></script>
@@ -120,7 +121,7 @@
               <div class="flex paper-font-title">{{selected_project}}</div>
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
-                <div style="display:inline-block">
+                <div class="layout horizontal center">
                   <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
                   <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
                 </div>
@@ -226,7 +227,7 @@
                   <div class="flex paper-font-title">{{selected_screen}}</div>
                   <span class="flex"></span>
                   <template is="dom-if" if="{{unsaved_changes}}">
-                    <div style="display:inline-block">
+                    <div class="layout horizontal center">
                       <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
                       <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
                     </div>

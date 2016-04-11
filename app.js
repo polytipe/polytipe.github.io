@@ -575,26 +575,23 @@ function promptSaveProject() {
 }
 
 //Makes a commit
-//TODO: Remove selected_element class of Iframe section (screen) on save
-function saveProject() { //TODO: Remove outlined_element class of poly-elements on save
+function saveProject() {
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(user_input, "polytipe-projects");
   if(validate_msg){
     document.getElementById('saving_spinner').active = true;
-    var new_contents = project_base_before + Polymer.dom(iframe_app_content).innerHTML + project_base_after;
-    repo.write(
-      app.selected_project,
-      'index.html',
-      new_contents,
-      app.commit_message,
-      function(err) {
+    var merged_html = project_base_before + Polymer.dom(iframe_app_content).innerHTML + project_base_after;
+    //Remove selected_element and outlined_element class on save
+    //TODO: Fix element class duplicates "x-scope poly-fab-0"
+    var no_iron_selected = merged_html.replace(/iron-selected/g, "");
+    var new_contents = no_iron_selected.replace(/outlined_element/g, "");
+    repo.write(app.selected_project, 'index.html', new_contents, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
         dialog.close();
         document.getElementById('saving_spinner').active = false;
         app.commit_message = "";
         app.unsaved_changes = false;
-      }
-    );
+    });
   }
 }
 
@@ -631,7 +628,7 @@ function leaveProject() {
   goto('user_view');
 }
 
-//For debugging only TODO: remove later
+//TODO: Add it as a dropdown option when user is clicked in user_view
 function deleteRepo(){
   var naRepo = github.getRepo(user_input, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {});
