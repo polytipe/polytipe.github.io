@@ -27,11 +27,13 @@
       properties:{
         text:{
           type: String,
-          value: "Ítem"
+          value: "Ítem",
+          reflectToAttribute: true
         },
         checked:{
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         }
       },
       ready: function () {

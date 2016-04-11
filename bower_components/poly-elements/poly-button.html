@@ -41,16 +41,19 @@
       properties:{
         text:{
           type: String,
-          value: "Botón"
+          value: "Botón",
+          reflectToAttribute: true
         },
         icon:{
           type: String,
           value: "",
-          observer: "_iconChanged"
+          observer: "_iconChanged",
+          reflectToAttribute: true
         },
         raised:{
           type: Boolean,
-          value: true
+          value: true,
+          reflectToAttribute: true
         }
       },
       ready: function () {

@@ -51,19 +51,23 @@
       properties:{
         title:{
           type: String,
-          value: "Título"
+          value: "Título",
+          reflectToAttribute: true
         },
         text:{
           type: String,
-          value: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere voluptas illo inventore debitis et sit molestiae pariatur doloremque dicta."
+          value: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere voluptas illo inventore debitis et sit molestiae pariatur doloremque dicta.",
+          reflectToAttribute: true
         },
         image:{
           type: String,
-          value: "http://placehold.it/350x150/2AB767/33000000"
+          value: "http://placehold.it/350x150/eee/33000000",
+          reflectToAttribute: true
         },
         action_buttons:{
           type: Array,
-          value: [{text: 'Me gusta'}, {text: 'Comentar'}]
+          value: [{text: 'Me gusta'}, {text: 'Comentar'}],
+          reflectToAttribute: true
         }
       },
       ready: function () {

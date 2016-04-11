@@ -28,16 +28,19 @@
       properties:{
         icon:{
           type: String,
-          value: "add"
+          value: "add",
+          reflectToAttribute: true
         },
         mini:{
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         },
         bottom_right:{
           type: Boolean,
           value: false,
-          observer: "_bottom_right_Changed"
+          observer: "_bottom_right_Changed",
+          reflectToAttribute: true
         }
       },
       ready: function () {

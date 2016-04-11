@@ -39,17 +39,21 @@
       properties: {
         tabs:{
           type: Array,
-          value: [{name: 'Tab 1'}, {name: 'Tab 2'}]
+          value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
+          reflectToAttribute: true
         },
         selected_tab: {
           type: Number,
           value: 0,
-          observer: '_selected_tabChange'
+          observer: '_selected_tabChange',
+          reflectToAttribute: true
         }
 
       },
       _selected_tabChange: function() {
-        this.fire("elementSelection");
+        if(this._focused){
+          this.fire("elementSelection");
+        }
       },
       ready: function() {
         this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}]; //Default values when creating multiple elements

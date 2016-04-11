@@ -26,27 +26,33 @@
       properties:{
         layout:{
           type: String,
-          observer: "_layoutChanged"
+          observer: "_layoutChanged",
+          reflectToAttribute: true
         },
         align:{
           type: String,
-          observer: "_alignChanged"
+          observer: "_alignChanged",
+          reflectToAttribute: true
         },
         justify:{
           type: String,
-          observer: "_justifyChanged"
+          observer: "_justifyChanged",
+          reflectToAttribute: true
         },
         flex:{
           type: String,
-          observer: "_flexChanged"
+          observer: "_flexChanged",
+          reflectToAttribute: true
         },
         wrap:{
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         },
         reverse:{
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         }
       },
       ready: function () {

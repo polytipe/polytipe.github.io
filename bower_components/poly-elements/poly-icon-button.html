@@ -24,15 +24,18 @@
       properties:{
         icon:{
           type: String,
-          value: "favorite"
+          value: "favorite",
+          reflectToAttribute: true
         },
         src:{
           type: String,
-          value: ""
+          value: "",
+          reflectToAttribute: true
         },
         disabled:{
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         }
       },
       ready: function () {

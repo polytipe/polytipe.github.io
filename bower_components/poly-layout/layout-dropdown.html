@@ -41,13 +41,16 @@
       is: 'layout-dropdown',
       properties:{
         label:{
-          type: String
+          type: String,
+          reflectToAttribute: true
         },
         items:{
-          type: Array
+          type: Array,
+          reflectToAttribute: true
         },
         value:{
-          type: String
+          type: String,
+          reflectToAttribute: true
         }
       },
       ready: function () {

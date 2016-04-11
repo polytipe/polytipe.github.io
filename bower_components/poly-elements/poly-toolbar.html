@@ -44,20 +44,24 @@
       properties:{
         text:{
           type: String,
-          value: "Aplicación"
+          value: "Aplicación",
+          reflectToAttribute: true
         },
         icon:{
           type: String,
           value: "menu",
-          observer: "_iconChanged"
+          observer: "_iconChanged",
+          reflectToAttribute: true
         },
         extra_icons:{
           type: Array,
-          value: [{icon: 'refresh'}, {icon: 'search'}]
+          value: [{icon: 'refresh'}, {icon: 'search'}],
+          reflectToAttribute: true
         },
         toggles_drawer:{
           type: Boolean,
-          value: true
+          value: true,
+          reflectToAttribute: true
         }
       },
       ready: function() {
