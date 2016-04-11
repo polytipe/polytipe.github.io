@@ -288,10 +288,13 @@ function propertyChanged() {
   } else if (element_properties[this.id].type.name == 'String') {
     selected_element[this.id] = this.value;
   }
+
+  app.unsaved_changes = true; //If changes are made, show the save_button
 }
 
 function styleChanged() {
   selected_element.updateStyles(this.label, this.value);
+  app.unsaved_changes = true; //If changes are made, show the save_button
 }
 
 function arrayChanged() {
@@ -301,8 +304,11 @@ function arrayChanged() {
   if (this.icon == "remove") {
     selected_element.removeElement();
   }
+
+  app.unsaved_changes = true; //If changes are made, show the save_button
 }
 
+//TODO: Get element_count at first and update this number from remote
 var element_count = 0;
 
 function makeElement(element_name) {
@@ -317,12 +323,14 @@ function makeElement(element_name) {
       screen_target.appendChild(element);
     }
     update_tree();
+    app.unsaved_changes = true; //If changes are made, show the save_button
   }
 }
 
 function deleteElement(e) {
   selected_element.remove();
   update_tree();
+  app.unsaved_changes = true; //If changes are made, show the save_button
   unfocus(e);
   setTimeout(function(){
     document.getElementById("app_folder").highlightFolder();
@@ -427,6 +435,11 @@ window.addEventListener('WebComponentsReady', function(e) {
   //Focus user input
   document.getElementById('sign_in_user').focus();
 
+  //Display ready toast
+  document.getElementById('created_repo_toast').addEventListener("iron-overlay-closed", function () {
+    document.getElementById("ready_toast").open();
+  });
+
   //Add project selection listener
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
@@ -436,7 +449,14 @@ window.addEventListener('WebComponentsReady', function(e) {
     editScreen();
   });
 
-  validate_user();
+  //validate_user();
+
+  var repo = github.getRepo("polytipe", "polytipe-projects");
+  repo.read("master", 'index.html', function(err, data) {
+    split_delimiter = '</iron-pages>';
+    project_base_before = data.split(split_delimiter)[0];
+    project_base_after = split_delimiter + data.split(split_delimiter)[1];
+  });
 });
 
 //Checks if credentials are correct and signs in
@@ -461,21 +481,21 @@ function fork_polytipe_repo() {
   document.getElementById("new_project_fab").style.display = "none";
   document.getElementById("loading_projects_box").style.display = "flex";
   document.getElementById("loading_projects_text").style.display = "none";
-  var hasProjects = false;
-  user.repos(function(err, repos) {
-    for (var i = 0; i < repos.length; i++) {
-      if(repos[i]["full_name"] == user_input + "/polytipe-projects"){
-        hasProjects = true;
-      }
-    }
-    if(!hasProjects){
+  //var hasProjects = false;
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.show(function(err, repo) {
+    if(err != null){
       var baseRepo = github.getRepo("polytipe", "polytipe-projects");
       baseRepo.fork(function(err,res) {
         document.getElementById("created_repo_toast").open();
+        app.user_projects = [];
       });
     }else{
       getProjects();
+      document.getElementById("ready_toast").text = "Estamos listos";
+      document.getElementById("ready_toast").open();
     }
+
     document.getElementById("new_project_fab").style.display = "flex";
     document.getElementById("loading_projects_box").style.display = "none";
     document.getElementById("loading_projects_text").style.display = "flex";
@@ -489,6 +509,13 @@ function createProject() {
   if(!validate_project){
     return;
   }
+  //Check that the project doesn't exist first
+  for (var i=0; i < app.user_projects.length; i++) {
+    if(app.project_name == app.user_projects[i]["name"]){
+      document.getElementById('project_taken_toast').open();
+      return;
+    }
+  }
   document.getElementById("new_project_fab").style.display = "none";
   document.getElementById("loading_projects_box").style.display = "flex";
   var repo = github.getRepo(user_input, "polytipe-projects");
@@ -496,12 +523,14 @@ function createProject() {
     getProjects();
     document.getElementById("new_project_fab").style.display = "flex";
     document.getElementById("loading_projects_box").style.display = "none";
-  });
-  var dialog = document.getElementById("add_project_dialog");
-  dialog.close();
 
-  app.project_name = "";
+    var dialog = document.getElementById("add_project_dialog");
+    dialog.close();
+
+    app.project_name = "";
+  });
 }
+
 //Adds polytipe projects to the user_view
 function getProjects() {
   var repo = github.getRepo(user_input, "polytipe-projects");
@@ -515,10 +544,65 @@ function getProjects() {
     app.user_projects = user_projects;
   });
 }
+
+//Gets elapsed time since last commit
+function getLastSaved() {
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  var options = {
+     sha: app.selected_project
+  };
+  repo.getCommits(options, function(err, commits, xhr) {
+    app.last_saved = timeAgo(Date.parse(commits[0].commit.author.date));
+    var tooltips = document.getElementsByClassName('last_saved_tooltip');
+    for (var i = 0; i < tooltips.length; i++) {
+      tooltips[i].show();
+    }
+  });
+}
+
+//Closes tooltip
+function closeLastSaved() {
+  var tooltips = document.getElementsByClassName('last_saved_tooltip');
+  for (var i = 0; i < tooltips.length; i++) {
+    tooltips[i].hide();
+  }
+}
+
+//Opens the save dialog
+function promptSaveProject() {
+  var dialog = document.getElementById("save_project_dialog");
+  dialog.open();
+}
+
+//Makes a commit
+//TODO: Remove selected_element class of Iframe section (screen) on save
+function saveProject() { //TODO: Remove outlined_element class of poly-elements on save
+  var validate_msg = document.getElementById('save_project_input').validate();
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  if(validate_msg){
+    document.getElementById('saving_spinner').active = true;
+    var new_contents = project_base_before + Polymer.dom(iframe_app_content).innerHTML + project_base_after;
+    repo.write(
+      app.selected_project,
+      'index.html',
+      new_contents,
+      app.commit_message,
+      function(err) {
+        var dialog = document.getElementById("save_project_dialog");
+        dialog.close();
+        document.getElementById('saving_spinner').active = false;
+        app.commit_message = "";
+        app.unsaved_changes = false;
+      }
+    );
+  }
+}
+
 function promptDeleteProject() {
   var dialog = document.getElementById("delete_project_dialog");
   dialog.open();
 }
+
 function deleteProject(){
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.deleteRef('heads/'+app.selected_project, function(err) {
@@ -532,7 +616,22 @@ function deleteProject(){
   });
 }
 
+function promptLeaveProject() {
+  if(app.unsaved_changes){
+    var dialog = document.getElementById("leave_project_dialog");
+    dialog.open();
+  }else{
+    goto('user_view');
+  }
+}
 
+function leaveProject() {
+  var dialog = document.getElementById("leave_project_dialog");
+  dialog.close();
+  goto('user_view');
+}
+
+//For debugging only TODO: remove later
 function deleteRepo(){
   var naRepo = github.getRepo(user_input, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {});
@@ -541,19 +640,24 @@ function deleteRepo(){
 /* Screen actions */
 
 function createScreen() {
-  //TODO: Check that the screen doesn't exist first
   var validate_screen = document.getElementById('add_screen_input').validate();
   if(!validate_screen){
     return;
   }
+  //Check that the screen doesn't exist first
+  for (var i=0; i < app.project_screens.length; i++) {
+    if(app.screen_name == app.project_screens[i]["name"]){
+      document.getElementById('screen_taken_toast').open();
+      return;
+    }
+  }
+
  var section = iframe_document.createElement("section");
  section.id = app.screen_name;
-
  Polymer.dom(iframe_app_content).appendChild(section);
- iframe_app_content.appendChild(section);
-
  displayScreens();
 
+ app.unsaved_changes = true; //If changes are made, show the save_button
  app.screen_name = "";
  var dialog = document.getElementById("add_screen_dialog");
  dialog.close();
@@ -567,22 +671,22 @@ function getScreens() {
     iframe_document.write(data);
     iframe_document.close();
 
+     //TODO: Find a way to get the WebComponentsReady listener from the Iframe
+     //      and avoid doing this (maybe a Polymer.dom() thingy could work)
     setTimeout(function(){ //Wait until elements load
       iframe_app_content = iframe_document.getElementById("app_content");
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
       if (iframe_app_content.children.length > 0) { //If there are screens on the remote
         displayScreens();
-      }else{
-        displayScreens();
       }
       iframeReady = true;
       iframe_ready();
-    },100);
+    },200);
   });
 }
 function displayScreens() {
-  var screens = iframe_app_content.children;
+  var screens = Polymer.dom(iframe_app_content).children;
   var project_screens = [];
   for (var i=0; i < screens.length; i++) {
     project_screens.push({"name": screens[i].id});
@@ -607,12 +711,31 @@ function deleteScreen() {
   dialog.close();
 
   update_tree();
+  app.unsaved_changes = true; //If changes are made, show the save_button
   app.selected_screen = "";
   goto('project_view');
   displayScreens();
 }
 
+//Function for displaying elapsed time since last commit
+function timeAgo(time){
+  var units = [
+    { name: "segundo", limit: 60, in_seconds: 1 },
+    { name: "minuto", limit: 3600, in_seconds: 60 },
+    { name: "hora", limit: 86400, in_seconds: 3600  },
+    { name: "día", limit: 604800, in_seconds: 86400 },
+    { name: "semana", limit: 2629743, in_seconds: 604800  },
+    { name: "mes", limit: 31556926, in_seconds: 2629743 },
+    { name: "año", limit: null, in_seconds: 31556926 }
+  ];
+  var diff = (new Date() - new Date(time)) / 1000;
+  if (diff < 5) return "ahora";
 
-if (window.location.hash == "" || window.location.hash == "#") {
-  window.location.hash = "#/";
+  var i = 0, unit;
+  while (unit = units[i++]) {
+    if (diff < unit.limit || !unit.limit){
+      var diff =  Math.floor(diff / unit.in_seconds);
+      return "hace " + diff + " " + unit.name + (diff>1 ? "s" : "");
+    }
+  };
 }
