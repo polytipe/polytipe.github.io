@@ -186,11 +186,24 @@ function iframe_ready() {
     bgPicker.color = selected_element["background"];
     colorPicker.color = selected_element["color"];
   });
+
   //Add event listener when styles are changed
   var style_inputs = document.getElementById('styles_list').querySelectorAll('paper-input');
   for (var i = 0; i < style_inputs.length; i++) {
     style_inputs[i].addEventListener("change", styleChanged);
   }
+
+  //Add event listener when paper-swatch-picker is selected
+  bgPicker.addEventListener('iron-select', function () {
+    style_inputs[4].value = bgPicker.color;
+    selected_element.updateStyles("background", bgPicker.color);
+    app.unsaved_changes = true; //If changes are made, show the save_button
+  });
+  colorPicker.addEventListener('iron-select', function () {
+    style_inputs[5].value = colorPicker.color;
+    selected_element.updateStyles("color", colorPicker.color);
+    app.unsaved_changes = true; //If changes are made, show the save_button
+  });
 }
 
 function unfocus(e) {
@@ -319,6 +332,9 @@ function makeElement(element_name) {
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
       selected_element.appendChild(element);
+      if(element.tagName == "POLY-LAYOUT"){ //When creating poly-layout inside another one set height auto
+        element.style.height = selected_element.style.height;
+      }
     }else{ //If no poly-layout element is selected add it to the selected screen
       screen_target.appendChild(element);
     }
@@ -553,19 +569,7 @@ function getLastSaved() {
   };
   repo.getCommits(options, function(err, commits, xhr) {
     app.last_saved = timeAgo(Date.parse(commits[0].commit.author.date));
-    var tooltips = document.getElementsByClassName('last_saved_tooltip');
-    for (var i = 0; i < tooltips.length; i++) {
-      tooltips[i].show();
-    }
   });
-}
-
-//Closes tooltip
-function closeLastSaved() {
-  var tooltips = document.getElementsByClassName('last_saved_tooltip');
-  for (var i = 0; i < tooltips.length; i++) {
-    tooltips[i].hide();
-  }
 }
 
 //Opens the save dialog

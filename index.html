@@ -129,8 +129,8 @@
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div class="layout horizontal center">
-                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
-                  <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
+                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                  <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
                 </div>
               </template>
               <paper-icon-button class="delete_icon" icon="delete" title="Eliminar proyecto" onclick="promptDeleteProject()"></paper-icon-button>
@@ -179,6 +179,7 @@
                         <polytipe-item icon="check-box" onclick="makeElement('poly-checkbox')">Checkbox</polytipe-item>
                         <polytipe-item icon="add-circle" onclick="makeElement('poly-fab')">Floating Action Button</polytipe-item>
                         <polytipe-item icon="star" onclick="makeElement('poly-icon-button')">Icon</polytipe-item>
+                        <polytipe-item icon="editor:format-color-text" onclick="makeElement('poly-label')">Label</polytipe-item>
                         <polytipe-item icon="dashboard" onclick="makeElement('poly-layout')">Layout</polytipe-item>
                         <polytipe-item icon="tab" onclick="makeElement('poly-tabs')">Tabs</polytipe-item>
                         <polytipe-item icon="av:web-asset" onclick="makeElement('poly-toolbar')">Toolbar</polytipe-item>
@@ -235,8 +236,8 @@
                   <span class="flex"></span>
                   <template is="dom-if" if="{{unsaved_changes}}">
                     <div class="layout horizontal center">
-                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()" onmouseout="closeLastSaved()">Tienes cambios sin guardar</paper-button>
-                      <paper-tooltip class="last_saved_tooltip" manual-mode offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
+                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                      <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue {{last_saved}}</paper-tooltip>
                     </div>
                   </template>
                   <paper-icon-button class="delete_icon" icon="delete" title="Eliminar pantalla" onclick="promptDeleteScreen()"></paper-icon-button>
