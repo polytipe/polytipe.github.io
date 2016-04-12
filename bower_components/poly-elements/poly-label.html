@@ -1,0 +1,104 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+
+<dom-module id="poly-label">
+
+  <style>
+    :host {
+      display: inline-block;
+      cursor: pointer;
+    }
+    div{
+      display: inline-block;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    /*Default typography styles*/
+    .paper-font-display4 {@apply(--paper-font-display4);}
+    .paper-font-display3 {@apply(--paper-font-display3);}
+    .paper-font-display2 {@apply(--paper-font-display2);}
+    .paper-font-display1 {@apply(--paper-font-display1);}
+    .paper-font-headline {@apply(--paper-font-headline);}
+    .paper-font-title {@apply(--paper-font-title);}
+    .paper-font-subhead {@apply(--paper-font-subhead);}
+    .paper-font-body2 {@apply(--paper-font-body1);}
+    .paper-font-body1 {@apply(--paper-font-body1);}
+    .paper-font-caption {@apply(--paper-font-caption);}
+    .paper-font-menu {@apply(--paper-font-menu);}
+    .paper-font-button {@apply(--paper-font-button);}
+  </style>
+
+  <template>
+    <div id="label" class="{{class}}">
+      {{text}}
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-label',
+      listeners: {
+        'tap': 'focus'
+      },
+      properties:{
+        text:{
+          type: String,
+          value: "Texto",
+          reflectToAttribute: true
+        },
+        class:{
+          type: String,
+          value: "paper-font-body1",
+          reflectToAttribute: true
+        }
+      },
+      ready: function () {
+        this._focused = false;
+      },
+      focus: function(event) {
+        this.getStyles();
+        if(!this.focused){
+          this.fire("elementSelection");
+          this.toggleClass('outlined_element', true);
+          event.stopPropagation();
+        }
+        this._focused = true;
+      },
+      unfocus: function() {
+        this.toggleClass('outlined_element', false);
+        this._focused = false;
+      },
+
+
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.label)["width"];
+        this.height = getComputedStyle(this.$.label)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.label)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.label)["color"]);;
+        this.display = getComputedStyle(this.$.label)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.label)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.label)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      },
+      updateStyles: function (property, value) {
+        this.$.label.style[property] = value;
+      }
+    });
+  </script>
+</dom-module>
