@@ -30,24 +30,12 @@
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
   <!-- Web Components -->
-  <script src="is.min.js"></script>
-  <script>
-    var magic = document.createElement('script');
-    if (is.chrome()) {
-      magic.setAttribute("src", "bower_components/webcomponentsjs/webcomponents.js");
-    }else{
-      magic.setAttribute("src", "bower_components/webcomponentsjs/webcomponents-lite.js");
-    }
-    document.getElementsByTagName("head")[0].appendChild(magic);
-  </script>
-  <!-- <script src="bower_components/webcomponentsjs/webcomponents.js"></script> -->
-  <!-- TODO: Load webcomponents-lite only on Firefox. On Chrome load webcomponents.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <script src="github.js"></script>
   <script src="github.bundle.min.js"></script>
 
   <link rel="import" href="elements.html">
   <link rel="import" href="styles.html">
-  <style is="custom-style" include="styles"></style>
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
 </head>
 
