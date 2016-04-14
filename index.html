@@ -186,9 +186,6 @@
           <section id="screen_editor">
             <paper-drawer-panel right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
               <paper-scroll-header-panel drawer id="sidebar_frame">
-                <paper-toolbar class="sidebar_polytipe_toolbar">
-                  <iron-icon class="sidebar_polytipe_logo" icon="polytipe-icons:logo"></iron-icon>
-                </paper-toolbar>
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
                     <paper-tab name="elements_view">Elementos</paper-tab>
@@ -276,6 +273,8 @@
     </paper-drawer-panel>
 
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
+    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s" target="[[polytipe_target]]"></iron-a11y-keys>
+    <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
 
     <div class="dialogs">
       <!-- User view dialogs -->

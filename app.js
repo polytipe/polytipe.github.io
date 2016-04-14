@@ -458,12 +458,14 @@ window.addEventListener('WebComponentsReady', function(e) {
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
   });
+
   //Add screen selection listener
   document.getElementById('screen_selector').addEventListener('iron-select', function () {
     if(iframeReady){
       editScreen();
     }
   });
+
 
   //validate_user();
 
@@ -472,6 +474,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     split_delimiter = '</iron-pages>';
     project_base_before = data.split(split_delimiter)[0];
     project_base_after = split_delimiter + data.split(split_delimiter)[1];
+  });
+
+  //Target for iron-a11y-keys
+  app.polytipe_target = document.body;
+  document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
+    polytipeKeyPressed(e);
   });
 });
 
@@ -699,6 +707,11 @@ function getScreens() {
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
       displayScreens();
+
+      app.iframe_target = iframe_document.body;
+      document.getElementById('iframe_keys').addEventListener('keys-pressed', function (e) {
+        iframeKeyPressed(e);
+      });
     });
 
   });
@@ -762,4 +775,21 @@ function timeAgo(time){
       return diff + " " + unit.name + (diff>1 ? "s" : "");
     }
   };
+}
+
+function polytipeKeyPressed(e) {
+  e.detail.keyboardEvent.preventDefault();
+  if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
+    if(app.unsaved_changes){
+      promptSaveProject();
+    }
+  }
+}
+function iframeKeyPressed(e) {
+  e.detail.keyboardEvent.preventDefault();
+  if(app.polytipe_section == "screen_editor"){
+    if(selected_element.tagName.startsWith("POLY-")){
+      deleteElement(e);
+    }
+  }
 }
