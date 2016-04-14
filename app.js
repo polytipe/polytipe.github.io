@@ -8,6 +8,9 @@ var element_properties;
 var iframeReady = false;
 
 function iframe_ready() {
+  iframeReady = true;
+  iframe_app_content.selected = app.selected_screen;
+  screen_target = iframe_document.getElementById(app.selected_screen);
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
     unfocus(e);
@@ -451,18 +454,15 @@ window.addEventListener('WebComponentsReady', function(e) {
   //Focus user input
   document.getElementById('sign_in_user').focus();
 
-  //Display ready toast
-  document.getElementById('created_repo_toast').addEventListener("iron-overlay-closed", function () {
-    document.getElementById("ready_toast").open();
-  });
-
   //Add project selection listener
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
   });
   //Add screen selection listener
   document.getElementById('screen_selector').addEventListener('iron-select', function () {
-    editScreen();
+    if(iframeReady){
+      editScreen();
+    }
   });
 
   //validate_user();
@@ -482,6 +482,7 @@ function validate_user() {
     if(err == null){ //If no errors, advance to the next screen
       user.show(null, function(err, user) {
         app.avatar = user["avatar_url"];
+        app.name = user["name"];
       });
       app.user = user_input;
       app.polytipe_section = "user_view";
@@ -494,27 +495,27 @@ function validate_user() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function fork_polytipe_repo() {
-  document.getElementById("new_project_fab").style.display = "none";
-  document.getElementById("loading_projects_box").style.display = "flex";
-  document.getElementById("loading_projects_text").style.display = "none";
-  //var hasProjects = false;
-  var repo = github.getRepo(user_input, "polytipe-projects");
-  repo.show(function(err, repo) {
-    if(err != null){
+  document.getElementById("loading_project_box").style.display = "flex";
+  var hasProjects = false;
+  user.userRepos(app.user, function(err, repos) {
+    for (var i = 0; i < repos.length; i++) {
+      if(repos[i].name=="polytipe-projects"){
+        hasProjects = true;
+      }
+    }
+    if(!hasProjects){
       var baseRepo = github.getRepo("polytipe", "polytipe-projects");
       baseRepo.fork(function(err,res) {
-        document.getElementById("created_repo_toast").open();
         app.user_projects = [];
+        document.getElementById("created_repo_toast").open();
+        document.getElementById("loading_project_box").style.display = "none";
+        document.getElementById("empty_state_project").style.display = "flex";
       });
     }else{
-      getProjects();
-      document.getElementById("ready_toast").text = "Estamos listos";
-      document.getElementById("ready_toast").open();
+      getProjects(function () {
+        document.getElementById("loading_project_box").style.display = "none";
+      });
     }
-
-    document.getElementById("new_project_fab").style.display = "flex";
-    document.getElementById("loading_projects_box").style.display = "none";
-    document.getElementById("loading_projects_text").style.display = "flex";
   });
 }
 
@@ -532,23 +533,22 @@ function createProject() {
       return;
     }
   }
-  document.getElementById("new_project_fab").style.display = "none";
-  document.getElementById("loading_projects_box").style.display = "flex";
+  document.getElementById("creating_spinner").active = true;
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.branch(app.project_name, function(err) {
-    getProjects();
-    document.getElementById("new_project_fab").style.display = "flex";
-    document.getElementById("loading_projects_box").style.display = "none";
+    getProjects(function () {
+      document.getElementById("creating_spinner").active = false;
 
-    var dialog = document.getElementById("add_project_dialog");
-    dialog.close();
+      var dialog = document.getElementById("add_project_dialog");
+      dialog.close();
 
-    app.project_name = "";
+      app.project_name = "";
+    });
   });
 }
 
 //Adds polytipe projects to the user_view
-function getProjects() {
+function getProjects(callback) {
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.listBranches(function(err, branches) {
     var user_projects = [];
@@ -558,6 +558,12 @@ function getProjects() {
       }
     }
     app.user_projects = user_projects;
+    if(app.user_projects.length > 0){
+      document.getElementById("empty_state_project").style.display = "none";
+    }else{
+      document.getElementById("empty_state_project").style.display = "flex";
+    }
+    callback();
   });
 }
 
@@ -608,12 +614,13 @@ function deleteProject(){
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.deleteRef('heads/'+app.selected_project, function(err) {
 
+    document.getElementById('app_container').removeChild(frame);
+    app.selected_project = "";
+
     var dialog = document.getElementById("delete_project_dialog");
     dialog.close();
-
-    app.selected_project = "";
     goto('user_view');
-    getProjects();
+    getProjects(function () {});
   });
 }
 
@@ -622,11 +629,17 @@ function promptLeaveProject() {
     var dialog = document.getElementById("leave_project_dialog");
     dialog.open();
   }else{
-    goto('user_view');
+    leaveProject();
   }
 }
 
 function leaveProject() {
+  app.unsaved_changes = false; //If changes are made, show the save_button
+  //Reset selected project so iron-select triggers if you select the same project
+  document.getElementById('project_selector').selected = "";
+  document.getElementById('app_container').removeChild(frame);
+  iframeReady = false;
+
   var dialog = document.getElementById("leave_project_dialog");
   dialog.close();
   goto('user_view');
@@ -653,37 +666,41 @@ function createScreen() {
     }
   }
 
- var section = iframe_document.createElement("section");
- section.id = app.screen_name;
- Polymer.dom(iframe_app_content).appendChild(section);
- displayScreens();
+  var section = iframe_document.createElement("section");
+  section.id = app.screen_name;
+  Polymer.dom(iframe_app_content).appendChild(section);
+  displayScreens();
 
- app.unsaved_changes = true; //If changes are made, show the save_button
- app.screen_name = "";
- var dialog = document.getElementById("add_screen_dialog");
- dialog.close();
+  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.screen_name = "";
+  var dialog = document.getElementById("add_screen_dialog");
+  dialog.close();
 }
+
+//TODO: Change single quote ' for double quotes " on array properties from poly-elements
+
 function getScreens() {
+  document.getElementById('empty_state_screen').style.display = "none";
+  document.getElementById('screen_placeholder').style.display = "flex";
   app.project_screens = [];
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.read(app.selected_project, 'index.html', function(err, data) {
-    iframe_document = document.getElementById("app_iframe").contentDocument;
+    frame = document.createElement("iframe");
+    frame.id = "app_iframe";
+    document.getElementById('app_container').appendChild(frame);
+    iframe_document = frame.contentDocument || frame.contentWindow.document;
+
     iframe_document.open();
     iframe_document.write(data);
     iframe_document.close();
 
-     //TODO: Find a way to get the WebComponentsReady listener from the Iframe
-     //      and avoid doing this (maybe a Polymer.dom() thingy could work)
-    setTimeout(function(){ //Wait until elements load
+    document.getElementById('app_iframe').addEventListener("load", function() {
       iframe_app_content = iframe_document.getElementById("app_content");
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
-      if (iframe_app_content.children.length > 0) { //If there are screens on the remote
-        displayScreens();
-      }
-      iframeReady = true;
-      iframe_ready();
-    },200);
+      displayScreens();
+    });
+
   });
 }
 function displayScreens() {
@@ -693,6 +710,13 @@ function displayScreens() {
     project_screens.push({"name": screens[i].id});
   }
   app.project_screens = project_screens;
+
+  document.getElementById('screen_placeholder').style.display = "none";
+  if(app.project_screens.length > 0){
+    document.getElementById('empty_state_screen').style.display = "none";
+  }else{
+    document.getElementById('empty_state_screen').style.display = "flex";
+  }
 }
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
@@ -705,7 +729,7 @@ function promptDeleteScreen() {
 }
 function deleteScreen() {
   var section = iframe_document.getElementById(app.selected_screen);
-  Polymer.dom(iframe_app_content).removeChild(section)
+  Polymer.dom(iframe_app_content).removeChild(section);
   section.remove();
 
   var dialog = document.getElementById("delete_screen_dialog");
@@ -730,13 +754,12 @@ function timeAgo(time){
     { name: "año", limit: null, in_seconds: 31556926 }
   ];
   var diff = (new Date() - new Date(time)) / 1000;
-  if (diff < 5) return "ahora";
 
   var i = 0, unit;
   while (unit = units[i++]) {
     if (diff < unit.limit || !unit.limit){
       var diff =  Math.floor(diff / unit.in_seconds);
-      return "hace " + diff + " " + unit.name + (diff>1 ? "s" : "");
+      return diff + " " + unit.name + (diff>1 ? "s" : "");
     }
   };
 }

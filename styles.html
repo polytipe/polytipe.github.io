@@ -175,6 +175,10 @@
   paper-icon-button{
     --paper-icon-button-ink-color: rgba(255, 255, 255, 0.4);
   }
+  .commit_spinner{
+    width: 17px;
+    height: 17px;
+  }
 
   /*Element actions*/
 
@@ -247,6 +251,41 @@
     }
   }
 
+  iron-selector[wide-layout]{
+    @apply(--layout-horizontal);
+    @apply(--layout-wrap);
+  }
+  iron-selector:not([wide-layout]){
+    @apply(--layout-horizontal);
+    @apply(--layout-around-justified);
+  }
+
+  /* Drawer toolbar */
+  #drawer_toolbar{
+    height: 112px;
+    padding: 0 20px;
+  }
+  #avatar{
+    --iron-image-width: 60px;
+    --iron-image-height: 60px;
+    border-radius: 50%;
+  }
+  #toolbar_text{
+    margin-left: 15px;
+    color: white;
+  }
+  #toolbar_name{
+    font-size: 18px;
+  }
+  .element_icon{
+    margin-right: 20px;
+  }
+  #sign_out_button{
+    position: absolute;
+    bottom: 20px;
+    margin-left: 5px;
+  }
+
   /* Sign in screen */
 
   #sign_in_left{
@@ -291,56 +330,72 @@
 
   /* User view */
 
-  #ready_toast{
-    --paper-toast-background-color: var(--polytipe-accent-color);
+  #empty_state_project{
+    background-color: var(--app-bg-color);
+    display: none;
   }
-
-  #user_box{
-    margin-right: 20px;
+  .empty_state_icon{
+    color: rgba(0, 0, 0, 0.2);
+    width: 75px;
+    height: 75px;
+    margin: 20px 0px;
   }
-  #avatar{
-    margin-left: 10px;
+  .empty_state_description{
+    margin: 0px 5px 0px 5px;
+    color: rgba(0, 0, 0, 0.7);
+    word-wrap: break-word;
+  }
+  .empty_state_description div:first-child{
+    font-size: 18px;
+  }
+  .empty_state_description div:last-child{
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .empty_state_arrow{
+    @apply(--shadow-none);
+    color: rgba(0, 0, 0, 0.7);
+    width: 26px;
+    height: 26px;
   }
   .project_box{
-    width: 250px;
-    height: 250px;
+    min-width: 250px;
+    min-height: 250px;
+    max-width: 250px;
+    max-height: 250px;
     margin: 15px;
     background-color: var(--app-bg-color);
     cursor: pointer;
     padding: 15px;
     box-sizing: border-box;
   }
-  .project_box div{
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    color: rgba(0, 0, 0, 0.7);
-  }
-  .project_box iron-icon{
+  .project_box_icon{
     color: rgba(0, 0, 0, 0.2);
     width: 50px;
     height: 50px;
   }
   .project_name{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: rgba(0, 0, 0, 0.7);
     word-break: break-all;
     text-align: center;
   }
-  #new_project_box{
+  #loading_project_box{
     background-color: rgba(0, 0, 0, 0.1);
     cursor: default;
   }
-  #new_project_box paper-fab{
-    background-color: var(--polytipe-accent-color);
-    @apply(--shadow-none);
-  }
-  #loading_projects_box{
-    display: none;
-  }
-  #loading_projects_box paper-spinner{
+  #loading_project_box paper-spinner{
     width: 45px;
     height: 45px;
-    margin-top: 20px;
+  }
+  .add_fab{
+    position: fixed;
+    bottom: 36px;
+    right: 36px;
+    background-color: var(--polytipe-accent-color);
   }
   #loading_projects_text{
     margin-top: 20px;
@@ -357,6 +412,15 @@
 
   /*Screens view*/
 
+  #empty_state_screen{
+    display: none;
+  }
+  .empty_state_screen_icon{
+    color: rgba(0, 0, 0, 0.2);
+    width: 75px;
+    height: 75px;
+    margin: 60px 0px;
+  }
   .elements_label{
     color: #888;
     margin-bottom: 10px;
@@ -387,13 +451,21 @@
     user-select: none;
     color: rgba(0, 0, 0, 0.7);
   }
-  .screen_box iron-icon{
+  .screen_box_icon{
     color: rgba(0, 0, 0, 0.2);
     width: 50px;
     height: 50px;
   }
   #screen_placeholder{
     background-color: rgba(0, 0, 0, 0.1);
+  }
+  #screen_placeholder paper-spinner{
+    width: 45px;
+    height: 45px;
+    margin-top: 20px;
+  }
+  #no_screens_message{
+    display: none;
   }
 
   .modal_dialog{
@@ -433,6 +505,10 @@
     #app_iframe{
       transform: scale(0.8);
     }
+    .add_fab{
+      bottom: 24px;
+      right: 24px;
+    }
 	}
 
   @media (max-width: 850px) {
@@ -465,6 +541,9 @@
     #user_box{
       margin-right: 10px;
     }
+    .elements_group{
+      padding: 60px;
+    }
 	}
 
   @media (max-width: 600px) {
@@ -477,6 +556,9 @@
     /* Screen editor */
     .right_drawer_toggle{
       display: flex;
+    }
+    .elements_group{
+      padding: 40px 30px;
     }
   }
 
