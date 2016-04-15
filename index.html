@@ -51,16 +51,25 @@
             </div>
         </div>
         <paper-menu selected="0">
-          <paper-item>Proyectos</paper-item>
-          <paper-item>Ir a Github</paper-item>
-          <paper-item>Eliminar "polytipe-projects"</paper-item>
+          <paper-item>
+            <iron-icon class="left_toolbar_icon element_icon" icon="description"></iron-icon>
+            <div>Proyectos</div>
+          </paper-item>
+          <a class="link" tabindex="-1" href="https://github.com/{{user}}/polytipe-projects" target="_blank">
+            <paper-item>
+                <iron-icon class="left_toolbar_icon element_icon" icon="polytipe-icons:github"></iron-icon>
+                <div>Ir a Github</div>
+            </paper-item>
+          </a>
+          <paper-item>
+            <iron-icon class="left_toolbar_icon element_icon" icon="info"></iron-icon>
+            <div>Acerca de Polytipe</div>
+          </paper-item>
+          <paper-item>
+            <iron-icon class="left_toolbar_icon element_icon" icon="exit-to-app"></iron-icon>
+            <div>Cerrar sesión</div>
+          </paper-item>
         </paper-menu>
-        <paper-button id="sign_out_button" class="layout horizontal center paper-font-button">
-          <iron-icon class="element_icon" icon="exit-to-app"></iron-icon>
-          <div class="">Cerrar sesión</div>
-        </paper-button>
-
-
       </paper-header-panel>
 
       <paper-header-panel main class="main_frame" mode="seamed">
@@ -91,7 +100,19 @@
               <paper-icon-button icon="menu" paper-drawer-left></paper-icon-button>
               <div class="paper-font-title">Polytipe</div>
               <div class="flex"></div>
-              <paper-icon-button icon="more-vert"></paper-icon-button>
+              <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
+                <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item onclick="">
+                    <iron-icon class="element_icon" icon="social:group"></iron-icon>
+                    <div>Ver colaboradores</div>
+                  </paper-item>
+                  <paper-item onclick="promptDeleteRepo()">
+                    <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
+                    <div>Eliminar repositorio</div>
+                  </paper-item>
+                </paper-menu>
+              </paper-menu-button>
             </paper-toolbar>
 
             <div class="elements_group">
@@ -137,11 +158,27 @@
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div class="layout horizontal center">
-                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Guardar cambios</paper-button>
                   <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                 </div>
               </template>
-              <paper-icon-button class="delete_icon" icon="delete" title="Eliminar proyecto" onclick="promptDeleteProject()"></paper-icon-button>
+              <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
+                <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item onclick="">
+                    <iron-icon class="element_icon" icon="create"></iron-icon>
+                    <div>Cambiar nombre</div>
+                  </paper-item>
+                  <paper-item onclick="">
+                    <iron-icon class="element_icon" icon="history"></iron-icon>
+                    <div>Ver historial de commits</div>
+                  </paper-item>
+                  <paper-item onclick="promptDeleteProject()">
+                    <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
+                    <div>Eliminar proyecto</div>
+                  </paper-item>
+                </paper-menu>
+              </paper-menu-button>
             </paper-toolbar>
 
             <div class="elements_group">
@@ -256,11 +293,23 @@
                   <span class="flex"></span>
                   <template is="dom-if" if="{{unsaved_changes}}">
                     <div class="layout horizontal center">
-                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Guardar cambios</paper-button>
                       <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                     </div>
                   </template>
-                  <paper-icon-button class="delete_icon" icon="delete" title="Eliminar pantalla" onclick="promptDeleteScreen()"></paper-icon-button>
+                  <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
+                    <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
+                      <paper-item onclick="">
+                        <iron-icon class="element_icon" icon="create"></iron-icon>
+                        <div>Cambiar nombre</div>
+                      </paper-item>
+                      <paper-item onclick="promptDeleteScreen()">
+                        <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
+                        <div>Eliminar pantalla</div>
+                      </paper-item>
+                    </paper-menu>
+                  </paper-menu-button>
                   <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                 </paper-toolbar>
 
@@ -273,7 +322,7 @@
     </paper-drawer-panel>
 
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s" target="[[polytipe_target]]"></iron-a11y-keys>
+    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s backspace" target="[[polytipe_target]]"></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
 
     <div class="dialogs">
@@ -287,6 +336,22 @@
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="delete_repo_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Eliminar repositorio</h2>
+          <paper-spinner id="delete_repo_spinner"></paper-spinner>
+        </div>
+        <p>
+          ¿Estás seguro de que deseas eliminar el repositorio
+          <strong>{{user}}/polytipe-projects</strong>  de tu Github?
+          Todos los proyectos de Polytipe se eliminarán.
+        </p>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="red_button" onclick="deleteRepo()" noink autofocus>Eliminar</paper-button>
         </div>
       </paper-dialog>
 

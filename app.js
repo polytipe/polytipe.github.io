@@ -527,6 +527,22 @@ function fork_polytipe_repo() {
   });
 }
 
+//Opens the delete repo dialog
+function promptDeleteRepo() {
+  var dialog = document.getElementById("delete_repo_dialog");
+  dialog.open();
+}
+//Deletes the polytipe-projects repository from the user
+function deleteRepo(){
+  document.getElementById("delete_repo_spinner").active = true;
+  var naRepo = github.getRepo(user_input, "polytipe-projects");
+  naRepo.deleteRepo(function(err, res) {
+    document.getElementById("delete_repo_spinner").active = false;
+    var dialog = document.getElementById("delete_repo_dialog");
+    dialog.close();
+  });
+}
+
 /* Project actions */
 
 function createProject() {
@@ -653,12 +669,6 @@ function leaveProject() {
   goto('user_view');
 }
 
-//TODO: Add it as a dropdown option when user is clicked in user_view
-function deleteRepo(){
-  var naRepo = github.getRepo(user_input, "polytipe-projects");
-  naRepo.deleteRepo(function(err, res) {});
-}
-
 /* Screen actions */
 
 function createScreen() {
@@ -776,13 +786,16 @@ function timeAgo(time){
     }
   };
 }
-
+//TODO: Add screenshots of the screens
+//TODO: Fix editing inputs on screen_editor
 function polytipeKeyPressed(e) {
   e.detail.keyboardEvent.preventDefault();
-  if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
-    if(app.unsaved_changes){
-      promptSaveProject();
-    }
+  //console.log(e.detail.keyboardEvent.key);
+  if(e.detail.keyboardEvent.key == "s" && (app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor") && app.unsaved_changes){
+    promptSaveProject();
+  }
+  if(e.detail.keyboardEvent.key == "Backspace" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
+    deleteElement(e);
   }
 }
 function iframeKeyPressed(e) {
