@@ -75,14 +75,62 @@
       <paper-header-panel main class="main_frame" mode="seamed">
         <iron-pages attr-for-selected="id" selected="{{polytipe_section}}">
           <section id="sign_in_screen" class="layout vertical center-center">
-            <paper-material id="sign_in_box" elevation="1" class="layout vertical center">
-              <div id="sign_in_image_container" class="layout vertical center-center">
-                <iron-image id="sign_in_image" src="http://49.media.tumblr.com/982e7b91bb5c2955bac8474805ecde89/tumblr_o1uloqceIQ1tdzjevo1_500.gif" preload sizing="contain"></iron-image>
-              </div>
-              <div id="sign_in_title" class="paper-font-title">Polytipe</div>
-              <div class="paper-font-subhead">Prototipado a código</div>
-              <paper-button raised onclick="sign_in()">Iniciar</paper-button>
+            <paper-material id="sign_in_material" elevation="1" class="layout vertical center">
+              <neon-animated-pages id="sign_in_box" selected="[[carousel]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="polytipe-icons:icon"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Polytipe</div>
+                  <div class="sign_in_description paper-font-subhead">Crea prototipos a partir de una interfaz gráfica y realiza pruebas de usabilidad</div>
+                </section>
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="polymer"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Material Design</div>
+                  <div class="sign_in_description paper-font-subhead">Utilizamos Polymer para seguir los lineamientos de diseño de Google</div>
+                </section>
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="history"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Control de versiones</div>
+                  <div class="sign_in_description paper-font-subhead">Lleva un registro de los cambios en tu proyecto a través de Github</div>
+                </section>
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="code"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Exportar código</div>
+                  <div class="sign_in_description paper-font-subhead">Polytipe genera el código de tus proyectos a medida que los vas creando</div>
+                </section>
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="polytipe-icons:github"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Open source</div>
+                  <div class="sign_in_description paper-font-subhead">We ❤ open source. Únete al proyecto en <strong><a class="link" href="https://github.com/alejost848/polytipe" target="_blank">Github</a></strong> y contribuye a su desarrollo</div>
+                </section>
+                <section>
+                  <div class="sign_in_icon_container layout vertical center-center">
+                    <iron-icon class="sign_in_icon" icon="av:play-arrow"></iron-icon>
+                  </div>
+                  <div class="sign_in_title paper-font-title">Empieza ahora</div>
+                  <div class="sign_in_description paper-font-subhead">Dale clic al botón de abajo y autoriza a Polytipe para iniciar sesión con Github</div>
+                </section>
+              </neon-animated-pages>
+              <iron-selector id="carousel_dots" selected="{{carousel}}">
+                <div class="carousel_dot"></div>
+                <div class="carousel_dot"></div>
+                <div class="carousel_dot"></div>
+                <div class="carousel_dot"></div>
+                <div class="carousel_dot"></div>
+                <div class="carousel_dot"></div>
+              </iron-selector>
+              <paper-button raised onclick="sign_in()">Empezar</paper-button>
             </paper-material>
+            <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
           </section>
 
           <section id="user_view">

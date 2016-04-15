@@ -295,28 +295,95 @@
     height: auto;
     color: white;
   }
-  #sign_in_box{
-    width: 200px;
-    background-color: var(--polytipe-accent-color);
-    padding: 40px;
-    color: rgba(20, 20, 20, 0.75);
+  #sign_in_material{
+    margin-top: 100px;
   }
-  #sign_in_box paper-button{
+  #sign_in_box{
+    width: 288px;
+    height: 512px;
+    overflow: hidden;
+    color: rgba(20, 20, 20, 0.75);
+    border-radius: 2px;
+    padding: 40px;
+  }
+  #sign_in_box section{
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .sign_in_title{
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .sign_in_description{
+    font-size: 18px;
+    width: 80%;
+    margin: 0 auto;
+  }
+  #sign_in_box section:nth-child(1){
+    background-color: var(--polytipe-accent-color);
+  }
+  #sign_in_box section:nth-child(2){
+    background-color: var(--paper-lime-400);
+  }
+  #sign_in_box section:nth-child(3){
+    background-color: var(--paper-amber-400);
+  }
+  #sign_in_box section:nth-child(4){
+    background-color: var(--paper-red-400);
+  }
+  #sign_in_box section:nth-child(5){
+    background-color: var(--paper-blue-300);
+  }
+  #sign_in_box section:nth-child(6){
+    background-color: var(--paper-cyan-400);
+  }
+  #sign_in_material paper-button{
     font-size: 14px;
     color: #555;
     background-color: #eee;
-    margin-top: 30px;
+    position: absolute;
+    left: 0;
+    bottom: 70px;
+    right: 0;
+    width: 100px;
+    margin: auto;
   }
   #sign_in_fail_toast paper-button{
     color: var(--polytipe-accent-color);
   }
-  #sign_in_image_container{
-    height: 300px;
+  .sign_in_icon_container{
+    height: 280px;
   }
-  #sign_in_image{
-    width: 250px;
-    height: 250px;
-  }  
+  .sign_in_icon{
+    width: 150px;
+    height: 150px;
+    color: rgba(0, 0, 0, 0.2);
+  }
+  #carousel_dots{
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    width: 80px;
+    margin: 0 auto;
+  }
+  .carousel_dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+  .carousel_dot + .carousel_dot{
+    margin-left: 3px;
+  }
+  .carousel_dot.iron-selected{
+    background-color: rgba(255,255,255,0.9);
+  }
 
   /* User view */
 
@@ -499,14 +566,33 @@
       bottom: 24px;
       right: 24px;
     }
+    #sign_in_box{
+      width: 252px;
+      height: 448px;
+    }
+    #sign_in_material{
+      margin-top: 30px;
+    }
+    .sign_in_icon_container{
+      height: 240px;
+    }
+    .sign_in_title{
+      font-size: 20px;
+      margin: 0;
+    }
+    .sign_in_description{
+      font-size: 16px;
+      width: 100%;
+    }
 	}
 
   @media (max-width: 850px) {
+    #sign_in_box{
+      width: 210px;
+      height: 420px;
+    }
     #app_iframe{
       transform: scale(0.75);
-    }
-    #sign_in_box{
-      width: 220px;
     }
     #sign_in_logo_small{
       width: 150px;
@@ -517,6 +603,18 @@
     }
     .elements_group{
       padding: 60px;
+    }
+
+    .sign_in_icon_container{
+      height: 220px;
+    }
+    .sign_in_title{
+      font-size: 18px;
+      margin: 0;
+    }
+    .sign_in_description{
+      font-size: 14px;
+      width: 100%;
     }
 	}
 
