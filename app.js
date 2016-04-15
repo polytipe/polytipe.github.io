@@ -415,44 +415,46 @@ function addProjectDialog(){
 
 /* Github sign in */
 
-function keyDown(event) { //Sign in when pressing enter in the token input
-  if (event.keyCode == 13) {
-    sign_in();
-  }
-}
-
-//Validates the inputs and creates the Github object
 function sign_in() {
-  var valid_user = document.getElementById('sign_in_user').validate();
-  var valid_token = document.getElementById('sign_in_token').validate();
-  if(!valid_user || !valid_token){
-    return;
-  }
-  user_input = document.getElementById('sign_in_user').value;
-  token_input = document.getElementById('sign_in_token').value;
-
-  github = new Github({
-    username: user_input,
-    password: token_input,
-    auth: "basic"
-  });
-
-  validate_user();
+  firebase_element.login();
+}
+function sign_out() {
+  firebase_element.logout();
 }
 
 window.addEventListener('WebComponentsReady', function(e) {
-  //TODO: Remove this when done testing
-  user_input = "alejost848";
-  token_input = "";
+  firebase_element = document.getElementById('firebaseAuth');
 
-  //Login in Github
-  github = new Github({
-      token: token_input,
-      auth: "oauth"
+  firebase_element.addEventListener('login', function (e) {
+    user_input = app.signed_user.github.username;
+    token_input = app.signed_user.github.accessToken;
+
+    //Login in Github
+    github = new Github({
+      username: user_input,
+      password: token_input,
+      auth: "basic"
+    });
+
+    validate_user();
+
+    //Get contents from the original polytipe-projects/index.html
+    var repo = github.getRepo("polytipe", "polytipe-projects");
+    repo.read("master", 'index.html', function(err, data) {
+      split_delimiter = '</iron-pages>';
+      project_base_before = data.split(split_delimiter)[0];
+      project_base_after = split_delimiter + data.split(split_delimiter)[1];
+    });
   });
 
-  //Focus user input
-  document.getElementById('sign_in_user').focus();
+  firebase_element.addEventListener('logout', function (e) {
+    document.querySelector('paper-drawer-panel').closeDrawer();
+    goto('sign_in_screen');
+  });
+
+  firebase_element.addEventListener('error', function (e) {
+    document.getElementById("sign_in_fail_toast").open();
+  });
 
   //Add project selection listener
   document.getElementById('project_selector').addEventListener('iron-select', function () {
@@ -466,16 +468,6 @@ window.addEventListener('WebComponentsReady', function(e) {
     }
   });
 
-
-  //validate_user();
-
-  var repo = github.getRepo("polytipe", "polytipe-projects");
-  repo.read("master", 'index.html', function(err, data) {
-    split_delimiter = '</iron-pages>';
-    project_base_before = data.split(split_delimiter)[0];
-    project_base_after = split_delimiter + data.split(split_delimiter)[1];
-  });
-
   //Target for iron-a11y-keys
   app.polytipe_target = document.body;
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
@@ -486,12 +478,12 @@ window.addEventListener('WebComponentsReady', function(e) {
 //Checks if credentials are correct and signs in
 function validate_user() {
   user = github.getUser();
-  user.notifications(function(err, notifications) {
+  user.show(null, function(err, user) {
     if(err == null){ //If no errors, advance to the next screen
-      user.show(null, function(err, user) {
-        app.avatar = user["avatar_url"];
-        app.name = user["name"];
-      });
+
+      app.avatar = user["avatar_url"];
+      app.name = user["name"];
+
       app.user = user_input;
       app.polytipe_section = "user_view";
       fork_polytipe_repo();
@@ -787,7 +779,7 @@ function timeAgo(time){
   };
 }
 //TODO: Add screenshots of the screens
-//TODO: Fix editing inputs on screen_editor
+//TODO: Fix editing inputs on screen_editor (backspace is on top of that)
 function polytipeKeyPressed(e) {
   e.detail.keyboardEvent.preventDefault();
   //console.log(e.detail.keyboardEvent.key);

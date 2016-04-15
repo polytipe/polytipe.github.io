@@ -65,7 +65,7 @@
             <iron-icon class="left_toolbar_icon element_icon" icon="info"></iron-icon>
             <div>Acerca de Polytipe</div>
           </paper-item>
-          <paper-item>
+          <paper-item onclick="sign_out()">
             <iron-icon class="left_toolbar_icon element_icon" icon="exit-to-app"></iron-icon>
             <div>Cerrar sesión</div>
           </paper-item>
@@ -74,25 +74,15 @@
 
       <paper-header-panel main class="main_frame" mode="seamed">
         <iron-pages attr-for-selected="id" selected="{{polytipe_section}}">
-          <section id="sign_in_screen" class="layout flex horizontal center-center">
-            <div id="sign_in_left" class="flex layout horizontal center end-justified">
-              <iron-icon id="sign_in_logo" icon="polytipe-icons:logo-square"></iron-icon>
-            </div>
-            <div id="sign_in_box_container" class="flex layout horizontal center start-justified">
-              <paper-material id="sign_in_box" elevation="1">
-                <div id="sign_in_title" class="paper-font-title">Iniciar sesión</div>
-                <paper-input id="sign_in_user" name="user" label="Usuario de Github" autocomplete="on" required error-message="Campo requerido" onkeydown="keyDown(event)"></paper-input>
-                <paper-input id="sign_in_token" label="Token de Github" type="text" required error-message="Campo requerido" onkeydown="keyDown(event)"></paper-input>
-                <div id="sign_in_bottom" class="layout horizontal center">
-                  <a tabindex="-1" href="https://github.com/settings/tokens" target="_blank">
-                    <paper-button noink>Obtener token</paper-button>
-                  </a>
-                  <span class="flex"></span>
-                  <paper-fab mini icon="arrow-forward" onclick="sign_in()"></paper-fab>
-                </div>
-              </paper-material>
-              <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
-            </div>
+          <section id="sign_in_screen" class="layout vertical center-center">
+            <paper-material id="sign_in_box" elevation="1" class="layout vertical center">
+              <div id="sign_in_image_container" class="layout vertical center-center">
+                <iron-image id="sign_in_image" src="http://49.media.tumblr.com/982e7b91bb5c2955bac8474805ecde89/tumblr_o1uloqceIQ1tdzjevo1_500.gif" preload sizing="contain"></iron-image>
+              </div>
+              <div id="sign_in_title" class="paper-font-title">Polytipe</div>
+              <div class="paper-font-subhead">Prototipado a código</div>
+              <paper-button raised onclick="sign_in()">Iniciar</paper-button>
+            </paper-material>
           </section>
 
           <section id="user_view">
@@ -321,6 +311,15 @@
       </paper-header-panel>
     </paper-drawer-panel>
 
+    <firebase-auth
+      id="firebaseAuth"
+      location="https://polytipe.firebaseio.com"
+      provider="github"
+      user="{{signed_user}}"
+      params='{"scope": "public_repo, delete_repo"}'
+      status-known="{{statusKnown}}">
+    </firebase-auth>
+
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
     <iron-a11y-keys id="polytipe_keys" keys="ctrl+s backspace" target="[[polytipe_target]]"></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
@@ -423,7 +422,9 @@
       </paper-toast>
       <paper-toast id="project_taken_toast" duration="3500" text="Ya existe un proyecto con este nombre"></paper-toast>
       <paper-toast id="screen_taken_toast" duration="3500" text="Ya existe una pantalla con este nombre"></paper-toast>
-      <paper-toast id="sign_in_fail_toast" duration="3000" text="Usuario o token incorrectos"></paper-toast>
+      <paper-toast id="sign_in_fail_toast" duration="5000" text="Ocurrió un error al iniciar sesión">
+        <paper-button noink onclick="sign_in()">Reintentar</paper-button>
+      </paper-toast>
     </div>
   </template>
 
