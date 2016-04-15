@@ -422,27 +422,8 @@ function sign_out() {
   firebase_element.logout();
 }
 
-function changeCarousel() {
-  this.carousel = this.carousel === 5 ? 0 : (this.carousel + 1);
-  //Resets the async timeout
-  if (typeof handle != 'undefined'){
-    app.cancelAsync(handle);
-  }
-  handle = app.async(changeCarousel, 5000);
-}
-
 window.addEventListener('WebComponentsReady', function(e) {
   firebase_element = document.getElementById('firebaseAuth');
-
-  app.carousel = 0;
-  changeCarousel();
-
-  document.getElementById('carousel_dots').addEventListener("iron-select", function () {
-    app.cancelAsync(handle);
-    changeCarousel();
-  });
-
-
   firebase_element.addEventListener('login', function (e) {
     user_input = app.signed_user.github.username;
     token_input = app.signed_user.github.accessToken;
@@ -486,12 +467,29 @@ window.addEventListener('WebComponentsReady', function(e) {
     }
   });
 
+  //Carousel trigger
+  app.carousel = 0;
+  changeCarousel();
+  document.getElementById('carousel_dots').addEventListener("iron-select", function () {
+    app.cancelAsync(handle);
+    changeCarousel();
+  });
+
   //Target for iron-a11y-keys
   app.polytipe_target = document.body;
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
     polytipeKeyPressed(e);
   });
 });
+
+function changeCarousel() {
+  this.carousel = this.carousel === 5 ? 0 : (this.carousel + 1);
+  //Resets the async timeout
+  if (typeof handle != 'undefined'){
+    app.cancelAsync(handle);
+  }
+  handle = app.async(changeCarousel, 5000);
+}
 
 //Checks if credentials are correct and signs in
 function validate_user() {

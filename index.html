@@ -74,7 +74,7 @@
 
       <paper-header-panel main class="main_frame" mode="seamed">
         <iron-pages attr-for-selected="id" selected="{{polytipe_section}}">
-          <section id="sign_in_screen" class="layout vertical center-center">
+          <section id="sign_in_screen" class="layout vertical center">
             <paper-material id="sign_in_material" elevation="1" class="layout vertical center">
               <neon-animated-pages id="sign_in_box" selected="[[carousel]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
                 <section>
@@ -369,7 +369,7 @@
     </firebase-auth>
 
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s backspace" target="[[polytipe_target]]"></iron-a11y-keys>
+    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s delete" target="[[polytipe_target]]"></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
 
     <div class="dialogs">

@@ -290,13 +290,17 @@
 
   /* Sign in screen */
 
+  #sign_in_screen{
+    position: relative;
+  }
+
   #sign_in_logo_small{
     width: 150px;
     height: auto;
     color: white;
   }
   #sign_in_material{
-    margin-top: 100px;
+    margin-top: 150px;
   }
   #sign_in_box{
     width: 288px;
@@ -556,6 +560,12 @@
   }
 
   @media (max-width: 1500px) {
+    #sign_in_material{
+      margin-top: 100px;
+    }
+  }
+
+  @media (max-width: 1500px) {
     #app_container{
       min-height: 550px;
     }
@@ -569,9 +579,6 @@
     #sign_in_box{
       width: 252px;
       height: 448px;
-    }
-    #sign_in_material{
-      margin-top: 30px;
     }
     .sign_in_icon_container{
       height: 240px;
@@ -594,9 +601,6 @@
     #app_iframe{
       transform: scale(0.75);
     }
-    #sign_in_logo_small{
-      width: 150px;
-    }
     /* User view */
     #user_box{
       margin-right: 10px;
@@ -605,6 +609,9 @@
       padding: 60px;
     }
 
+    #sign_in_material{
+      margin-top: 80px;
+    }
     .sign_in_icon_container{
       height: 220px;
     }
