@@ -157,7 +157,7 @@
               <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
                 <paper-menu class="dropdown-content">
-                  <paper-item onclick="">
+                  <paper-item onclick="promptCollaboratorsDialog()">
                     <iron-icon class="element_icon" icon="social:group"></iron-icon>
                     <div>Ver colaboradores</div>
                   </paper-item>
@@ -202,7 +202,6 @@
               </paper-material>
             </div>
             <paper-fab class="add_fab" onclick="addProjectDialog()" icon="add" title="Crear proyecto nuevo"></paper-fab>
-            <iron-ajax auto url="{{project_url}}" method="POST" body="{{ajax_body}}"></iron-ajax>
           </section>
 
           <section id="project_view">
@@ -384,6 +383,32 @@
       status-known="{{statusKnown}}">
     </firebase-auth>
 
+    <iron-ajax
+        auto
+        url="https://api.lifx.com/v1/lights/all/state"
+        headers='{"Authorization": "Bearer "}'
+        method="PUT"
+        content-type="application/json"
+        body='{{lifx_body}}'>
+    </iron-ajax>
+
+    <iron-ajax
+        auto
+        url="https://api.lifx.com/v1/lights/all/effects/pulse"
+        headers='{"Authorization": "Bearer "}'
+        method="POST"
+        content-type="application/json"
+        body='{{lifx_alert}}'>
+    </iron-ajax>
+
+    <iron-ajax
+        id="collaborators__ajax"
+        auto
+        url="https://api.github.com/repos/{{user}}/polytipe-projects/collaborators/{{user_to_add_delete}}"
+        content-type="application/json"
+        params="{{collaborators_params}}">
+    </iron-ajax>
+
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
     <iron-a11y-keys id="polytipe_keys" keys="ctrl+s delete" target="[[polytipe_target]]"></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
@@ -415,6 +440,44 @@
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="red_button" onclick="deleteRepo()" noink autofocus>Eliminar</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="collaborators_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Colaboradores</h2>
+          <paper-spinner id="collaborators_spinner"></paper-spinner>
+        </div>
+
+        <paper-input id="collaborators_input" label="Agregar usuario" value="{{user_search}}" autofocus>
+          <paper-menu-button id="collaborators_dropdown" suffix horizontal-align="right" vertical-offset="-10">
+            <paper-icon-button class="dropdown-trigger" onclick="searchUsers()" icon="search"></paper-icon-button>
+            <paper-menu id="collaborators_items" class="dropdown-content" attr-for-selected="username">
+              <template is="dom-repeat" items="{{user_list}}" as="user">
+                <paper-item class="collaborators_item" username="{{user.login}}">
+                  <iron-icon class="element_icon" src="{{user.avatar_url}}"></iron-icon>
+                  <div class="flex">{{user.login}}</div>
+                </paper-item>
+              </template>
+              <template is="dom-if" if="{{empty_search}}">
+                <paper-item class="collaborators_item" disabled>
+                  <iron-icon class="light_gray_icon element_icon" icon="error"></iron-icon>
+                  <div class="flex">No hay resultados</div>
+                </paper-item>
+              </template>
+            </paper-menu>
+          </paper-menu-button>
+        </paper-input>
+        <div id="collaborators_group">
+          <div id="collaborators_group_title">Lista de colaboradores</div>
+          <div class="layout horizontal wrap">
+            <template id="collaborators_app" is="dom-repeat" items="{{collaborators}}" as="collaborator">
+              <paper-chip class="collaborator_chip" actual="{{user}}" user="{{collaborator.login}}">
+                <iron-icon class="icon" src="{{collaborator.avatar_url}}"></iron-icon>
+                <h1>{{collaborator.login}}</h1>
+              </paper-chip>
+            </template>
+          </div>
         </div>
       </paper-dialog>
 

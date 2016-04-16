@@ -55,6 +55,14 @@
     --paper-fab-keyboard-focus-background: var(--polytipe-accent-color);
   }
 
+  paper-menu-button{
+    padding: 0;
+  }
+
+  paper-item{
+    cursor: pointer;
+  }
+
   /*Sidebar frame*/
 
   #sidebar_frame{
@@ -180,6 +188,19 @@
     height: 17px;
   }
 
+  #collaborators_dropdown{
+    --paper-menu-button-content:{
+      width: 252px;
+      @apply(--shadow-elevation-12dp);
+    }
+  }
+  .collaborators_item{
+    cursor: pointer;
+  }
+  .collaborators_item:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
   /*Element actions*/
 
   #element_actions{
@@ -279,6 +300,9 @@
   }
   .element_icon{
     margin-right: 20px;
+  }
+  .light_gray_icon{
+    color: rgba(0, 0, 0, 0.2);;
   }
   .left_toolbar_icon{
     color: #bbb;
@@ -550,6 +574,12 @@
     color: var(--app-accent-color);
     font-weight: 700;
   }
+  #collaborators_group{
+    margin-top: 20px;
+  }
+  #collaborators_group_title{
+    margin-bottom: 10px;
+  }
 
   /*Iframe frame*/
 
@@ -610,7 +640,7 @@
     }
 
     #sign_in_material{
-      margin-top: 80px;
+      margin-top: 10px;
     }
     .sign_in_icon_container{
       height: 220px;

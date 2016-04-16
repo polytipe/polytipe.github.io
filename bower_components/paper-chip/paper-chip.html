@@ -134,6 +134,8 @@ Basic chip with single letter instead of an icon
       #label ::content h1,
       #label ::content h2 {
         white-space: nowrap;
+        width: 60px;
+        overflow: hidden;
         text-overflow: ellipsis;
         margin: 0;
         font-weight: normal;
@@ -256,7 +258,12 @@ Basic chip with single letter instead of an icon
             <content select="h1"></content>
             <content select="h2"></content>
           </div>
-          <paper-icon-button id="remove" icon="cancel" on-tap="remove" title="Eliminar usuario"></paper-icon-button>
+          <template is="dom-if" if="{{!logged_user}}">
+            <paper-icon-button id="remove" icon="cancel" on-click="remove" title="Eliminar usuario"></paper-icon-button>
+          </template>
+          <template is="dom-if" if="{{logged_user}}">
+            <paper-icon-button icon="social:person" title="Eres el dueño del repositorio"></paper-icon-button>
+          </template>
         </div>
         <div id="content">
           <content></content>
@@ -329,6 +336,18 @@ Basic chip with single letter instead of an icon
           reflectToAttribute: true
         },
 
+        user: {
+          type: String,
+          value: "",
+          reflectToAttribute: true
+        },
+
+        actual: {
+          type: String,
+          value: "",
+          reflectToAttribute: true
+        },
+
         _elevation: {
           type: Number
         }
@@ -342,6 +361,7 @@ Basic chip with single letter instead of an icon
       ],
 
       ready: function() {
+        this._isActualUser();
         if (this.$.removeBtn) {
           // disable tabindex on remove button so that tabindex can be used for chips
           this.$.removeBtn.removeAttribute('tabindex');
@@ -370,9 +390,6 @@ Basic chip with single letter instead of an icon
        */
       remove: function() {
         var e = this.fire('remove', {}, this, false, true);
-        if (!e.defaultPrevented) {
-          this.parentNode.removeChild(this);
-        }
       },
       toggleOpened: function() {
         //this.opened = !this.opened;
@@ -401,6 +418,13 @@ Basic chip with single letter instead of an icon
       },
       _forceReflow: function() {
         return this.offsetHeight;
+      },
+      _isActualUser: function () {
+        if(this.user == this.actual){
+          this.logged_user = true;
+        }else{
+          this.logged_user = false;
+        }
       }
     });
   </script>

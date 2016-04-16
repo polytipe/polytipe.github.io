@@ -406,35 +406,20 @@ function goto(section) {
   app.polytipe_section = section;
 }
 
-function addScreenDialog(){
-  document.getElementById('add_screen_dialog').open();
-}
-function addProjectDialog(){
-  document.getElementById('add_project_dialog').open();
-}
-
-/* Github sign in */
-
-function sign_in() {
-  firebase_element.login();
-}
-function sign_out() {
-  firebase_element.logout();
-}
+/* WebComponentsReady listener */
 
 window.addEventListener('WebComponentsReady', function(e) {
+  /* Firebase event listeners */
+
   firebase_element = document.getElementById('firebaseAuth');
-  firebase_element.addEventListener('login', function (e) {
+  firebase_element.addEventListener('login', function (e) { //On login
     user_input = app.signed_user.github.username;
     token_input = app.signed_user.github.accessToken;
-
-    //Login in Github
     github = new Github({
       username: user_input,
       password: token_input,
       auth: "basic"
     });
-
     validate_user();
 
     //Get contents from the original polytipe-projects/index.html
@@ -445,29 +430,28 @@ window.addEventListener('WebComponentsReady', function(e) {
       project_base_after = split_delimiter + data.split(split_delimiter)[1];
     });
   });
-
-  firebase_element.addEventListener('logout', function (e) {
+  firebase_element.addEventListener('logout', function (e) { //On logout
     document.querySelector('paper-drawer-panel').closeDrawer();
     goto('sign_in_screen');
+    changeCarousel();
   });
-
-  firebase_element.addEventListener('error', function (e) {
+  firebase_element.addEventListener('error', function (e) { //On error
     document.getElementById("sign_in_fail_toast").open();
   });
 
-  //Add project selection listener
+  /* Selection listeners */
+
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
   });
-
-  //Add screen selection listener
   document.getElementById('screen_selector').addEventListener('iron-select', function () {
     if(iframeReady){
       editScreen();
     }
   });
 
-  //Carousel trigger
+  /* Misc listeners */
+
   app.carousel = 0;
   changeCarousel();
   document.getElementById('carousel_dots').addEventListener("iron-select", function () {
@@ -475,32 +459,91 @@ window.addEventListener('WebComponentsReady', function(e) {
     changeCarousel();
   });
 
-  //Target for iron-a11y-keys
+  /* Collaborators listeners */
+
+  document.getElementById('collaborators_items').addEventListener("iron-select", function (e) {
+    var selected_user = document.getElementById('collaborators_items').selected;
+    document.getElementById('collaborators_input').value = selected_user;
+    addCollaborator(selected_user);
+  });
+
+  collaborators_ajax = document.getElementById('collaborators__ajax');
+  collaborators_ajax.addEventListener("response", function () {
+    getCollaborators();
+    document.getElementById('collaborators_items').selected = "";
+    document.getElementById('collaborators_input').value = "";
+    app.user_list = [];
+  });
+
+  /* iron-a11y-keys listeners */
+
   app.polytipe_target = document.body;
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
     polytipeKeyPressed(e);
   });
 });
 
+/* Misc actions */
+
+function changeLIFX() {
+  var lifx_color;
+  //Change the LIFX bulb color
+  switch (app.carousel) {
+    case 0:
+      lifx_color = "hue:120";
+      break;
+    case 1:
+      lifx_color = "hue:70";
+      break;
+    case 2:
+      lifx_color = "hue:52";
+      break;
+    case 3:
+      lifx_color = "hue:335";
+      break;
+    case 4:
+      lifx_color = "hue:195";
+      break;
+    case 5:
+      lifx_color = "hue:175";
+      break;
+  }
+  app.lifx_body =  {"power": "on", "color": lifx_color + ' saturation:1.0', "brightness": 0.5, "duration": 1};
+}
+
 function changeCarousel() {
   this.carousel = this.carousel === 5 ? 0 : (this.carousel + 1);
+  changeLIFX();
   //Resets the async timeout
   if (typeof handle != 'undefined'){
     app.cancelAsync(handle);
   }
-  handle = app.async(changeCarousel, 5000);
+  handle = app.async(changeCarousel, 6000);
 }
 
-//Checks if credentials are correct and signs in
+/* Initialization actions */
+
+function sign_in() {
+  firebase_element.login();
+}
+function sign_out() {
+  firebase_element.logout();
+}
+
 function validate_user() {
   user = github.getUser();
   user.show(null, function(err, user) {
-    if(err == null){ //If no errors, advance to the next screen
-
+    if(err == null){
+      app.user_projects = [];
       app.avatar = user["avatar_url"];
       app.name = user["name"];
 
+      //Stop carousel and change the LIFX bulb color
+      app.cancelAsync(handle);
+      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
+
       app.user = user_input;
+      app.token = token_input;
       app.polytipe_section = "user_view";
       fork_polytipe_repo();
     }else{ //If errors display the fail toast
@@ -511,7 +554,6 @@ function validate_user() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function fork_polytipe_repo() {
-  document.getElementById("loading_project_box").style.display = "flex";
   var hasProjects = false;
   user.userRepos(app.user, function(err, repos) {
     for (var i = 0; i < repos.length; i++) {
@@ -522,7 +564,6 @@ function fork_polytipe_repo() {
     if(!hasProjects){
       var baseRepo = github.getRepo("polytipe", "polytipe-projects");
       baseRepo.fork(function(err,res) {
-        app.user_projects = [];
         document.getElementById("created_repo_toast").open();
         document.getElementById("loading_project_box").style.display = "none";
         document.getElementById("empty_state_project").style.display = "flex";
@@ -539,7 +580,18 @@ function fork_polytipe_repo() {
 function promptDeleteRepo() {
   var dialog = document.getElementById("delete_repo_dialog");
   dialog.open();
+  // Flicker app.lifx_alert =  {"power": "on", "color": "red", "brightness": 0.5, "period": 0.3, "cycles": 2.0, "persist": false};
+  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+
+  dialog.addEventListener("iron-overlay-canceled", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+
+  dialog.addEventListener("iron-overlay-closed", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
 }
+
 //Deletes the polytipe-projects repository from the user
 function deleteRepo(){
   document.getElementById("delete_repo_spinner").active = true;
@@ -551,7 +603,76 @@ function deleteRepo(){
   });
 }
 
+/* Collaborator actions */
+
+function addCollaborator(username) {
+  app.user_to_add_delete = username;
+  collaborators_ajax.method = "PUT";
+  app.collaborators_params = {"access_token": app.token};
+}
+
+function removeCollaborator(username) {
+  app.user_to_add_delete = username;
+  collaborators_ajax.method = "DELETE";
+  app.collaborators_params = {"access_token": app.token};
+}
+
+function getCollaborators() {
+  document.getElementById('collaborators_spinner').active = true;
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  repo.collaborators(function(err, data) {
+    app.collaborators = data;
+    document.getElementById('collaborators_spinner').active = false;
+
+    document.getElementById('collaborators_app').addEventListener('dom-change', function() {
+      //Add event listener
+      var collaborator_chips = document.getElementsByClassName('collaborator_chip');
+      for (var i = 0; i < collaborator_chips.length; i++) {
+        collaborator_chips[i].addEventListener("remove", function (e) {
+          var username = e.target.querySelector('h1').innerHTML;
+          removeCollaborator(username);
+        });
+      }
+    });
+  });
+}
+
+function promptCollaboratorsDialog() {
+  var collaborators_dialog = document.getElementById('collaborators_dialog');
+  collaborators_dialog.open();
+  collaborators_dialog.addEventListener("iron-overlay-opened", function () {
+    getCollaborators();
+  });
+}
+
+function searchUsers() {
+  var search = github.getSearch(app.user_search);
+  search.users(null, function (err, users) {
+    if(users.total_count > 0){
+      app.user_list = users.items;
+      app.empty_search = false;
+    }else{
+      app.user_list = [];
+      app.empty_search = true;
+    }
+  });
+}
+
 /* Project actions */
+
+function addProjectDialog(){
+  var dialog = document.getElementById('add_project_dialog');
+  dialog.open();
+  app.lifx_body =  {"power": "on", "color": "green", "brightness": 0.5, "duration": 1};
+
+  dialog.addEventListener("iron-overlay-canceled", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+
+  dialog.addEventListener("iron-overlay-closed", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+}
 
 function createProject() {
   var validate_project = document.getElementById('add_project_input').validate();
@@ -579,7 +700,6 @@ function createProject() {
   });
 }
 
-//Adds polytipe projects to the user_view
 function getProjects(callback) {
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.listBranches(function(err, branches) {
@@ -640,6 +760,15 @@ function saveProject() {
 function promptDeleteProject() {
   var dialog = document.getElementById("delete_project_dialog");
   dialog.open();
+  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+
+  dialog.addEventListener("iron-overlay-canceled", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+
+  dialog.addEventListener("iron-overlay-closed", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
 }
 
 function deleteProject(){
@@ -678,6 +807,20 @@ function leaveProject() {
 }
 
 /* Screen actions */
+
+function addScreenDialog(){
+  var dialog = document.getElementById('add_screen_dialog');
+  dialog.open();
+  app.lifx_body =  {"power": "on", "color": "green", "brightness": 0.5, "duration": 1};
+
+  dialog.addEventListener("iron-overlay-canceled", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+
+  dialog.addEventListener("iron-overlay-closed", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+}
 
 function createScreen() {
   var validate_screen = document.getElementById('add_screen_input').validate();
@@ -734,6 +877,7 @@ function getScreens() {
 
   });
 }
+
 function displayScreens() {
   var screens = Polymer.dom(iframe_app_content).children;
   var project_screens = [];
@@ -749,15 +893,18 @@ function displayScreens() {
     document.getElementById('empty_state_screen').style.display = "flex";
   }
 }
+
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
   update_tree();
 }
+
 function promptDeleteScreen() {
   var dialog = document.getElementById("delete_screen_dialog");
   dialog.open();
 }
+
 function deleteScreen() {
   var section = iframe_document.getElementById(app.selected_screen);
   Polymer.dom(iframe_app_content).removeChild(section);
@@ -794,15 +941,18 @@ function timeAgo(time){
     }
   };
 }
+
+/* Key binding functions */
 //TODO: Add screenshots of the screens
 //TODO: Fix editing inputs on screen_editor (backspace is on top of that)
 function polytipeKeyPressed(e) {
-  e.detail.keyboardEvent.preventDefault();
   //console.log(e.detail.keyboardEvent.key);
   if(e.detail.keyboardEvent.key == "s" && (app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor") && app.unsaved_changes){
+    e.detail.keyboardEvent.preventDefault();
     promptSaveProject();
   }
-  if(e.detail.keyboardEvent.key == "Backspace" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
+  if(e.detail.keyboardEvent.key == "Delete" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
+    e.detail.keyboardEvent.preventDefault();
     deleteElement(e);
   }
 }
