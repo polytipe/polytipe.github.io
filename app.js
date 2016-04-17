@@ -324,9 +324,6 @@ function arrayChanged() {
   app.unsaved_changes = true; //If changes are made, show the save_button
 }
 
-//TODO: Get element_count at first and update this number from remote
-var element_count = 0;
-
 function makeElement(element_name) {
   if(iframeReady){
     var element = iframe_document.createElement(element_name);
@@ -434,6 +431,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     goto('sign_in_screen');
     changeCarousel();
   });
+
   firebase_element.addEventListener('error', function (e) { //On error
     document.getElementById("sign_in_fail_toast").open();
   });
@@ -595,7 +593,7 @@ function promptDeleteRepo() {
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
   });
 }
-//TODO: Do something after deleteRepo
+
 //Deletes the polytipe-projects repository from the user
 function deleteRepo(){
   document.getElementById("delete_repo_spinner").active = true;
@@ -604,6 +602,9 @@ function deleteRepo(){
     document.getElementById("delete_repo_spinner").active = false;
     var dialog = document.getElementById("delete_repo_dialog");
     dialog.close();
+    app.user_projects = [];
+    document.getElementById("empty_state_project").style.display = "flex";
+    //TODO: Open dialog for explaining the initial fork and stuff
   });
 }
 
@@ -858,13 +859,21 @@ function addScreenDialog(){
   var dialog = document.getElementById('add_screen_dialog');
   dialog.open();
 }
-//TODO: Check reserved words first
+
 function createScreen() {
   var validate_screen = document.getElementById('add_screen_input').validate();
   if(!validate_screen){
     return;
   }
-  //Check that the screen doesn't exist first
+  //Check that the screen isn't a reserved screen name
+  var reserved_screen_names = ["main", "drawer", "dialogs", "app", "toasts", "img"];
+  for (var i = 0; i < reserved_screen_names.length; i++) {
+    if(app.screen_name == reserved_screen_names[i]){
+      document.getElementById('screen_reserved_toast').open();
+      return;
+    }
+  }
+  //Check that the screen doesn't exist
   for (var i=0; i < app.project_screens.length; i++) {
     if(app.screen_name == app.project_screens[i]["name"]){
       document.getElementById('screen_taken_toast').open();
@@ -882,8 +891,6 @@ function createScreen() {
   var dialog = document.getElementById("add_screen_dialog");
   dialog.close();
 }
-
-//TODO: Change single quote ' for double quotes " on array properties from poly-elements
 
 function getScreens() {
   document.getElementById('empty_state_screen').style.display = "none";
@@ -904,6 +911,15 @@ function getScreens() {
       iframe_app_content = iframe_document.getElementById("app_content");
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
+
+      if(iframe_app_content.innerHTML != ""){
+        var id_count = iframe_app_content.innerHTML.match(/id=".*?"/g);
+        start_count = id_count[id_count.length-1].match(/\d/g).join("");
+        element_count = start_count;
+      }else{
+        element_count = 0;
+      }
+
       displayScreens();
 
       app.iframe_target = iframe_document.body;
