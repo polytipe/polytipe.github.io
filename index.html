@@ -271,7 +271,7 @@
                 </paper-material>
               </div>
             </div>
-            <paper-fab class="add_fab" onclick="addScreenDialog()" icon="add" title="Agregar una pantalla"></paper-fab>
+            <paper-fab class="add_fab" onclick="addScreenDialog()" icon="add" title="Crear una pantalla"></paper-fab>
           </section>
 
           <section id="screen_editor">
@@ -312,8 +312,8 @@
                   <iron-pages attr-for-selected="id" selected="{{screen_editor_bottom_mode}}">
                     <section id="editor_properties">
                       <div id="element_actions" class="sidebar_list layout horizontal end-justified">
-                        <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button"></paper-fab>
-                        <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button"></paper-fab>
+                        <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button" onclick="moveElementUp()"></paper-fab>
+                        <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button" onclick="moveElementDown()"></paper-fab>
                         <div class="flex"></div>
                         <paper-fab id="delete_button" icon="delete" title="Eliminar elemento" onclick="deleteElement(event)"></paper-fab>
                       </div>
@@ -372,6 +372,8 @@
                 </paper-toolbar>
 
                 <div id="app_container" class="layout horizontal center-center"></div>
+
+                <paper-fab icon="av:play-arrow" id="preview_fab" title="Previsualizar"></paper-fab>
               </paper-header-panel>
             </paper-drawer-panel>
           </section>
@@ -583,6 +585,7 @@
       </paper-toast>
       <paper-toast id="project_taken_toast" duration="3500" text="Ya existe un proyecto con este nombre"></paper-toast>
       <paper-toast id="screen_taken_toast" duration="3500" text="Ya existe una pantalla con este nombre"></paper-toast>
+      <paper-toast id="screen_reserved_toast" duration="3500" text="Esta es una palabra reservada. Intenta otra."></paper-toast>
       <paper-toast id="sign_in_fail_toast" duration="5000" text="Ocurrió un error al iniciar sesión">
         <paper-button noink onclick="sign_in()">Reintentar</paper-button>
       </paper-toast>

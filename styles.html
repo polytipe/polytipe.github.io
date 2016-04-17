@@ -224,6 +224,7 @@
   /*Screen editor*/
 
   .main_frame{
+    position: relative;
     background-color: var(--polytipe-bg-color);
   }
   .screen_view_toolbar{
@@ -271,7 +272,13 @@
       font-size: 12px;
     }
   }
-
+  #preview_fab{
+    position: fixed;
+    bottom: 36px;
+    right: 326px;
+    background-color: var(--polytipe-accent-color);
+    transition: right 0.4s;
+  }
   iron-selector[wide-layout]{
     @apply(--layout-horizontal);
     @apply(--layout-wrap);
@@ -363,7 +370,7 @@
     background-color: var(--paper-red-400);
   }
   #sign_in_box section:nth-child(5){
-    background-color: var(--paper-blue-300);
+    background-color: var(--paper-deep-purple-300);
   }
   #sign_in_box section:nth-child(6){
     background-color: var(--paper-cyan-400);
@@ -716,6 +723,9 @@
     }
     .elements_group{
       padding: 40px 30px;
+    }
+    #preview_fab{
+      right: 36px;
     }
   }
 
