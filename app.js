@@ -431,7 +431,6 @@ window.addEventListener('WebComponentsReady', function(e) {
     });
   });
   firebase_element.addEventListener('logout', function (e) { //On logout
-    document.querySelector('paper-drawer-panel').closeDrawer();
     goto('sign_in_screen');
     changeCarousel();
   });
@@ -441,6 +440,9 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   /* Selection listeners */
 
+  document.getElementById('left_drawer_menu').addEventListener("iron-select", function (e) {
+    document.querySelector('paper-drawer-panel').closeDrawer();
+  });
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
   });
@@ -467,7 +469,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     addCollaborator(selected_user);
   });
 
-  collaborators_ajax = document.getElementById('collaborators__ajax');
+  collaborators_ajax = document.getElementById('collaborators_ajax');
   collaborators_ajax.addEventListener("response", function () {
     getCollaborators();
     document.getElementById('collaborators_items').selected = "";
@@ -520,6 +522,8 @@ function changeCarousel() {
   }
   handle = app.async(changeCarousel, 6000);
 }
+
+//TODO: Move repository to Polytipe organization
 
 /* Initialization actions */
 
@@ -580,7 +584,7 @@ function fork_polytipe_repo() {
 function promptDeleteRepo() {
   var dialog = document.getElementById("delete_repo_dialog");
   dialog.open();
-  // Flicker app.lifx_alert =  {"power": "on", "color": "red", "brightness": 0.5, "period": 0.3, "cycles": 2.0, "persist": false};
+  //app.lifx_alert =  {"power": "on", "from_color": "hue:330" ,"color": "red", "brightness": 0.5, "period": 0.3, "cycles": 2.0, "persist": true};
   app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
@@ -591,7 +595,7 @@ function promptDeleteRepo() {
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
   });
 }
-
+//TODO: Do something after deleteRepo
 //Deletes the polytipe-projects repository from the user
 function deleteRepo(){
   document.getElementById("delete_repo_spinner").active = true;
@@ -658,20 +662,47 @@ function searchUsers() {
   });
 }
 
+/* Commit history actions */
+
+function promptGetCommits() {
+  var get_commits_dialog = document.getElementById('get_commits_dialog');
+  get_commits_dialog.open();
+  get_commits_dialog.addEventListener("iron-overlay-opened", function () {
+    getCommits();
+  });
+}
+//TODO: Display diff when making a new commit
+//FIXME: We can't use {{user}} when referencing the path of a project because
+//       it's gonna break on shared projects. We should ask who is the owner first
+function getCommits() {
+  app.loading_commits = true;
+  document.getElementById('commits_view_more').style.display = "none";
+  var repo = github.getRepo(user_input, "polytipe-projects");
+  var options = {
+     sha: app.selected_project,
+     perpage: 20
+  };
+  repo.getCommits(options, function(err, commits, xhr) {
+    var commit_array = [];
+    for (var i = 0; i < commits.length; i++) {
+      var url = commits[i].html_url;
+      var avatar = commits[i].committer.avatar_url;
+      var message = commits[i].commit.message.split("\"\n")[0]; //Get title only
+      var date = "Hace " + timeAgo(Date.parse(commits[i].commit.author.date));
+      var author = commits[i].author.login;
+      commit_array.push({url: url, avatar: avatar, message: message, date: date, author: author});
+    }
+    app.commits = commit_array;
+    app.loading_commits = false;
+    document.getElementById('commits_view_more').style.display = "flex";
+  });
+}
+
 /* Project actions */
 
 function addProjectDialog(){
   var dialog = document.getElementById('add_project_dialog');
   dialog.open();
-  app.lifx_body =  {"power": "on", "color": "green", "brightness": 0.5, "duration": 1};
-
-  dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
-  });
-
-  dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
-  });
 }
 
 function createProject() {
@@ -742,12 +773,18 @@ function saveProject() {
   var repo = github.getRepo(user_input, "polytipe-projects");
   if(validate_msg){
     document.getElementById('saving_spinner').active = true;
-    var merged_html = project_base_before + Polymer.dom(iframe_app_content).innerHTML + project_base_after;
-    //Remove selected_element and outlined_element class on save
-    //TODO: Fix element class duplicates "x-scope poly-fab-0"
-    var no_iron_selected = merged_html.replace(/iron-selected/g, "");
-    var new_contents = no_iron_selected.replace(/outlined_element/g, "");
-    repo.write(app.selected_project, 'index.html', new_contents, app.commit_message, function(err) {
+    var temp_dom = Polymer.dom(iframe_app_content).innerHTML;
+    temp_dom = temp_dom.replace(/ class=".*?"/g, '');
+    //TODO: Fix layout inside layout not being added
+    var beautified_html = vkbeautify.xml(temp_dom, 2);
+    var temp = beautified_html.split("\n");
+    for (var i = 0; i < temp.length; i++) {
+      temp[i] = "\t" + temp[i];
+    }
+    beautified_html = temp.join("\n");
+    var merged_html = project_base_before + beautified_html + "\n" + "      "  + project_base_after;
+
+    repo.write(app.selected_project, 'index.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
         dialog.close();
         document.getElementById('saving_spinner').active = false;
@@ -789,6 +826,15 @@ function promptLeaveProject() {
   if(app.unsaved_changes){
     var dialog = document.getElementById("leave_project_dialog");
     dialog.open();
+    app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+
+    dialog.addEventListener("iron-overlay-canceled", function () {
+      app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    });
+
+    dialog.addEventListener("iron-overlay-closed", function () {
+      app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    });
   }else{
     leaveProject();
   }
@@ -811,17 +857,8 @@ function leaveProject() {
 function addScreenDialog(){
   var dialog = document.getElementById('add_screen_dialog');
   dialog.open();
-  app.lifx_body =  {"power": "on", "color": "green", "brightness": 0.5, "duration": 1};
-
-  dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
-  });
-
-  dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
-  });
 }
-
+//TODO: Check reserved words first
 function createScreen() {
   var validate_screen = document.getElementById('add_screen_input').validate();
   if(!validate_screen){
@@ -903,6 +940,15 @@ function editScreen() {
 function promptDeleteScreen() {
   var dialog = document.getElementById("delete_screen_dialog");
   dialog.open();
+  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+
+  dialog.addEventListener("iron-overlay-canceled", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
+
+  dialog.addEventListener("iron-overlay-closed", function () {
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+  });
 }
 
 function deleteScreen() {
@@ -943,7 +989,7 @@ function timeAgo(time){
 }
 
 /* Key binding functions */
-//TODO: Add screenshots of the screens
+//IDEA: Add screenshots of the screens
 //TODO: Fix editing inputs on screen_editor (backspace is on top of that)
 function polytipeKeyPressed(e) {
   //console.log(e.detail.keyboardEvent.key);
