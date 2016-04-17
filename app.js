@@ -331,6 +331,7 @@ function makeElement(element_name) {
     element.id = "poly" + element_count;
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
+      Polymer.dom(selected_element).appendChild(element);
       selected_element.appendChild(element);
       if(element.tagName == "POLY-LAYOUT"){ //When creating poly-layout inside another one set height auto
         element.style.height = selected_element.style.height;
@@ -490,25 +491,25 @@ function changeLIFX() {
   //Change the LIFX bulb color
   switch (app.carousel) {
     case 0:
-      lifx_color = "hue:120";
+      lifx_color = "hue:120 brightness:1.0";
       break;
     case 1:
-      lifx_color = "hue:70";
+      lifx_color = "hue:70 brightness:1.0";
       break;
     case 2:
-      lifx_color = "hue:52";
+      lifx_color = "hue:52 brightness:1.0";
       break;
     case 3:
-      lifx_color = "hue:335";
+      lifx_color = "hue:335 brightness:1.0";
       break;
     case 4:
-      lifx_color = "hue:195";
+      lifx_color = "hue:265 brightness:1.0";
       break;
     case 5:
-      lifx_color = "hue:175";
+      lifx_color = "hue:175 brightness:1.0";
       break;
   }
-  app.lifx_body =  {"power": "on", "color": lifx_color + ' saturation:1.0', "brightness": 0.5, "duration": 1};
+  app.lifx_body =  {"power": "on", "color": lifx_color, "duration": 1};
 }
 
 function changeCarousel() {
@@ -783,7 +784,7 @@ function saveProject() {
       temp[i] = "\t" + temp[i];
     }
     beautified_html = temp.join("\n");
-    var merged_html = project_base_before + beautified_html + "\n" + "      "  + project_base_after;
+    var merged_html = project_base_before + "\n" + beautified_html + "\n" + "      "  + project_base_after;
 
     repo.write(app.selected_project, 'index.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
@@ -1003,9 +1004,9 @@ function timeAgo(time){
     }
   };
 }
-
+//IDEA: On paper-swatch-picker hover change the bulb color
 /* Key binding functions */
-//IDEA: Add screenshots of the screens
+//IDEA: Add screenshots of the screens with html2canvas
 //TODO: Fix editing inputs on screen_editor (backspace is on top of that)
 function polytipeKeyPressed(e) {
   //console.log(e.detail.keyboardEvent.key);

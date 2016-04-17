@@ -14,6 +14,7 @@
   </style>
 
   <template>
+    <content></content>
   </template>
 
   <script>
@@ -61,7 +62,6 @@
         this.alignDropdown = ["", "start","center", "end"];
         this.justifyDropdown = ["", "start-justified","center-justified","end-justified","justified","around-justified"];
         this.flexDropdown = ["", "flex-1","flex-2","flex-3","flex-4","flex-5","flex-6","flex-7","flex-8","flex-9","flex-10","flex-11","flex-12"];
-        this.toggleClass("layout", true);
       },
       focus: function(event) {
         this.getStyles();
