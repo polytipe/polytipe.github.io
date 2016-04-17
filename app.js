@@ -9,6 +9,7 @@ var iframeReady = false;
 
 function iframe_ready() {
   iframeReady = true;
+  editScreen();
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
   //Unfocus all elements when clicking outside the app
@@ -57,7 +58,6 @@ function iframe_ready() {
     document.getElementById('properties_placeholder').style.display = "none";
 
     //Display element actions
-    // TODO: Move up / down in the DOM tree
     document.getElementById('element_actions').style.display = "flex";
 
     //Add inputs for poly-layout elements
@@ -324,6 +324,8 @@ function arrayChanged() {
   app.unsaved_changes = true; //If changes are made, show the save_button
 }
 
+/* Element actions */
+
 function makeElement(element_name) {
   if(iframeReady){
     var element = iframe_document.createElement(element_name);
@@ -356,6 +358,24 @@ function deleteElement(e) {
     document.getElementById("app_iframe").classList.add('outlined_element');
   }
 }
+//FIXME: Skip empty text nodes
+function moveElementUp() {
+  var parent = selected_element.parentNode;
+  if(selected_element.previousSibling != null){
+    parent.insertBefore(selected_element, selected_element.previousSibling);
+  }
+  update_tree();
+}
+
+function moveElementDown() {
+  var parent = selected_element.parentNode;
+  if(selected_element.nextSibling != null){
+    parent.insertBefore(selected_element, selected_element.nextSibling.nextSibling);
+  }
+  update_tree();
+}
+
+/* Tree actions */
 
 function generateTree(node) {
   var treeArray = [];
@@ -777,7 +797,6 @@ function saveProject() {
     document.getElementById('saving_spinner').active = true;
     var temp_dom = Polymer.dom(iframe_app_content).innerHTML;
     temp_dom = temp_dom.replace(/ class=".*?"/g, '');
-    //TODO: Fix layout inside layout not being added
     var beautified_html = vkbeautify.xml(temp_dom, 2);
     var temp = beautified_html.split("\n");
     for (var i = 0; i < temp.length; i++) {
