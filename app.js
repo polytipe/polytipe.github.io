@@ -642,7 +642,6 @@ function deleteRepo(){
     dialog.close();
     app.user_projects = [];
     document.getElementById("empty_state_project").style.display = "flex";
-    //TODO: Open dialog for explaining the initial fork and stuff
   });
 }
 
