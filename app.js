@@ -325,7 +325,7 @@ function arrayChanged() {
 }
 
 /* Element actions */
-
+//FIXME: Fix adding elements to drawer
 function makeElement(element_name) {
   if(iframeReady){
     var element = iframe_document.createElement(element_name);
@@ -444,8 +444,8 @@ window.addEventListener('WebComponentsReady', function(e) {
     var repo = github.getRepo("polytipe", "polytipe-projects");
     repo.read("master", 'index.html', function(err, data) {
       split_delimiter = '</iron-pages>';
-      project_base_before = data.split(split_delimiter)[0];
-      project_base_after = split_delimiter + data.split(split_delimiter)[1];
+      project_base_before = data.split(split_delimiter)[0] + "\n";
+      project_base_after = "\n" + "      " + split_delimiter + data.split(split_delimiter)[1];
     });
   });
   firebase_element.addEventListener('logout', function (e) { //On logout
@@ -498,6 +498,19 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   /* iron-a11y-keys listeners */
 
+  editor_active_input = false;
+  document.getElementById('editor_frame').addEventListener("click", function (e) {
+    editor_active_input = false;
+  });
+
+  document.getElementById("inputs_frame").addEventListener("click", function () {
+    editor_active_input = true;
+  });
+
+  document.body.addEventListener("folderSelected", function () {
+    editor_active_input = false;
+  });
+
   app.polytipe_target = document.body;
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
     polytipeKeyPressed(e);
@@ -542,8 +555,6 @@ function changeCarousel() {
   handle = app.async(changeCarousel, 6000);
 }
 
-//TODO: Move repository to Polytipe organization
-
 /* Initialization actions */
 
 function sign_in() {
@@ -568,7 +579,8 @@ function validate_user() {
       app.user = user_input;
       app.token = token_input;
       app.polytipe_section = "user_view";
-      fork_polytipe_repo();
+      document.getElementById("loading_project_box").style.display = "flex";
+      promptForkRepo();
     }else{ //If errors display the fail toast
       document.getElementById("sign_in_fail_toast").open();
     }
@@ -576,7 +588,7 @@ function validate_user() {
 }
 
 //Forks the the polytipe-projects repo if it doesn't have it
-function fork_polytipe_repo() {
+function promptForkRepo() {
   var hasProjects = false;
   user.userRepos(app.user, function(err, repos) {
     for (var i = 0; i < repos.length; i++) {
@@ -585,17 +597,22 @@ function fork_polytipe_repo() {
       }
     }
     if(!hasProjects){
-      var baseRepo = github.getRepo("polytipe", "polytipe-projects");
-      baseRepo.fork(function(err,res) {
-        document.getElementById("created_repo_toast").open();
-        document.getElementById("loading_project_box").style.display = "none";
-        document.getElementById("empty_state_project").style.display = "flex";
-      });
+      document.getElementById('create_repo_dialog').open();
     }else{
       getProjects(function () {
         document.getElementById("loading_project_box").style.display = "none";
       });
     }
+  });
+}
+
+function forkRepo() {
+  var baseRepo = github.getRepo("polytipe", "polytipe-projects");
+  baseRepo.fork(function(err,res) {
+    document.getElementById("created_repo_toast").open();
+    document.getElementById('create_repo_dialog').close();
+    document.getElementById("loading_project_box").style.display = "none";
+    document.getElementById("empty_state_project").style.display = "flex";
   });
 }
 
@@ -693,7 +710,7 @@ function promptGetCommits() {
     getCommits();
   });
 }
-//TODO: Display diff when making a new commit
+//IDEA: Display diff when making a new commit
 //FIXME: We can't use {{user}} when referencing the path of a project because
 //       it's gonna break on shared projects. We should ask who is the owner first
 function getCommits() {
@@ -791,6 +808,7 @@ function promptSaveProject() {
 
 //Makes a commit
 function saveProject() {
+  //FIXME: Save change in styles
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(user_input, "polytipe-projects");
   if(validate_msg){
@@ -802,8 +820,9 @@ function saveProject() {
     for (var i = 0; i < temp.length; i++) {
       temp[i] = "\t" + temp[i];
     }
+    //FIXME: Remove blank lines when saving
     beautified_html = temp.join("\n");
-    var merged_html = project_base_before + "\n" + beautified_html + "\n" + "      "  + project_base_after;
+    var merged_html = project_base_before + beautified_html + project_base_after;
 
     repo.write(app.selected_project, 'index.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
@@ -915,6 +934,7 @@ function createScreen() {
 function getScreens() {
   document.getElementById('empty_state_screen').style.display = "none";
   document.getElementById('screen_placeholder').style.display = "flex";
+  app.last_saved = "...";
   app.project_screens = [];
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.read(app.selected_project, 'index.html', function(err, data) {
@@ -932,12 +952,11 @@ function getScreens() {
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
 
-      if(iframe_app_content.innerHTML != ""){
-        var id_count = iframe_app_content.innerHTML.match(/id=".*?"/g);
-        start_count = id_count[id_count.length-1].match(/\d/g).join("");
-        element_count = start_count;
-      }else{
+      var id_count = iframe_app_content.innerHTML.match(/id=".*?"/g);
+      if(id_count==null){
         element_count = 0;
+      }else{
+        element_count = id_count[id_count.length-1].match(/\d/g).join("");
       }
 
       displayScreens();
@@ -1023,17 +1042,19 @@ function timeAgo(time){
     }
   };
 }
+
 //IDEA: On paper-swatch-picker hover change the bulb color
-/* Key binding functions */
 //IDEA: Add screenshots of the screens with html2canvas
-//TODO: Fix editing inputs on screen_editor (backspace is on top of that)
+
+/* Key binding functions */
+
 function polytipeKeyPressed(e) {
   //console.log(e.detail.keyboardEvent.key);
   if(e.detail.keyboardEvent.key == "s" && (app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor") && app.unsaved_changes){
     e.detail.keyboardEvent.preventDefault();
     promptSaveProject();
   }
-  if(e.detail.keyboardEvent.key == "Delete" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
+  if(!editor_active_input && e.detail.keyboardEvent.key == "Delete" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
     e.detail.keyboardEvent.preventDefault();
     deleteElement(e);
   }
