@@ -422,6 +422,20 @@
 
   /* User view */
 
+  #create_repo_dialog{
+    width: 350px;
+    border-radius: 2px;
+    padding: 5px;
+    margin: 0;
+  }
+  .create_repo_icon_container{
+    height: 250px;
+  }
+  .create_repo_description{
+    margin: 20px 0;
+    font-size: 18px;
+  }
+
   #empty_state_project{
     background-color: var(--app-bg-color);
     display: none;
@@ -478,6 +492,7 @@
   #loading_project_box{
     background-color: rgba(0, 0, 0, 0.1);
     cursor: default;
+    display: none;
   }
   #loading_project_box paper-spinner{
     width: 45px;
@@ -618,11 +633,11 @@
   .modal_dialog .buttons{
     margin-top: 25px;
   }
-  .modal_dialog .buttons .accept_button{
+  .accept_button{
     color: var(--polytipe-accent-color);
     font-weight: 700;
   }
-  .modal_dialog .buttons .cancel_button{
+  .cancel_button{
     color: #777;
   }
   .modal_dialog .buttons .red_button{
