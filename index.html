@@ -127,7 +127,7 @@
                     <iron-icon class="sign_in_icon" icon="polytipe-icons:github"></iron-icon>
                   </div>
                   <div class="sign_in_title paper-font-title">Open source</div>
-                  <div class="sign_in_description paper-font-subhead">We ❤ open source. Únete al proyecto en <strong><a class="link" href="https://github.com/alejost848/polytipe" target="_blank">Github</a></strong> y contribuye a su desarrollo</div>
+                  <div class="sign_in_description paper-font-subhead">We ❤ open source. <strong><a class="link" href="https://github.com/polytipe/polytipe" target="_blank">Únete al proyecto</a></strong> en Github y contribuye a su desarrollo</div>
                 </section>
                 <section>
                   <div class="sign_in_icon_container layout vertical center-center">
@@ -300,7 +300,7 @@
                   </iron-pages>
                 </paper-scroll-header-panel>
 
-                <paper-scroll-header-panel class="sidebar_panel" fixed>
+                <paper-scroll-header-panel id="inputs_frame" class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
                     <paper-tab name="editor_properties">Propiedades</paper-tab>
                     <paper-tab name="editor_styles">Estilos</paper-tab>
@@ -321,6 +321,7 @@
                     </section>
                     <section id="editor_styles">
                       <div id="styles_list" class="sidebar_list">
+                        <!-- IDEA: Add a reset styles button -->
                         <paper-input label="width"></paper-input>
                         <paper-input label="height"></paper-input>
                         <paper-input label="padding"></paper-input>
@@ -340,7 +341,7 @@
                 </paper-scroll-header-panel>
               </paper-scroll-header-panel>
 
-              <paper-header-panel main class="main_frame" mode="seamed">
+              <paper-header-panel main id="editor_frame" class="main_frame" mode="seamed">
                 <paper-toolbar class="screen_view_toolbar">
                   <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <div class="flex paper-font-title">{{selected_screen}}</div>
@@ -387,8 +388,7 @@
       provider="github"
       redirect
       user="{{signed_user}}"
-      params='{"scope": "public_repo, delete_repo"}'
-      status-known="{{statusKnown}}">
+      params='{"scope": "public_repo, delete_repo"}'>
     </firebase-auth>
 
     <iron-ajax
@@ -419,16 +419,29 @@
 
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
     <iron-a11y-keys id="polytipe_keys" keys="ctrl+s delete" target="[[polytipe_target]]"></iron-a11y-keys>
-    <iron-a11y-keys id="iframe_keys" keys="backspace" target="[[iframe_target]]"></iron-a11y-keys>
+    <iron-a11y-keys id="iframe_keys" keys="delete" target="[[iframe_target]]"></iron-a11y-keys>
 
     <div class="dialogs">
       <!-- User view dialogs -->
+      <paper-dialog id="create_repo_dialog" modal entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+
+        <div class="create_repo_icon_container layout vertical center-center">
+          <iron-icon class="sign_in_icon" icon="create-new-folder"></iron-icon>
+        </div>
+        <div class="sign_in_title paper-font-title">Bienvenido a Polytipe</div>
+        <div class="create_repo_description paper-font-subhead">Lo primero que haremos será crear un repositorio en tu cuenta de Github donde se guardarán todos tus proyectos.</div>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink onclick="sign_out()" dialog-dismiss>Salir de Polytipe</paper-button>
+          <paper-button class="accept_button" onclick="forkRepo()" noink autofocus>Crear</paper-button>
+        </div>
+
+      </paper-dialog>
       <paper-dialog id="add_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
         <div class="layout horizontal">
           <h2 class="flex">Crear proyecto</h2>
           <paper-spinner id="creating_spinner"></paper-spinner>
         </div>
-        <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="No puede dejarse en blanco"></paper-input>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
@@ -514,7 +527,7 @@
 
       <paper-dialog id="add_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
         <h2>Crear pantalla</h2>
-        <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="No puede dejarse en blanco"></paper-input>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" noink onclick="createScreen()" autofocus>Crear</paper-button>
