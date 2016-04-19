@@ -25,18 +25,15 @@ function iframe_ready() {
 
   drawer_panel = iframe_document.getElementById('drawer_panel');
   drawer_panel.addEventListener('selected-changed', function(e) {
-
-    if(drawer_panel.selected == "drawer"){
-      iframe_drawer_content.style.border = "2px solid yellow";
-      selected_iframe_panel = iframe_drawer_content;
-      unfocus("main");
-    }else if(drawer_panel.selected == "main"){
-      iframe_drawer_content.style.border = "none";
-      if(selected_iframe_panel == iframe_drawer_content){
-        selected_iframe_panel = screen_target;
+    app.async(function () { //Wait a little for the drawer_panel.selected to update
+      if(drawer_panel.selected == "drawer"){
+        iframe_drawer_content.style.border = "2px solid yellow";
+        unfocus("main");
+      }else if(drawer_panel.selected == "main"){
+        iframe_drawer_content.style.border = "none";
         unfocus("drawer");
       }
-    }
+    },10);
   });
 
   iframe_document.addEventListener('elementSelection', function(e) {
@@ -323,7 +320,7 @@ function arrayChanged() {
 }
 
 /* Element actions */
-//FIXME: Fix adding elements to drawer
+
 function makeElement(element_name) {
   if(iframeReady){
     var element = iframe_document.createElement(element_name);
@@ -337,7 +334,11 @@ function makeElement(element_name) {
         element.style.height = selected_element.style.height;
       }
     }else{ //If no poly-layout element is selected add it to the selected screen
-      Polymer.dom(screen_target).appendChild(element);
+      if(drawer_panel.selected == "drawer"){
+        Polymer.dom(iframe_drawer_content).appendChild(element);
+      }else if(drawer_panel.selected == "main"){
+        Polymer.dom(screen_target).appendChild(element);
+      }
     }
     update_tree();
     app.unsaved_changes = true; //If changes are made, show the save_button
@@ -414,7 +415,7 @@ function update_tree(){
 
   var drawer_tree = document.createElement("file-tree");
   drawer_tree.identifier = "drawer_tree";
-  drawer_tree.data = {"id": "drawer_folder", "name": "drawer", "open": true, "children": generateTree(iframe_document.getElementById("drawer_content"))};
+  drawer_tree.data = {"id": "drawer_folder", "name": "drawer", "open": true, "children": generateTree(iframe_drawer_content)};
   document.getElementById('tree_view').appendChild(drawer_tree);
 }
 
