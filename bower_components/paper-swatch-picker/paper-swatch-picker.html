@@ -262,6 +262,7 @@ Custom property | Description | Default
         // If it's in rgb format, convert it first.
         this.color = color.indexOf('rgb') === -1 ? color : this._rgbToHex(color);
         this.fire('color-picker-selected', {color: this.color});
+        this.$.container.selected = null;
       },
 
       _colorChanged: function() {

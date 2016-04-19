@@ -192,12 +192,12 @@ function iframe_ready() {
   }
 
   //Add event listener when paper-swatch-picker is selected
-  bgPicker.addEventListener('iron-select', function () {
+  bgPicker.addEventListener('color-picker-selected', function () {
     style_inputs[4].value = bgPicker.color;
     selected_element.updateStyles("background", bgPicker.color);
     app.unsaved_changes = true; //If changes are made, show the save_button
   });
-  colorPicker.addEventListener('iron-select', function () {
+  colorPicker.addEventListener('color-picker-selected', function () {
     style_inputs[5].value = colorPicker.color;
     selected_element.updateStyles("color", colorPicker.color);
     app.unsaved_changes = true; //If changes are made, show the save_button
@@ -424,8 +424,6 @@ function goto(section) {
 }
 
 /* WebComponentsReady listener */
-
-// TODO: Reset paper-swatch-picker
 
 window.addEventListener('WebComponentsReady', function(e) {
   /* Firebase event listeners */
