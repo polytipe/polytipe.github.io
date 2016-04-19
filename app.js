@@ -9,7 +9,6 @@ var iframeReady = false;
 
 function iframe_ready() {
   iframeReady = true;
-  editScreen();
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
   //Unfocus all elements when clicking outside the app
@@ -26,19 +25,18 @@ function iframe_ready() {
 
   drawer_panel = iframe_document.getElementById('drawer_panel');
   drawer_panel.addEventListener('selected-changed', function(e) {
-    setTimeout(function(){
-      if(drawer_panel.selected == "drawer"){
-        iframe_drawer_content.style.border = "2px solid yellow";
-        selected_iframe_panel = iframe_drawer_content;
-        unfocus("main");
-      }else if(drawer_panel.selected == "main"){
-        iframe_drawer_content.style.border = "none";
-        if(selected_iframe_panel == iframe_drawer_content){
-          selected_iframe_panel = screen_target;
-          unfocus("drawer");
-        }
+
+    if(drawer_panel.selected == "drawer"){
+      iframe_drawer_content.style.border = "2px solid yellow";
+      selected_iframe_panel = iframe_drawer_content;
+      unfocus("main");
+    }else if(drawer_panel.selected == "main"){
+      iframe_drawer_content.style.border = "none";
+      if(selected_iframe_panel == iframe_drawer_content){
+        selected_iframe_panel = screen_target;
+        unfocus("drawer");
       }
-    },1);
+    }
   });
 
   iframe_document.addEventListener('elementSelection', function(e) {
@@ -339,7 +337,7 @@ function makeElement(element_name) {
         element.style.height = selected_element.style.height;
       }
     }else{ //If no poly-layout element is selected add it to the selected screen
-      screen_target.appendChild(element);
+      Polymer.dom(screen_target).appendChild(element);
     }
     update_tree();
     app.unsaved_changes = true; //If changes are made, show the save_button
@@ -425,6 +423,8 @@ function goto(section) {
 }
 
 /* WebComponentsReady listener */
+
+// TODO: Reset paper-swatch-picker
 
 window.addEventListener('WebComponentsReady', function(e) {
   /* Firebase event listeners */
@@ -563,6 +563,11 @@ function sign_in() {
 function sign_out() {
   firebase_element.logout();
 }
+
+//TODO: Add new screen to select different pack of projects belonging to other users
+/*user.repos(null, function(err, repos) {
+  console.log(repos);
+});*/
 
 function validate_user() {
   user = github.getUser();
@@ -769,6 +774,8 @@ function createProject() {
   });
 }
 
+//IDEA: Add possibility to create teams
+
 function getProjects(callback) {
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.listBranches(function(err, branches) {
@@ -951,7 +958,7 @@ function getScreens() {
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
 
-      var id_count = iframe_app_content.innerHTML.match(/id=".*?"/g);
+      var id_count = Polymer.dom(iframe_app_content).innerHTML.match(/id=".*?"/g);
       if(id_count==null){
         element_count = 0;
       }else{
