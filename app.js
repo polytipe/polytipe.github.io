@@ -11,6 +11,7 @@ function iframe_ready() {
   iframeReady = true;
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
+  update_tree();
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
     unfocus(e);
@@ -195,12 +196,12 @@ function iframe_ready() {
   bgPicker.addEventListener('color-picker-selected', function () {
     style_inputs[4].value = bgPicker.color;
     selected_element.updateStyles("background", bgPicker.color);
-    app.unsaved_changes = true; //If changes are made, show the save_button
+    app.unsaved_changes = true;
   });
   colorPicker.addEventListener('color-picker-selected', function () {
     style_inputs[5].value = colorPicker.color;
     selected_element.updateStyles("color", colorPicker.color);
-    app.unsaved_changes = true; //If changes are made, show the save_button
+    app.unsaved_changes = true;
   });
 }
 
@@ -300,12 +301,12 @@ function propertyChanged() {
     selected_element[this.id] = this.value;
   }
 
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
 }
 
 function styleChanged() {
   selected_element.updateStyles(this.label, this.value);
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
 }
 
 function arrayChanged() {
@@ -316,7 +317,7 @@ function arrayChanged() {
     selected_element.removeElement();
   }
 
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
 }
 
 /* Element actions */
@@ -341,29 +342,25 @@ function makeElement(element_name) {
       }
     }
     update_tree();
-    app.unsaved_changes = true; //If changes are made, show the save_button
+    app.unsaved_changes = true;
   }
 }
 
-function copyElement() {
+function cloneElement() {
   element_count++;
-  element_to_copy = selected_element.cloneNode(true);
-  element_to_copy.id = element_count;
-}
-
-function pasteElement() {
+  new_element = Polymer.dom(selected_element).cloneNode(true);
+  new_element.id = "poly"+element_count;
+  new_element.classList.remove("outlined_element");
   var parent = selected_element.parentNode;
-  if(selected_element.nextSibling != null){
-    parent.insertBefore(element_to_copy, selected_element.nextSibling.nextSibling);
-    update_tree();
-    unfocus(selected_element);
-  }
+  app.unsaved_changes = true;
+  parent.insertBefore(new_element, selected_element.nextSibling);
+  update_tree();
 }
 
 function deleteElement(e) {
   selected_element.remove();
   update_tree();
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
   unfocus(e);
   setTimeout(function(){
     document.getElementById("app_folder").highlightFolder();
@@ -439,7 +436,7 @@ function goto(section) {
 }
 
 /* WebComponentsReady listener */
-//TODO: Add a copy element button
+
 window.addEventListener('WebComponentsReady', function(e) {
   /* Firebase event listeners */
 
@@ -901,7 +898,7 @@ function promptLeaveProject() {
 }
 
 function leaveProject() {
-  app.unsaved_changes = false; //If changes are made, show the save_button
+  app.unsaved_changes = false;
   //Reset selected project so iron-select triggers if you select the same project
   document.getElementById('project_selector').selected = "";
   document.getElementById('app_container').removeChild(frame);
@@ -945,7 +942,7 @@ function createScreen() {
   Polymer.dom(iframe_app_content).appendChild(section);
   displayScreens();
 
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
   app.screen_name = "";
   var dialog = document.getElementById("add_screen_dialog");
   dialog.close();
@@ -983,7 +980,7 @@ function getScreens() {
 
       app.iframe_target = iframe_document.body;
       document.getElementById('iframe_keys').addEventListener('keys-pressed', function (e) {
-        iframeKeyPressed(e);
+        polytipeKeyPressed(e);
       });
     });
 
@@ -1035,7 +1032,7 @@ function deleteScreen() {
   dialog.close();
 
   update_tree();
-  app.unsaved_changes = true; //If changes are made, show the save_button
+  app.unsaved_changes = true;
   app.selected_screen = "";
   goto('project_view');
   displayScreens();
@@ -1069,21 +1066,18 @@ function timeAgo(time){
 /* Key binding functions */
 
 function polytipeKeyPressed(e) {
-  //console.log(e.detail.keyboardEvent.key);
-  if(e.detail.keyboardEvent.key == "s" && (app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor") && app.unsaved_changes){
-    e.detail.keyboardEvent.preventDefault();
-    promptSaveProject();
-  }
-  if(!editor_active_input && e.detail.keyboardEvent.key == "Delete" && app.polytipe_section == "screen_editor" && selected_element.tagName.startsWith("POLY-")){
-    e.detail.keyboardEvent.preventDefault();
-    deleteElement(e);
-  }
-}
-function iframeKeyPressed(e) {
   e.detail.keyboardEvent.preventDefault();
+  if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
+    if(e.detail.keyboardEvent.key == "s" && app.unsaved_changes){
+      promptSaveProject();
+    }
+  }
   if(app.polytipe_section == "screen_editor"){
-    if(selected_element.tagName.startsWith("POLY-")){
+    if(!editor_active_input && e.detail.keyboardEvent.key == "Delete" && selected_element.tagName.startsWith("POLY-")){
       deleteElement(e);
+    }
+    if(e.detail.keyboardEvent.key == "d" && selected_element.tagName.startsWith("POLY-")){
+      cloneElement();
     }
   }
 }

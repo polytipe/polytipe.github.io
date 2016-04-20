@@ -314,10 +314,9 @@
                       <div id="element_actions" class="sidebar_list layout horizontal end-justified">
                         <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button" onclick="moveElementUp()"></paper-fab>
                         <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button" onclick="moveElementDown()"></paper-fab>
-                        <paper-fab icon="content-copy" title="Copiar elemento" class="move_button" onclick="copyElement()"></paper-fab>
-                        <paper-fab icon="content-paste" title="Pegar elemento" class="move_button" onclick="pasteElement()"></paper-fab>
+                        <paper-fab icon="content-copy" title="Duplicar elemento [Ctrl+D]" class="move_button" onclick="cloneElement()"></paper-fab>
                         <div class="flex"></div>
-                        <paper-fab id="delete_button" icon="delete" title="Eliminar elemento" onclick="deleteElement(event)"></paper-fab>
+                        <paper-fab id="delete_button" icon="delete" title="Eliminar elemento [Supr]" onclick="deleteElement(event)"></paper-fab>
                       </div>
                       <div id="properties_list" class="sidebar_list"></div>
                     </section>
@@ -420,8 +419,8 @@
     </iron-ajax>
 
     <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s delete" target="[[polytipe_target]]"></iron-a11y-keys>
-    <iron-a11y-keys id="iframe_keys" keys="delete" target="[[iframe_target]]"></iron-a11y-keys>
+    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s ctrl+d delete" target="[[polytipe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
+    <iron-a11y-keys id="iframe_keys" keys="ctrl+s ctrl+d delete" target="[[iframe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
 
     <div class="dialogs">
       <!-- User view dialogs -->
@@ -581,13 +580,13 @@
       <!-- Shared dialogs -->
       <paper-dialog id="save_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
         <div class="layout horizontal">
-          <h2 class="flex">Hacer commit</h2>
+          <h2 class="flex">Crear commit</h2>
           <paper-spinner id="saving_spinner"></paper-spinner>
         </div>
         <paper-input id="save_project_input" label="Mensaje del commit" maxlength="50" char-counter value="{{commit_message}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-          <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Commit</paper-button>
+          <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Crear</paper-button>
         </div>
       </paper-dialog>
     </div>
