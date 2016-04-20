@@ -338,9 +338,21 @@ function makeElement(element_name) {
       }
     }else{ //If no poly-layout element is selected add it to the selected screen
       if(drawer_panel.selected == "drawer"){
-        Polymer.dom(iframe_drawer_content).appendChild(element);
+        var parent = selected_element.parentNode;
+        if(selected_element.nextSibling != null){
+          parent.insertBefore(element, selected_element.nextSibling.nextSibling);
+          app.unsaved_changes = true;
+        }else{
+          Polymer.dom(iframe_drawer_content).appendChild(element);
+        }
       }else if(drawer_panel.selected == "main"){
-        Polymer.dom(screen_target).appendChild(element);
+        var parent = selected_element.parentNode;
+        if(selected_element.nextSibling != null){
+          parent.insertBefore(element, selected_element.nextSibling.nextSibling);
+          app.unsaved_changes = true;
+        }else{
+          Polymer.dom(screen_target).appendChild(element);
+        }
       }
     }
     update_tree();
@@ -357,12 +369,17 @@ function cloneElement() {
   new_element.style.cssText = selected_element.style.cssText;
   new_element.setAttribute("style", selected_element.getAttribute("style"));
   new_element.updateStyles();
-
   new_element.id = "poly"+element_count;
   new_element.classList.remove("outlined_element");
-  Polymer.dom(screen_target).appendChild(new_element);
-  app.unsaved_changes = true;
-  update_tree();
+
+  var parent = selected_element.parentNode;
+  if(selected_element.nextSibling != null){
+    parent.insertBefore(new_element, selected_element.nextSibling.nextSibling);
+    app.unsaved_changes = true;
+    update_tree();
+  }else{
+    Polymer.dom(screen_target).appendChild(new_element);
+  }
 }
 
 function deleteElement(e) {
