@@ -56,9 +56,9 @@
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
 </head>
 
-<body unresolved class="fullbleed main">
+<body class="fullbleed main">
   <template id="app" is="dom-bind">
-    <paper-drawer-panel disable-swipe force-narrow drawer-width="290px" drawer-toggle-attribute="paper-drawer-left">
+    <paper-drawer-panel id="drawer_panel_wrapper" disable-swipe force-narrow drawer-width="290px" drawer-toggle-attribute="paper-drawer-left">
       <paper-header-panel drawer mode="seamed">
         <div id="drawer_toolbar" class="sidebar_polytipe_toolbar layout horizontal center-center">
             <iron-image id="avatar" alt="{{user}}" src="{{avatar}}"></iron-image>

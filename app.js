@@ -7,6 +7,19 @@ var selected_element;
 var element_properties;
 var iframeReady = false;
 
+var style = document.createElement("style");
+style.textContent = "" + "body {" + "background-color: #303030; margin: 0 auto; width: 100vw; height: 100vh;" + " } \n" + "#pre_loader{" + "margin: 0 auto; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;" + " }";
+var head = document.querySelector("head");
+head.insertBefore(style, head.firstChild);
+
+var pre_loader = document.createElement("div");
+pre_loader.id = "pre_loader";
+var loading_icon = document.createElement("div");
+loading_icon.innerHTML = "<img src='images/touch/icon-128x128.png'>";
+pre_loader.appendChild(loading_icon);
+document.body.appendChild(pre_loader);
+
+
 function iframe_ready() {
   frame.style.opacity = "1";
   document.getElementById('iframe_loading_spinner').style.display = "none";
@@ -471,6 +484,8 @@ function goto(section) {
 /* WebComponentsReady listener */
 
 window.addEventListener('WebComponentsReady', function(e) {
+  //Hide loader
+  document.getElementById('drawer_panel_wrapper').style.opacity = 1;
   /* Firebase event listeners */
 
   firebase_element = document.getElementById('firebaseAuth');
