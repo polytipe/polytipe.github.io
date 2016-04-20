@@ -83,7 +83,7 @@
       getStyles: function(){
         this.width = getComputedStyle(this.$.button)["width"];
         this.height = getComputedStyle(this.$.button)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
+        this['background-color'] = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
         this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
         this.display = getComputedStyle(this.$.button)["display"];
 

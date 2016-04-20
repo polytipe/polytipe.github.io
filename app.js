@@ -8,6 +8,8 @@ var element_properties;
 var iframeReady = false;
 
 function iframe_ready() {
+  frame.style.opacity = "1";
+  document.getElementById('iframe_loading_spinner').style.display = "none";
   iframeReady = true;
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
@@ -182,7 +184,7 @@ function iframe_ready() {
     for (var i = 0; i < element_styles.length; i++) {
       element_styles[i].value = selected_element[element_styles[i].label];
     }
-    bgPicker.color = selected_element["background"];
+    bgPicker.color = selected_element["background-color"];
     colorPicker.color = selected_element["color"];
   });
 
@@ -195,7 +197,7 @@ function iframe_ready() {
   //Add event listener when paper-swatch-picker is selected
   bgPicker.addEventListener('color-picker-selected', function () {
     style_inputs[4].value = bgPicker.color;
-    selected_element.updateStyles("background", bgPicker.color);
+    selected_element.updateStyles("background-color", bgPicker.color);
     app.unsaved_changes = true;
   });
   colorPicker.addEventListener('color-picker-selected', function () {
@@ -347,13 +349,19 @@ function makeElement(element_name) {
 }
 
 function cloneElement() {
+  var new_element = iframe_document.createElement(selected_element.tagName);
   element_count++;
-  new_element = Polymer.dom(selected_element).cloneNode(true);
+  for(var i in selected_element.properties) {
+    new_element[i] = selected_element[i];
+  }
+  new_element.style.cssText = selected_element.style.cssText;
+  new_element.setAttribute("style", selected_element.getAttribute("style"));
+  new_element.updateStyles();
+
   new_element.id = "poly"+element_count;
   new_element.classList.remove("outlined_element");
-  var parent = selected_element.parentNode;
+  Polymer.dom(screen_target).appendChild(new_element);
   app.unsaved_changes = true;
-  parent.insertBefore(new_element, selected_element.nextSibling);
   update_tree();
 }
 
@@ -442,6 +450,8 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   firebase_element = document.getElementById('firebaseAuth');
   firebase_element.addEventListener('login', function (e) { //On login
+    document.getElementById('start_button').style.display = "none";
+    document.getElementById('start_button_loading').style.display = "block";
     user_input = app.signed_user.github.username;
     token_input = app.signed_user.github.accessToken;
     github = new Github({
@@ -455,11 +465,13 @@ window.addEventListener('WebComponentsReady', function(e) {
     var repo = github.getRepo("polytipe", "polytipe-projects");
     repo.read("master", 'index.html', function(err, data) {
       split_delimiter = '</iron-pages>';
-      project_base_before = data.split(split_delimiter)[0] + "\n";
-      project_base_after = "\n" + "      " + split_delimiter + data.split(split_delimiter)[1];
+      project_base_before = data.split(split_delimiter)[0];
+      project_base_after = split_delimiter + data.split(split_delimiter)[1];
     });
   });
   firebase_element.addEventListener('logout', function (e) { //On logout
+    document.getElementById('start_button').style.display = "block";
+    document.getElementById('start_button_loading').style.display = "none";
     goto('sign_in_screen');
     changeCarousel();
   });
@@ -569,6 +581,8 @@ function changeCarousel() {
 /* Initialization actions */
 
 function sign_in() {
+  document.getElementById('start_button').style.display = "none";
+  document.getElementById('start_button_loading').style.display = "block";
   firebase_element.login();
 }
 function sign_out() {
@@ -608,7 +622,7 @@ function promptForkRepo() {
   var hasProjects = false;
   user.userRepos(app.user, function(err, repos) {
     for (var i = 0; i < repos.length; i++) {
-      if(repos[i].name=="polytipe-projects"){
+      if(repos[i].full_name==app.user+"/polytipe-projects"){
         hasProjects = true;
       }
     }
@@ -657,7 +671,9 @@ function deleteRepo(){
     var dialog = document.getElementById("delete_repo_dialog");
     dialog.close();
     app.user_projects = [];
-    document.getElementById("empty_state_project").style.display = "flex";
+    document.getElementById("empty_state_project").style.display = "none";
+    document.getElementById("loading_project_box").style.display = "flex";
+    document.getElementById('create_repo_dialog').open();
   });
 }
 
@@ -785,8 +801,6 @@ function createProject() {
   });
 }
 
-//IDEA: Add possibility to create teams
-
 function getProjects(callback) {
   var repo = github.getRepo(user_input, "polytipe-projects");
   repo.listBranches(function(err, branches) {
@@ -837,7 +851,7 @@ function saveProject() {
     for (var i = 0; i < temp.length; i++) {
       temp[i] = "\t" + temp[i];
     }
-    //FIXME: Remove blank lines when saving
+    //FIXME: Fix first and last iron-pages lines when saving
     beautified_html = temp.join("\n");
     var merged_html = project_base_before + beautified_html + project_base_after;
 
@@ -957,6 +971,7 @@ function getScreens() {
   repo.read(app.selected_project, 'index.html', function(err, data) {
     frame = document.createElement("iframe");
     frame.id = "app_iframe";
+    frame.style.opacity = "0.05";
     document.getElementById('app_container').appendChild(frame);
     iframe_document = frame.contentDocument || frame.contentWindow.document;
 
@@ -969,11 +984,21 @@ function getScreens() {
       iframe_drawer_content = iframe_document.getElementById("drawer_content");
       selected_iframe_panel = iframe_app_content;
 
+      //Get the highest id number of the elements
       var id_count = Polymer.dom(iframe_app_content).innerHTML.match(/id=".*?"/g);
       if(id_count==null){
         element_count = 0;
       }else{
-        element_count = id_count[id_count.length-1].match(/\d/g).join("");
+        //If no numbers are returned
+        var number_array = [];
+        for (var i = 0; i < id_count.length; i++) {
+          if(id_count[i].match(/\d/g)){ //If it's a number
+            if(id_count[i].substring(4).slice(0, -1).startsWith("poly")){ //If it's a poly id
+              number_array.push(parseInt(id_count[i].substring(8).slice(0, -1)));
+            }
+          }
+        }
+        element_count = Math.max.apply(0, number_array);
       }
 
       displayScreens();
@@ -1066,9 +1091,9 @@ function timeAgo(time){
 /* Key binding functions */
 
 function polytipeKeyPressed(e) {
-  e.detail.keyboardEvent.preventDefault();
   if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
     if(e.detail.keyboardEvent.key == "s" && app.unsaved_changes){
+      e.detail.keyboardEvent.preventDefault();
       promptSaveProject();
     }
   }
@@ -1077,6 +1102,7 @@ function polytipeKeyPressed(e) {
       deleteElement(e);
     }
     if(e.detail.keyboardEvent.key == "d" && selected_element.tagName.startsWith("POLY-")){
+      e.detail.keyboardEvent.preventDefault();
       cloneElement();
     }
   }

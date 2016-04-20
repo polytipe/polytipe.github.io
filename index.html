@@ -145,7 +145,10 @@
                 <div class="carousel_dot"></div>
                 <div class="carousel_dot"></div>
               </iron-selector>
-              <paper-button raised onclick="sign_in()">Empezar</paper-button>
+              <paper-button id="sign_in_button" raised onclick="sign_in()">
+                <div id="start_button">Empezar</div>
+                <paper-spinner active id="start_button_loading"></paper-spinner>
+              </paper-button>
             </paper-material>
             <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
           </section>
@@ -329,7 +332,7 @@
                         <paper-input label="margin"></paper-input>
                         <div class="layout horizontal center">
                           <paper-swatch-picker id="bgPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
-                          <paper-input label="background"></paper-input>
+                          <paper-input label="background-color"></paper-input>
                         </div>
                         <div class="layout horizontal center">
                           <paper-swatch-picker id="colorPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
@@ -373,7 +376,9 @@
                   <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                 </paper-toolbar>
 
-                <div id="app_container" class="layout horizontal center-center"></div>
+                <div id="app_container" class="layout horizontal center-center">
+                  <paper-spinner id="iframe_loading_spinner" active></paper-spinner>
+                </div>
 
                 <paper-fab icon="av:play-arrow" id="preview_fab" title="Previsualizar"></paper-fab>
               </paper-header-panel>
