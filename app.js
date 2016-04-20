@@ -377,19 +377,27 @@ function deleteElement(e) {
     document.getElementById("app_iframe").classList.add('outlined_element');
   }
 }
-//FIXME: Skip empty text nodes
+
 function moveElementUp() {
   var parent = selected_element.parentNode;
-  if(selected_element.previousSibling != null){
-    parent.insertBefore(selected_element, selected_element.previousSibling);
+  var previous_sibling = selected_element.previousSibling;
+  while(previous_sibling != null && previous_sibling.nodeType == 3){
+    previous_sibling = previous_sibling.previousSibling;
+  }
+  if(previous_sibling != null){
+    parent.insertBefore(selected_element, previous_sibling);
   }
   update_tree();
 }
 
 function moveElementDown() {
   var parent = selected_element.parentNode;
-  if(selected_element.nextSibling != null){
-    parent.insertBefore(selected_element, selected_element.nextSibling.nextSibling);
+  var next_sibling = selected_element.nextSibling;
+  while(next_sibling != null && next_sibling.nodeType == 3){
+    next_sibling = next_sibling.nextSibling;
+  }
+  if(next_sibling != null){
+    parent.insertBefore(selected_element, next_sibling.nextSibling);
   }
   update_tree();
 }
