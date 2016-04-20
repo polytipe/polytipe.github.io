@@ -345,6 +345,21 @@ function makeElement(element_name) {
   }
 }
 
+function copyElement() {
+  element_count++;
+  element_to_copy = selected_element.cloneNode(true);
+  element_to_copy.id = element_count;
+}
+
+function pasteElement() {
+  var parent = selected_element.parentNode;
+  if(selected_element.nextSibling != null){
+    parent.insertBefore(element_to_copy, selected_element.nextSibling.nextSibling);
+    update_tree();
+    unfocus(selected_element);
+  }
+}
+
 function deleteElement(e) {
   selected_element.remove();
   update_tree();
@@ -424,7 +439,7 @@ function goto(section) {
 }
 
 /* WebComponentsReady listener */
-
+//TODO: Add a copy element button
 window.addEventListener('WebComponentsReady', function(e) {
   /* Firebase event listeners */
 
