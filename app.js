@@ -7,6 +7,8 @@ var selected_element;
 var element_properties;
 var iframeReady = false;
 
+//Preloader
+
 var style = document.createElement("style");
 style.textContent = "" + "body {" + "background-color: #303030; margin: 0 auto; width: 100vw; height: 100vh;" + " } \n" + "#pre_loader{" + "margin: 0 auto; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;" + " }";
 var head = document.querySelector("head");
@@ -18,7 +20,6 @@ var loading_icon = document.createElement("div");
 loading_icon.innerHTML = "<img src='images/touch/icon-128x128.png'>";
 pre_loader.appendChild(loading_icon);
 document.body.appendChild(pre_loader);
-
 
 function iframe_ready() {
   frame.style.opacity = "1";
@@ -338,6 +339,7 @@ function arrayChanged() {
 /* Element actions */
 
 function makeElement(element_name) {
+  selected_element = document.getElementById('app_container');
   if(iframeReady){
     var element = iframe_document.createElement(element_name);
     element_count++;
@@ -352,7 +354,7 @@ function makeElement(element_name) {
     }else{ //If no poly-layout element is selected add it to the selected screen
       if(drawer_panel.selected == "drawer"){
         var parent = selected_element.parentNode;
-        if(selected_element.nextSibling != null){
+        if(selected_element.nextSibling != null && selected_element.parentNode.id!="mainContainer"){
           parent.insertBefore(element, selected_element.nextSibling.nextSibling);
           app.unsaved_changes = true;
         }else{
@@ -360,7 +362,7 @@ function makeElement(element_name) {
         }
       }else if(drawer_panel.selected == "main"){
         var parent = selected_element.parentNode;
-        if(selected_element.nextSibling != null){
+        if(selected_element.nextSibling != null && selected_element.parentNode.id!="mainContainer"){
           parent.insertBefore(element, selected_element.nextSibling.nextSibling);
           app.unsaved_changes = true;
         }else{
@@ -486,6 +488,7 @@ function goto(section) {
 window.addEventListener('WebComponentsReady', function(e) {
   //Hide loader
   document.getElementById('drawer_panel_wrapper').style.opacity = 1;
+
   /* Firebase event listeners */
 
   firebase_element = document.getElementById('firebaseAuth');
@@ -629,7 +632,7 @@ function sign_out() {
   firebase_element.logout();
 }
 
-//TODO: Add new screen to select different pack of projects belonging to other users
+//NOTE: Add new screen to select different pack of projects belonging to other users
 /*user.repos(null, function(err, repos) {
   console.log(repos);
 });*/
@@ -782,7 +785,7 @@ function promptGetCommits() {
   });
 }
 //IDEA: Display diff when making a new commit
-//FIXME: We can't use {{user}} when referencing the path of a project because
+//NOTE: We can't use {{user}} when referencing the path of a project because
 //       it's gonna break on shared projects. We should ask who is the owner first
 function getCommits() {
   app.loading_commits = true;
@@ -891,7 +894,7 @@ function saveProject() {
     for (var i = 0; i < temp.length; i++) {
       temp[i] = "\t" + temp[i];
     }
-    //FIXME: Fix first and last iron-pages lines when saving
+    //NOTE: Fix first and last iron-pages lines when saving
     beautified_html = temp.join("\n");
     var merged_html = project_base_before + beautified_html + project_base_after;
 
@@ -1038,7 +1041,11 @@ function getScreens() {
             }
           }
         }
-        element_count = Math.max.apply(0, number_array);
+        if(number_array.length>0){
+          element_count = Math.max.apply(0, number_array);
+        }else{
+          element_count = 0;
+        }
       }
 
       displayScreens();
