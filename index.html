@@ -346,7 +346,7 @@
               </paper-scroll-header-panel>
 
               <paper-header-panel main id="editor_frame" class="main_frame" mode="seamed">
-                <paper-toolbar class="screen_view_toolbar">
+                <paper-toolbar id="editor_toolbar" class="screen_view_toolbar">
                   <paper-icon-button id="editor_back_button" class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <template is="dom-if" if="{{preview_mode}}">
                     <div class="flex paper-font-title">Previsualizando {{preview_selected_screen}}</div>
@@ -357,7 +357,7 @@
                   <span class="flex"></span>
                   <template is="dom-if" if="{{unsaved_changes}}">
                     <div class="layout horizontal center">
-                      <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                      <paper-button id="editor_save_button" noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
                       <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                     </div>
                   </template>

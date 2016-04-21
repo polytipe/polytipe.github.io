@@ -1117,17 +1117,20 @@ function deleteScreen() {
 }
 
 function togglePreview() {
-  app.preview_mode = document.getElementById('editor_drawer').narrow;
+  app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
   var editor_back_button = document.getElementById('editor_back_button');
-  app.preview_mode = !app.preview_mode;
   document.getElementById('editor_drawer').forceNarrow = app.preview_mode;
   preview_fab.classList.toggle("preview_mode");
   if(preview_fab.classList.contains("preview_mode")){
+    document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
+    document.getElementById("editor_save_button").style.color = "white";
     preview_fab.icon = "close";
     preview_fab.title = "Salir del modo previsualización";
     editor_back_button.icon = "polytipe-icons:icon";
   }else{
+    document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
+    document.getElementById("editor_save_button").style.color = "#888";
     preview_fab.icon = "av:play-arrow";
     preview_fab.title = "Modo previsualización";
     editor_back_button.icon = "arrow-back";
