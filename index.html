@@ -91,7 +91,7 @@
 
       <paper-header-panel main class="main_frame" mode="seamed">
         <iron-pages attr-for-selected="id" selected="{{polytipe_section}}">
-          <section id="sign_in_screen" class="layout vertical center">
+          <section id="sign_in_screen" class="layout vertical center-center">
             <paper-material id="sign_in_material" elevation="1" class="layout vertical center">
               <neon-animated-pages id="sign_in_box" selected="[[carousel]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
                 <section>
@@ -222,13 +222,13 @@
               <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
                 <paper-menu class="dropdown-content">
-                  <paper-item onclick="">
-                    <iron-icon class="element_icon" icon="create"></iron-icon>
-                    <div>Cambiar nombre</div>
-                  </paper-item>
                   <paper-item onclick="promptGetCommits()">
                     <iron-icon class="element_icon" icon="history"></iron-icon>
                     <div>Ver commits recientes</div>
+                  </paper-item>
+                  <paper-item onclick="">
+                    <iron-icon class="element_icon" icon="create"></iron-icon>
+                    <div>Cambiar nombre</div>
                   </paper-item>
                   <paper-item onclick="promptDeleteProject()">
                     <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
@@ -278,7 +278,7 @@
           </section>
 
           <section id="screen_editor">
-            <paper-drawer-panel right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
+            <paper-drawer-panel id="editor_drawer" right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
               <paper-scroll-header-panel drawer id="sidebar_frame">
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
@@ -347,8 +347,13 @@
 
               <paper-header-panel main id="editor_frame" class="main_frame" mode="seamed">
                 <paper-toolbar class="screen_view_toolbar">
-                  <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
-                  <div class="flex paper-font-title">{{selected_screen}}</div>
+                  <paper-icon-button id="editor_back_button" class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
+                  <template is="dom-if" if="{{preview_mode}}">
+                    <div class="flex paper-font-title">Previsualizando {{preview_selected_screen}}</div>
+                  </template>
+                  <template is="dom-if" if="{{!preview_mode}}">
+                    <div class="flex paper-font-title">Pantalla {{selected_screen}}</div>
+                  </template>
                   <span class="flex"></span>
                   <template is="dom-if" if="{{unsaved_changes}}">
                     <div class="layout horizontal center">
@@ -359,13 +364,13 @@
                   <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
                     <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
                     <paper-menu class="dropdown-content">
-                      <paper-item onclick="">
-                        <iron-icon class="element_icon" icon="create"></iron-icon>
-                        <div>Cambiar nombre</div>
-                      </paper-item>
                       <paper-item onclick="promptGetCommits()">
                         <iron-icon class="element_icon" icon="history"></iron-icon>
                         <div>Ver commits recientes</div>
+                      </paper-item>
+                      <paper-item onclick="">
+                        <iron-icon class="element_icon" icon="create"></iron-icon>
+                        <div>Cambiar nombre</div>
                       </paper-item>
                       <paper-item onclick="promptDeleteScreen()">
                         <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
@@ -380,7 +385,7 @@
                   <paper-spinner id="iframe_loading_spinner" active></paper-spinner>
                 </div>
 
-                <paper-fab icon="av:play-arrow" id="preview_fab" title="Previsualizar"></paper-fab>
+                <paper-fab icon="av:play-arrow" id="preview_fab" title="Previsualizar" onclick="togglePreview()"></paper-fab>
               </paper-header-panel>
             </paper-drawer-panel>
           </section>
@@ -423,7 +428,7 @@
         params="{{collaborators_params}}">
     </iron-ajax>
 
-    <iron-media-query query="(min-width: 1400px)" query-matches="{{wide}}"></iron-media-query>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
     <iron-a11y-keys id="polytipe_keys" keys="ctrl+s ctrl+d delete" target="[[polytipe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="ctrl+s ctrl+d delete" target="[[iframe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
 

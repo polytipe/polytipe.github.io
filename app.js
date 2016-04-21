@@ -389,7 +389,7 @@ function cloneElement() {
 
   var parent = selected_element.parentNode;
   if(selected_element.nextSibling != null){
-    parent.insertBefore(new_element, selected_element.nextSibling.nextSibling);
+    parent.insertBefore(new_element, selected_element.nextSibling);
     app.unsaved_changes = true;
     update_tree();
   }else{
@@ -480,7 +480,9 @@ function update_tree(){
 }
 
 function goto(section) {
-  app.polytipe_section = section;
+  if(!app.preview_mode){
+    app.polytipe_section = section;
+  }
 }
 
 /* WebComponentsReady listener */
@@ -581,34 +583,37 @@ window.addEventListener('WebComponentsReady', function(e) {
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
     polytipeKeyPressed(e);
   });
+
+  app.preview_mode = false;
 });
 
 /* Misc actions */
+//IDEA: Add pulse effect when final export to gh-pages
 
 function changeLIFX() {
   var lifx_color;
   //Change the LIFX bulb color
   switch (app.carousel) {
     case 0:
-      lifx_color = "hue:120 brightness:1.0";
+      lifx_color = "hue:120 saturation:1.0";
       break;
     case 1:
-      lifx_color = "hue:70 brightness:1.0";
+      lifx_color = "hue:70 saturation:1.0";
       break;
     case 2:
-      lifx_color = "hue:52 brightness:1.0";
+      lifx_color = "hue:52 saturation:1.0";
       break;
     case 3:
-      lifx_color = "hue:335 brightness:1.0";
+      lifx_color = "hue:342 saturation:1.0";
       break;
     case 4:
-      lifx_color = "hue:265 brightness:1.0";
+      lifx_color = "hue:265 saturation:1.0";
       break;
     case 5:
-      lifx_color = "hue:175 brightness:1.0";
+      lifx_color = "hue:175 saturation:1.0";
       break;
   }
-  app.lifx_body =  {"power": "on", "color": lifx_color, "duration": 1};
+  app.lifx_body =  {"power": "on", "color": lifx_color, "brightness":0.8, "duration": 1};
 }
 
 function changeCarousel() {
@@ -662,6 +667,7 @@ function validate_user() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function promptForkRepo() {
+  app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   var hasProjects = false;
   user.userRepos(app.user, function(err, repos) {
     for (var i = 0; i < repos.length; i++) {
@@ -1110,6 +1116,24 @@ function deleteScreen() {
   displayScreens();
 }
 
+function togglePreview() {
+  app.preview_mode = document.getElementById('editor_drawer').narrow;
+  var preview_fab = document.getElementById('preview_fab');
+  var editor_back_button = document.getElementById('editor_back_button');
+  app.preview_mode = !app.preview_mode;
+  document.getElementById('editor_drawer').forceNarrow = app.preview_mode;
+  preview_fab.classList.toggle("preview_mode");
+  if(preview_fab.classList.contains("preview_mode")){
+    preview_fab.icon = "close";
+    preview_fab.title = "Salir del modo previsualización";
+    editor_back_button.icon = "polytipe-icons:icon";
+  }else{
+    preview_fab.icon = "av:play-arrow";
+    preview_fab.title = "Modo previsualización";
+    editor_back_button.icon = "arrow-back";
+  }
+}
+
 //Function for displaying elapsed time since last commit
 function timeAgo(time){
   var units = [
@@ -1139,16 +1163,16 @@ function timeAgo(time){
 
 function polytipeKeyPressed(e) {
   if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
-    if(e.detail.keyboardEvent.key == "s" && app.unsaved_changes){
+    if(e.detail.combo == "ctrl+s" && app.unsaved_changes){
       e.detail.keyboardEvent.preventDefault();
       promptSaveProject();
     }
   }
   if(app.polytipe_section == "screen_editor"){
-    if(!editor_active_input && e.detail.keyboardEvent.key == "Delete" && selected_element.tagName.startsWith("POLY-")){
+    if(!editor_active_input && e.detail.combo == "delete" && selected_element.tagName.startsWith("POLY-")){
       deleteElement(e);
     }
-    if(e.detail.keyboardEvent.key == "d" && selected_element.tagName.startsWith("POLY-")){
+    if(e.detail.combo == "ctrl+d" && selected_element.tagName.startsWith("POLY-")){
       e.detail.keyboardEvent.preventDefault();
       cloneElement();
     }
