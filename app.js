@@ -1124,16 +1124,25 @@ function togglePreview() {
   preview_fab.classList.toggle("preview_mode");
   if(preview_fab.classList.contains("preview_mode")){
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
-    document.getElementById("editor_save_button").style.color = "white";
+    if(document.getElementById("editor_save_button")!=null){
+      document.getElementById("editor_save_button").style.color = "white";
+    }
+
     preview_fab.icon = "close";
     preview_fab.title = "Salir del modo previsualización";
     editor_back_button.icon = "polytipe-icons:icon";
+
+    app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
   }else{
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
-    document.getElementById("editor_save_button").style.color = "#888";
+    if(document.getElementById("editor_save_button")!=null){
+      document.getElementById("editor_save_button").style.color = "#888";
+    }
     preview_fab.icon = "av:play-arrow";
     preview_fab.title = "Modo previsualización";
     editor_back_button.icon = "arrow-back";
+
+    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};
   }
 }
 
