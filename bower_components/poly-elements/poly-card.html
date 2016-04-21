@@ -8,17 +8,20 @@
     :host {
       display: block;
       font-size: 14px;
-      padding: 8px;
+      background-color: transparent !important;
+      padding: 0;
+      margin: 0 !important;
     }
     paper-card {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      padding: 0;
       width: 100%;
+      padding: 0 !important;
+      position: relative;
       --paper-card-header-image:{
-        height: 145.7px;
+        height: 150px;
         background-color: #fff;
       }
     }
@@ -75,20 +78,16 @@
         this.number = 2;
         this.min = 0;
         this.max = 3;
-        this._focused = false;
+        this.updateStyles();
       },
       focus: function(event) {
         this.getStyles();
-        if(!this.focused){
-          this.fire("elementSelection");
-          this.toggleClass('outlined_element', true);
-          event.stopPropagation();
-        }
-        this._focused = true;
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+        event.stopPropagation();
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
-        this._focused = false;
       },
       addElement: function(){
         if(this.number < this.max){
@@ -104,12 +103,10 @@
           this.fire("elementSelection");
         }
       },
-
-
       getStyles: function(){
         this.width = getComputedStyle(this.$.card)["width"];
         this.height = getComputedStyle(this.$.card)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.card)["background-color"]);
+        this['background-color'] = this.rgb2hex(getComputedStyle(this.$.card)["background-color"]);
         this.color = this.rgb2hex(getComputedStyle(this.$.card)["color"]);;
         this.display = getComputedStyle(this.$.card)["display"];
 
@@ -117,8 +114,8 @@
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this)["margin"+values[j]]);
-          padding.push(getComputedStyle(this)["padding"+values[j]]);
+          margin.push(getComputedStyle(this.$.card)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.card)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
         this.padding = padding.join(' ');
@@ -131,11 +128,8 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       updateStyles: function (property, value) {
-        if(property=="padding" || property=="margin"){
-          this.style[property] = value;
-        }else{
-          this.$.card.style[property] = value;
-        }
+        this.style[property] = value;
+        this.$.card.setAttribute('style', this.getAttribute('style'));
       }
     });
   </script>
