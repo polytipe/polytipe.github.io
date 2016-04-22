@@ -27,9 +27,16 @@ function iframe_ready() {
   iframeReady = true;
   iframe_app_content.selected = app.selected_screen;
 
+  //Firefox fix for updating the tree on element selection
+  if (typeof screen_target == 'undefined') {
+    screen_target = iframe_document.getElementById(app.selected_screen);
+    if(screen_target != null){
+      update_tree();
+    }
+  }
+
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
-    screen_target = iframe_document.getElementById(app.selected_screen);
     update_tree();
     unfocus(e);
     iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
@@ -57,12 +64,6 @@ function iframe_ready() {
     selected_element = e.target;
     element_properties = selected_element.properties;
 
-    //Firefox fix for updating the tree on element selection
-    if (typeof screen_target == 'undefined') {
-      screen_target = iframe_document.getElementById(app.selected_screen);
-      update_tree();
-    }
-
     //Unfocus all elements except the selected_element
     unfocus(e);
 
@@ -70,9 +71,6 @@ function iframe_ready() {
     if(document.getElementById(selected_element.id) != null){
       document.getElementById(selected_element.id).highlightFolder(e);
     }
-
-    //Remove border on drawer
-    iframe_drawer_content.style.border = "none";
 
     //Remove placeholder when no elements are selected
     document.getElementById('styles_list').style.display = "block";
@@ -93,7 +91,7 @@ function iframe_ready() {
           dropdown.items = selected_element[key+"Dropdown"];
           dropdown.selectedIndex = dropdown.items.indexOf(dropdown.value); //Get index of selected item
           dropdown.addEventListener("iron-select", propertyChanged);
-          properties_list.appendChild(dropdown);
+          properties_list.appendChild(dropdown);    
         }else if (element_properties[key].type.name == 'Boolean') {
           //Title of property
           var div = document.createElement("div");
@@ -231,6 +229,7 @@ function iframe_ready() {
 }
 
 function unfocus(e) {
+
   var tree_content = document.getElementsByTagName('file-folder');
   for (var i = 0; i < tree_content.length; i++) {
     tree_content[i].classList.remove("selected");
@@ -343,44 +342,36 @@ function arrayChanged() {
 }
 
 /* Element actions */
-//FIXME: This needs fixes when creating things inside layout
+
 function makeElement(element_name) {
   if(iframeReady){
-
     var element = iframe_document.createElement(element_name);
     element_count++;
     element.id = "poly" + element_count;
-
     if(selected_element == undefined){
       selected_element = document.getElementById('app_container');
     }
-
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
-      //console.log(selected_element);
       Polymer.dom(selected_element).appendChild(element);
-      //selected_element.appendChild(element);
       if(element.tagName == "POLY-LAYOUT"){ //TODO: When creating poly-layout inside another one set height auto
-        element.style.height = selected_element.style.height;
+        //element.style.height = selected_element.style.height;
       }
-    }else{ //If no poly-layout element is selected add it to the selected screen
-      if(drawer_panel.selected == "drawer"){
-        //Add to drawer
+    }else{
+      if(drawer_panel.selected == "drawer"){ //Add to drawer
         if(selected_element.id=="app_container"){
           Polymer.dom(iframe_drawer_content).appendChild(element);
         }
-        //Add after selected_element
-        if(selected_element.id.startsWith("poly")){
-          Polymer.dom(iframe_drawer_content).insertBefore(element, selected_element.nextSibling);
-        }
-      }else if(drawer_panel.selected == "main"){
-        //Add to screen
+      }else if(drawer_panel.selected == "main"){ //Add to screen
         if(selected_element.id=="app_container"){
           Polymer.dom(screen_target).appendChild(element);
         }
-        //Add after selected_element
-        if(selected_element.id.startsWith("poly")){
-          Polymer.dom(screen_target).insertBefore(element, selected_element.nextSibling);
+      }
+      if(selected_element.id.startsWith("poly")){
+        if(selected_element.parentNode.tagName == "POLY-LAYOUT"){ //Add to layout (last)
+          Polymer.dom(selected_element.parentNode).appendChild(element);
+        }else{ //Add after selected_element
+          Polymer.dom(selected_element.parentNode).insertBefore(element, selected_element.nextSibling);
         }
       }
     }
@@ -401,9 +392,8 @@ function cloneElement() {
   new_element.id = "poly"+element_count;
   new_element.classList.remove("outlined_element");
 
-  var parent = selected_element.parentNode;
   if(selected_element.nextSibling != null){
-    parent.insertBefore(new_element, selected_element.nextSibling);
+    Polymer.dom(selected_element.parentNode).insertBefore(new_element, selected_element.nextSibling);
     app.unsaved_changes = true;
     update_tree();
   }else{
@@ -412,7 +402,7 @@ function cloneElement() {
 }
 
 function deleteElement(e) {
-  selected_element.remove();
+  Polymer.dom(selected_element.parentNode).removeChild(selected_element);
   update_tree();
   app.unsaved_changes = true;
   unfocus(document.getElementById("app_container"));
@@ -425,13 +415,12 @@ function deleteElement(e) {
 }
 
 function moveElementUp() {
-  var parent = selected_element.parentNode;
   var previous_sibling = selected_element.previousSibling;
   while(previous_sibling != null && previous_sibling.nodeType == 3){
     previous_sibling = previous_sibling.previousSibling;
   }
   if(previous_sibling != null){
-    parent.insertBefore(selected_element, previous_sibling);
+    Polymer.dom(selected_element.parentNode).insertBefore(selected_element, previous_sibling);
   }
   update_tree();
 }
@@ -443,7 +432,7 @@ function moveElementDown() {
     next_sibling = next_sibling.nextSibling;
   }
   if(next_sibling != null){
-    parent.insertBefore(selected_element, next_sibling.nextSibling);
+    Polymer.dom(selected_element.parentNode).insertBefore(selected_element, next_sibling.nextSibling);
   }
   update_tree();
 }
@@ -1099,7 +1088,6 @@ function displayScreens() {
 
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
-  screen_target = iframe_document.getElementById(app.selected_screen);
 }
 
 function promptDeleteScreen() {
