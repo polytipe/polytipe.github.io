@@ -73,7 +73,7 @@ Example:
           <iron-icon id="stateIndicator" icon=""></iron-icon>
           <iron-icon icon="folder"></iron-icon>
         </span>
-        <span id="folder_name" class="name" selection="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
+        <span id="{{data.id}}" class="name" selection="{{data.id}}" on-click="selectFolder">{{data.name}}</span>
       </div>
       <ul hidden$={{!data.open}}>
         <template is="dom-repeat" items="{{data.children}}">
@@ -112,7 +112,7 @@ Example:
 
     attached: function(){
       if(this.id != "app_tree" || this.id != "drawer_tree"){
-        this.id = this.$.folder_name.selection;
+        this.id = this.data.id;
       }
     },
 

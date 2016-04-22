@@ -26,12 +26,12 @@ function iframe_ready() {
   document.getElementById('iframe_loading_spinner').style.display = "none";
   iframeReady = true;
   iframe_app_content.selected = app.selected_screen;
-  screen_target = iframe_document.getElementById(app.selected_screen);
 
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
+    screen_target = iframe_document.getElementById(app.selected_screen);
+    update_tree();
     unfocus(e);
-    document.getElementById("app_folder").selectFolder(e); //Select app folder in tree
     iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
   });
 
@@ -57,6 +57,12 @@ function iframe_ready() {
     selected_element = e.target;
     element_properties = selected_element.properties;
 
+    //Firefox fix for updating the tree on element selection
+    if (typeof screen_target == 'undefined') {
+      screen_target = iframe_document.getElementById(app.selected_screen);
+      update_tree();
+    }
+
     //Unfocus all elements except the selected_element
     unfocus(e);
 
@@ -64,6 +70,9 @@ function iframe_ready() {
     if(document.getElementById(selected_element.id) != null){
       document.getElementById(selected_element.id).highlightFolder(e);
     }
+
+    //Remove border on drawer
+    iframe_drawer_content.style.border = "none";
 
     //Remove placeholder when no elements are selected
     document.getElementById('styles_list').style.display = "block";
@@ -228,54 +237,51 @@ function unfocus(e) {
   }
 
   //Reset selected element
-  if(typeof e == "string"){
-    if(e == "drawer"){
-      for (var i = 0; i < iframe_drawer_content.children.length; i++) {
-        iframe_drawer_content.children[i].unfocus();
-      }
-      unfocus(this);
-      document.getElementById("app_folder").highlightFolder();
-    }else if(e == "main"){
-      document.getElementById('drawer_folder').highlightFolder();
-      for (var i = 0; i < screen_target.children.length; i++) {
-        screen_target.children[i].unfocus();
-      }
+  selected_element = e.target;
+  //Add iframe outline
+  if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
+    if(selected_element.id == "app_container" || selected_element.id == "app_folder"){
+      iframe_document.querySelector('paper-drawer-panel').closeDrawer();
+      iframe_drawer_content.style.border = "none";
+      document.getElementById("app_iframe").classList.add('outlined_element');
+    } else if(selected_element.id == "drawer_folder"){
+      iframe_document.querySelector('paper-drawer-panel').openDrawer();
+      iframe_drawer_content.style.border = "2px solid yellow";
+      document.getElementById("app_iframe").classList.remove('outlined_element');
+    }else{
+      iframe_drawer_content.style.border = "none";
+      document.getElementById("app_iframe").classList.remove('outlined_element');
     }
   }else{
-    selected_element = e.target;
-    //Add iframe outline
-    if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
-      if(selected_element.id == "app_container" || selected_element.id == "folder_name"){
-        document.getElementById("app_iframe").classList.add('outlined_element');
-      }else{
-        document.getElementById("app_iframe").classList.remove('outlined_element');
-      }
-    }else{
+    if(drawer_panel.selected == "main"){
       document.getElementById("app_iframe").classList.add('outlined_element');
     }
-
-    //Add placeholder when no elements are selected
-    document.getElementById('element_actions').style.display = "none";
-    document.getElementById('styles_list').style.display = "none";
-    document.getElementById('properties_placeholder').style.display = "flex";
-
-    //Unfocus all children elements except the one active
-    for (var i = 0; i < screen_target.children.length; i++) {
-      if (screen_target.children[i] != selected_element) {
-        screen_target.children[i].unfocus();
-      }
+    if(drawer_panel.selected == "drawer"){
+      document.getElementById("app_iframe").classList.remove('outlined_element');
     }
-    for (var i = 0; i < iframe_drawer_content.children.length; i++) {
-      if (iframe_drawer_content.children[i] != selected_element) {
-        iframe_drawer_content.children[i].unfocus();
-      }
+  }
+
+  //Add placeholder when no elements are selected
+  document.getElementById('element_actions').style.display = "none";
+  document.getElementById('styles_list').style.display = "none";
+  document.getElementById('properties_placeholder').style.display = "flex";
+
+  //Unfocus all children elements except the one active
+  for (var i = 0; i < screen_target.children.length; i++) {
+    if (screen_target.children[i] != selected_element) {
+      screen_target.children[i].unfocus();
     }
-    //Unfocus children elements with the outlined_element class
-    var children = drawer_panel.querySelectorAll(".outlined_element");
-    for (var i = 0; i < children.length; i++) {
-      if (children[i] != selected_element) {
-        children[i].unfocus();
-      }
+  }
+  for (var i = 0; i < iframe_drawer_content.children.length; i++) {
+    if (iframe_drawer_content.children[i] != selected_element) {
+      iframe_drawer_content.children[i].unfocus();
+    }
+  }
+  //Unfocus children elements with the outlined_element class
+  var children = drawer_panel.querySelectorAll(".outlined_element");
+  for (var i = 0; i < children.length; i++) {
+    if (children[i] != selected_element) {
+      children[i].unfocus();
     }
   }
 
@@ -351,6 +357,7 @@ function makeElement(element_name) {
 
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
+      //console.log(selected_element);
       Polymer.dom(selected_element).appendChild(element);
       //selected_element.appendChild(element);
       if(element.tagName == "POLY-LAYOUT"){ //TODO: When creating poly-layout inside another one set height auto
@@ -358,21 +365,22 @@ function makeElement(element_name) {
       }
     }else{ //If no poly-layout element is selected add it to the selected screen
       if(drawer_panel.selected == "drawer"){
-        var parent = selected_element.parentNode;
-        if(selected_element.nextSibling != null && selected_element.parentNode.id!="mainContainer"){
-          parent.insertBefore(element, selected_element.nextSibling.nextSibling);
-          app.unsaved_changes = true;
-        }else{
+        //Add to drawer
+        if(selected_element.id=="app_container"){
           Polymer.dom(iframe_drawer_content).appendChild(element);
         }
+        //Add after selected_element
+        if(selected_element.id.startsWith("poly")){
+          Polymer.dom(iframe_drawer_content).insertBefore(element, selected_element.nextSibling);
+        }
       }else if(drawer_panel.selected == "main"){
-        var parent = selected_element.parentNode;
-        //console.log(parent);
-        if(selected_element.nextSibling != null && selected_element.parentNode.id!="mainContainer"){
-          parent.insertBefore(element, selected_element.nextSibling.nextSibling);
-          app.unsaved_changes = true;
-        }else{
+        //Add to screen
+        if(selected_element.id=="app_container"){
           Polymer.dom(screen_target).appendChild(element);
+        }
+        //Add after selected_element
+        if(selected_element.id.startsWith("poly")){
+          Polymer.dom(screen_target).insertBefore(element, selected_element.nextSibling);
         }
       }
     }
@@ -541,6 +549,8 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
   document.getElementById('screen_selector').addEventListener('iron-select', function () {
     if(iframeReady){
+      screen_target = iframe_document.getElementById(app.selected_screen);
+      update_tree();
       editScreen();
     }
   });
