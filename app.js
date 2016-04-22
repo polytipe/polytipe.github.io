@@ -27,7 +27,7 @@ function iframe_ready() {
   iframeReady = true;
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
-  update_tree();
+
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
     unfocus(e);
@@ -337,18 +337,23 @@ function arrayChanged() {
 }
 
 /* Element actions */
-
+//FIXME: This needs fixes when creating things inside layout
 function makeElement(element_name) {
-  selected_element = document.getElementById('app_container');
   if(iframeReady){
+
     var element = iframe_document.createElement(element_name);
     element_count++;
     element.id = "poly" + element_count;
+
+    if(selected_element == undefined){
+      selected_element = document.getElementById('app_container');
+    }
+
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
       Polymer.dom(selected_element).appendChild(element);
-      selected_element.appendChild(element);
-      if(element.tagName == "POLY-LAYOUT"){ //When creating poly-layout inside another one set height auto
+      //selected_element.appendChild(element);
+      if(element.tagName == "POLY-LAYOUT"){ //TODO: When creating poly-layout inside another one set height auto
         element.style.height = selected_element.style.height;
       }
     }else{ //If no poly-layout element is selected add it to the selected screen
@@ -362,6 +367,7 @@ function makeElement(element_name) {
         }
       }else if(drawer_panel.selected == "main"){
         var parent = selected_element.parentNode;
+        //console.log(parent);
         if(selected_element.nextSibling != null && selected_element.parentNode.id!="mainContainer"){
           parent.insertBefore(element, selected_element.nextSibling.nextSibling);
           app.unsaved_changes = true;
@@ -401,7 +407,7 @@ function deleteElement(e) {
   selected_element.remove();
   update_tree();
   app.unsaved_changes = true;
-  unfocus(e);
+  unfocus(document.getElementById("app_container"));
   setTimeout(function(){
     document.getElementById("app_folder").highlightFolder();
   },10);
@@ -1084,7 +1090,6 @@ function displayScreens() {
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
   screen_target = iframe_document.getElementById(app.selected_screen);
-  update_tree();
 }
 
 function promptDeleteScreen() {
@@ -1115,7 +1120,7 @@ function deleteScreen() {
   goto('project_view');
   displayScreens();
 }
-
+//TODO: Remove yellow borders and layout borders on preview mode
 function togglePreview() {
   app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
@@ -1181,7 +1186,7 @@ function polytipeKeyPressed(e) {
     }
   }
   if(app.polytipe_section == "screen_editor"){
-    if(!editor_active_input && e.detail.combo == "delete" && selected_element.tagName.startsWith("POLY-")){
+    if(!editor_active_input && e.detail.combo == "delete" && selected_element != undefined && selected_element.tagName.startsWith("POLY-")){
       deleteElement(e);
     }
     if(e.detail.combo == "ctrl+d" && selected_element.tagName.startsWith("POLY-")){
