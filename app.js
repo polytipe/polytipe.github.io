@@ -91,7 +91,7 @@ function iframe_ready() {
           dropdown.items = selected_element[key+"Dropdown"];
           dropdown.selectedIndex = dropdown.items.indexOf(dropdown.value); //Get index of selected item
           dropdown.addEventListener("iron-select", propertyChanged);
-          properties_list.appendChild(dropdown);    
+          properties_list.appendChild(dropdown);
         }else if (element_properties[key].type.name == 'Boolean') {
           //Title of property
           var div = document.createElement("div");
@@ -354,8 +354,8 @@ function makeElement(element_name) {
     //Adds element inside a layout if any poly-layout element is selected
     if(selected_element != null && selected_element.tagName == "POLY-LAYOUT"){
       Polymer.dom(selected_element).appendChild(element);
-      if(element.tagName == "POLY-LAYOUT"){ //TODO: When creating poly-layout inside another one set height auto
-        //element.style.height = selected_element.style.height;
+      if(element.tagName == "POLY-LAYOUT"){
+        element.style.minHeight = "20px";
       }
     }else{
       if(drawer_panel.selected == "drawer"){ //Add to drawer
@@ -375,7 +375,11 @@ function makeElement(element_name) {
         }
       }
     }
-    update_tree();
+    //Wait for the element to be appended
+    app.async(function () {
+      update_tree();
+    }, 10);
+
     app.unsaved_changes = true;
   }
 }
@@ -395,15 +399,24 @@ function cloneElement() {
   if(selected_element.nextSibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(new_element, selected_element.nextSibling);
     app.unsaved_changes = true;
-    update_tree();
   }else{
     Polymer.dom(screen_target).appendChild(new_element);
   }
+
+  //Wait for the element to be appended
+  app.async(function () {
+    update_tree();
+  }, 10);
 }
 
 function deleteElement(e) {
   Polymer.dom(selected_element.parentNode).removeChild(selected_element);
-  update_tree();
+
+  //Wait for the element to be appended
+  app.async(function () {
+    update_tree();
+  }, 10);
+
   app.unsaved_changes = true;
   unfocus(document.getElementById("app_container"));
   setTimeout(function(){
@@ -422,7 +435,10 @@ function moveElementUp() {
   if(previous_sibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(selected_element, previous_sibling);
   }
-  update_tree();
+  //Wait for the element to be appended
+  app.async(function () {
+    update_tree();
+  }, 10);
 }
 
 function moveElementDown() {
@@ -431,10 +447,14 @@ function moveElementDown() {
   while(next_sibling != null && next_sibling.nodeType == 3){
     next_sibling = next_sibling.nextSibling;
   }
+  //FIXME: Fix moving elements down inside layout
   if(next_sibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(selected_element, next_sibling.nextSibling);
   }
-  update_tree();
+  //Wait for the element to be appended
+  app.async(function () {
+    update_tree();
+  }, 10);
 }
 
 /* Tree actions */
@@ -1125,7 +1145,22 @@ function togglePreview() {
   var editor_back_button = document.getElementById('editor_back_button');
   document.getElementById('editor_drawer').forceNarrow = app.preview_mode;
   preview_fab.classList.toggle("preview_mode");
+
+  var all_layouts = iframe_document.querySelectorAll('poly-layout');
+  var all_elements = iframe_document.querySelectorAll("[id^='poly']");
+
   if(preview_fab.classList.contains("preview_mode")){
+    //Remove iframe outline
+    document.getElementById("app_iframe").classList.remove('outlined_element');
+
+    //Remove border to poly-layout
+    for (var i = 0; i < all_layouts.length; i++) {
+      all_layouts[i].style.border = "none";
+    }
+    //Remove border to poly-elements
+    for (var i = 0; i < all_elements.length; i++) {
+      all_elements[i].classList.add("no_outlined_element");
+    }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
     if(document.getElementById("editor_save_button")!=null){
       document.getElementById("editor_save_button").style.color = "white";
@@ -1137,6 +1172,19 @@ function togglePreview() {
 
     app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
   }else{
+    //Add iframe outline
+    if(selected_element.id == "app_container" || selected_element.id == "app_folder"){
+      document.getElementById("app_iframe").classList.add('outlined_element');
+    }
+
+    //Add border to poly-layout
+    for (var i = 0; i < all_layouts.length; i++) {
+      all_layouts[i].style.border = "1px solid #aaa";
+    }
+    //Add border to poly-elements
+    for (var i = 0; i < all_elements.length; i++) {
+      all_elements[i].classList.remove("no_outlined_element");
+    }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
     if(document.getElementById("editor_save_button")!=null){
       document.getElementById("editor_save_button").style.color = "#888";
@@ -1177,6 +1225,9 @@ function timeAgo(time){
 /* Key binding functions */
 
 function polytipeKeyPressed(e) {
+  if(app.preview_mode){
+    return;
+  }
   if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
     if(e.detail.combo == "ctrl+s" && app.unsaved_changes){
       e.detail.keyboardEvent.preventDefault();
