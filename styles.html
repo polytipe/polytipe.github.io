@@ -130,6 +130,10 @@
     display: none;
   }
 
+  #editor_links{
+    display: none;
+  }
+
   paper-swatch-picker {
     --paper-swatch-picker-color-size: 15px;
     --paper-swatch-picker-icon: {
@@ -259,6 +263,9 @@
     margin: 0 !important;
     display: none;
   }
+  #generate_prototype_button{
+    color: white;
+  }
   #app_container{
     position: absolute;
     width: 100%;
@@ -312,6 +319,18 @@
   iron-selector:not([wide-layout]){
     @apply(--layout-horizontal);
     @apply(--layout-around-justified);
+  }
+  #editor_links paper-item{
+    position: relative;
+    min-height: 32px;
+    width: 177px;
+  }
+  #editor_links paper-dropdown-menu {
+    width: 100%;
+    --paper-input-container-focus-color: var(--polytipe-accent-color);
+    --paper-input-container-input: {
+      color: white;
+    }
   }
 
   /* Drawer toolbar */

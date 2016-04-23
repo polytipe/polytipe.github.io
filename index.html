@@ -307,6 +307,7 @@
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
                     <paper-tab name="editor_properties">Propiedades</paper-tab>
                     <paper-tab name="editor_styles">Estilos</paper-tab>
+                    <paper-tab name="editor_links">Links</paper-tab>
                   </paper-tabs>
                   <div id="properties_placeholder" class="layout vertical center-center">
                     <iron-icon id="no_elements_selected" icon="touch-app"></iron-icon>
@@ -341,6 +342,17 @@
                         <paper-input label="display"></paper-input>
                       </div>
                     </section>
+                    <section id="editor_links">
+                      <div class="sidebar_list">
+                        <paper-dropdown-menu id="link_screen" label="Link">
+                          <paper-menu class="dropdown-content">
+                            <template is="dom-repeat" items="{{screen_list}}">
+                              <paper-item>{{item}}</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
+                    </section>
                   </iron-pages>
                 </paper-scroll-header-panel>
               </paper-scroll-header-panel>
@@ -349,36 +361,37 @@
                 <paper-toolbar id="editor_toolbar" class="screen_view_toolbar">
                   <paper-icon-button id="editor_back_button" class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <template is="dom-if" if="{{preview_mode}}">
-                    <div class="flex paper-font-title">Previsualizando {{preview_selected_screen}}</div>
+                    <div class="flex paper-font-title">Pantalla {{preview_selected_screen}}</div>
+                    <paper-button id="generate_prototype_button" noink class="paper-font-button" onclick="generatePrototype()">Generar prototipo</paper-button>
                   </template>
                   <template is="dom-if" if="{{!preview_mode}}">
                     <div class="flex paper-font-title">Pantalla {{selected_screen}}</div>
+                    <span class="flex"></span>
+                    <template is="dom-if" if="{{unsaved_changes}}">
+                      <div class="layout horizontal center">
+                        <paper-button id="editor_save_button" noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                      </div>
+                    </template>
+                    <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <paper-item onclick="promptGetCommits()">
+                          <iron-icon class="element_icon" icon="history"></iron-icon>
+                          <div>Ver commits recientes</div>
+                        </paper-item>
+                        <paper-item onclick="">
+                          <iron-icon class="element_icon" icon="create"></iron-icon>
+                          <div>Cambiar nombre</div>
+                        </paper-item>
+                        <paper-item onclick="promptDeleteScreen()">
+                          <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
+                          <div>Eliminar pantalla</div>
+                        </paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+                    <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                   </template>
-                  <span class="flex"></span>
-                  <template is="dom-if" if="{{unsaved_changes}}">
-                    <div class="layout horizontal center">
-                      <paper-button id="editor_save_button" noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
-                      <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
-                    </div>
-                  </template>
-                  <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
-                    <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
-                    <paper-menu class="dropdown-content">
-                      <paper-item onclick="promptGetCommits()">
-                        <iron-icon class="element_icon" icon="history"></iron-icon>
-                        <div>Ver commits recientes</div>
-                      </paper-item>
-                      <paper-item onclick="">
-                        <iron-icon class="element_icon" icon="create"></iron-icon>
-                        <div>Cambiar nombre</div>
-                      </paper-item>
-                      <paper-item onclick="promptDeleteScreen()">
-                        <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
-                        <div>Eliminar pantalla</div>
-                      </paper-item>
-                    </paper-menu>
-                  </paper-menu-button>
-                  <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                 </paper-toolbar>
 
                 <div id="app_container" class="layout horizontal center-center">

@@ -37,6 +37,9 @@ function iframe_ready() {
 
   //Unfocus all elements when clicking outside the app
   document.getElementById("app_container").addEventListener('click', function(e) {
+    if(app.preview_mode){
+      return;
+    }
     update_tree();
     unfocus(e);
     iframe_document.querySelector('paper-drawer-panel').closeDrawer(); //Close app drawer
@@ -74,6 +77,7 @@ function iframe_ready() {
 
     //Remove placeholder when no elements are selected
     document.getElementById('styles_list').style.display = "block";
+    document.getElementById('editor_links').style.display = "block";
     document.getElementById('properties_placeholder').style.display = "none";
 
     //Display element actions
@@ -263,6 +267,7 @@ function unfocus(e) {
   //Add placeholder when no elements are selected
   document.getElementById('element_actions').style.display = "none";
   document.getElementById('styles_list').style.display = "none";
+  document.getElementById('editor_links').style.display = "none";
   document.getElementById('properties_placeholder').style.display = "flex";
 
   //Unfocus all children elements except the one active
@@ -555,10 +560,12 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     getScreens();
+    document.getElementById('iframe_loading_spinner').style.display = "inline-block";
   });
-  document.getElementById('screen_selector').addEventListener('iron-select', function () {
+  document.getElementById('screen_selector').addEventListener('iron-select', function (e) {
     if(iframeReady){
       screen_target = iframe_document.getElementById(app.selected_screen);
+      selected_element = document.getElementById('app_container');
       update_tree();
       editScreen();
     }
@@ -1138,7 +1145,7 @@ function deleteScreen() {
   goto('project_view');
   displayScreens();
 }
-//TODO: Remove yellow borders and layout borders on preview mode
+
 function togglePreview() {
   app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
@@ -1162,18 +1169,15 @@ function togglePreview() {
       all_elements[i].classList.add("no_outlined_element");
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
-    if(document.getElementById("editor_save_button")!=null){
-      document.getElementById("editor_save_button").style.color = "white";
-    }
 
     preview_fab.icon = "close";
     preview_fab.title = "Salir del modo previsualización";
     editor_back_button.icon = "polytipe-icons:icon";
 
-    app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
+    //app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
   }else{
     //Add iframe outline
-    if(selected_element.id == "app_container" || selected_element.id == "app_folder"){
+    if(selected_element != undefined && (selected_element.id == "app_container" || selected_element.id == "app_folder")){
       document.getElementById("app_iframe").classList.add('outlined_element');
     }
 
@@ -1186,9 +1190,7 @@ function togglePreview() {
       all_elements[i].classList.remove("no_outlined_element");
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
-    if(document.getElementById("editor_save_button")!=null){
-      document.getElementById("editor_save_button").style.color = "#888";
-    }
+
     preview_fab.icon = "av:play-arrow";
     preview_fab.title = "Modo previsualización";
     editor_back_button.icon = "arrow-back";
