@@ -104,10 +104,6 @@
     cursor: pointer;
   }
 
-  .test{
-    position: relative;
-  }
-
   .sidebar_list{
     padding: 20px;
   }
@@ -263,9 +259,6 @@
     margin: 0 !important;
     display: none;
   }
-  #generate_prototype_button{
-    color: white;
-  }
   #app_container{
     position: absolute;
     width: 100%;
@@ -331,6 +324,28 @@
     --paper-input-container-input: {
       color: white;
     }
+  }
+
+  #generate_prototype_dialog{
+    width: 400px;
+    border-radius: 2px;
+    padding: 5px;
+    margin: 0;
+  }
+  #generate_prototype_dialog paper-input{
+    margin-top: 2px;
+    margin-bottom: 20px;
+    width: 200px;
+    --paper-input-container-focus-color: var(--polytipe-accent-color);
+  }
+  .prototype_title{
+    margin-bottom: 30px;
+  }
+  .prototype_button{
+    color: #888;
+  }
+  .prototype_button:hover{
+    color: var(--polytipe-accent-color);
   }
 
   /* Drawer toolbar */
@@ -406,7 +421,6 @@
     text-align: center;
   }
   .sign_in_title{
-    font-size: 24px;
     margin-bottom: 20px;
   }
   .sign_in_description{

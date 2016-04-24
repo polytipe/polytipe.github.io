@@ -14,14 +14,14 @@
 	<meta name="twitter:creator" content="@alejost848">
 	<meta name="twitter:title" content="Polytipe">
 	<meta name="twitter:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código HTML y Javascript">
-	<meta name="twitter:image" content="">
+	<meta name="twitter:image" content="http://polytipe.github.io/polytipe/images/cover.png">
 
   <!-- Facebook card -->
 	<meta property="og:title" content="Polytipe">
 	<meta property="og:type" content="website">
-	<meta property="og:url" content="http://polytipe.me">
+	<meta property="og:url" content="https://polytipe.me">
 	<meta property="og:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código HTML y Javascript">
-	<meta property="og:image" content="">
+	<meta property="og:image" content="http://polytipe.github.io/polytipe/images/cover.png">
 
   <!-- No zooming! -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -61,7 +61,7 @@
     <paper-drawer-panel id="drawer_panel_wrapper" disable-swipe force-narrow drawer-width="290px" drawer-toggle-attribute="paper-drawer-left">
       <paper-header-panel drawer mode="seamed">
         <div id="drawer_toolbar" class="sidebar_polytipe_toolbar layout horizontal center-center">
-            <iron-image id="avatar" alt="{{user}}" src="{{avatar}}"></iron-image>
+            <iron-image id="avatar" alt="{{user}}" src="{{avatar}}" preload fade></iron-image>
             <div id="toolbar_text">
               <div id="toolbar_name">{{name}}</div>
               <div class="paper-font-subhead">{{user}}</div>
@@ -211,7 +211,7 @@
           <section id="project_view">
             <paper-toolbar class="screen_view_toolbar">
               <paper-icon-button class="back_icon" icon="arrow-back" onclick="promptLeaveProject()"></paper-icon-button>
-              <div class="flex paper-font-title">{{selected_project}}</div>
+              <div class="paper-font-title">{{selected_project}}</div>
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div class="layout horizontal center">
@@ -361,11 +361,26 @@
                 <paper-toolbar id="editor_toolbar" class="screen_view_toolbar">
                   <paper-icon-button id="editor_back_button" class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <template is="dom-if" if="{{preview_mode}}">
-                    <div class="flex paper-font-title">Pantalla {{preview_selected_screen}}</div>
-                    <paper-button id="generate_prototype_button" noink class="paper-font-button" onclick="generatePrototype()">Generar prototipo</paper-button>
+                    <div class="paper-font-title">Pantalla {{preview_selected_screen}}</div>
+                    <span class="flex"></span>
+                    <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <a class="link" tabindex="-1" href="https://{{user}}.github.io/polytipe-projects" target="_blank">
+                          <paper-item>
+                            <iron-icon class="element_icon" icon="visibility"></iron-icon>
+                            <div>Ver prototipo</div>
+                          </paper-item>
+                        </a>
+                        <paper-item onclick="generatePrototype()">
+                          <iron-icon class="element_icon" icon="autorenew"></iron-icon>
+                          <div>Regenerar prototipo</div>
+                        </paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
                   </template>
                   <template is="dom-if" if="{{!preview_mode}}">
-                    <div class="flex paper-font-title">Pantalla {{selected_screen}}</div>
+                    <div class="paper-font-title">Pantalla {{selected_screen}}</div>
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div class="layout horizontal center">
@@ -412,7 +427,7 @@
       provider="github"
       redirect
       user="{{signed_user}}"
-      params='{"scope": "public_repo, delete_repo"}'>
+      params='{"scope": "public_repo, delete_repo"}'> <!-- TODO: Remove delete_repo scope -->
     </firebase-auth>
 
     <iron-ajax
@@ -572,7 +587,7 @@
           <template is="dom-repeat" items="{{commits}}" as="commit">
             <a href="{{commit.url}}" target="_blank" class="link">
               <paper-item class="commit_box layout horizontal">
-                <iron-image class="commit_avatar" src="{{commit.avatar}}"></iron-image>
+                <iron-image class="commit_avatar" src="{{commit.avatar}}" preload fade></iron-image>
                 <div class="layout vertical">
                   <div class="paper-font-subhead">{{commit.message}}</div>
                   <div class="layout horizontal paper-font-menu">
@@ -612,11 +627,45 @@
           <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Crear</paper-button>
         </div>
       </paper-dialog>
+
+      <paper-dialog id="generate_prototype_dialog" modal entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="prototype_title">
+          <div class="paper-font-title">Generar prototipo</div>
+          <div class="paper-font-body1 prototype_button">
+            <a class="link" href="http://{{user}}.github.io/polytipe-projects" target="_blank">Actualizado hace 8 horas</a>
+          </div>
+        </div>
+        <div class="create_repo_description paper-font-subhead">
+          Exporta el prototipo a una página web para realizar pruebas
+          de usabilidad. Si utilizas Google Analytics puedes
+          <strong>
+            <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
+          </strong>
+          para monitorear la actividad de los usuarios.
+
+          <paper-input label="ID de seguimiento"></paper-input>
+
+          Una vez generado, puedes
+          <strong>
+            <a class="link" href="https://github.com/{{user}}/polytipe-projects/settings" target="_blank">habilitar la casilla de issues</a>
+          </strong>
+          en el repositorio para recibir feedback de los usuarios.
+        </div>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="accept_button" onclick="" noink autofocus>Generar</paper-button>
+        </div>
+      </paper-dialog>
     </div>
 
     <div class="toasts">
       <paper-toast id="created_repo_toast" duration="6000" text="El repositorio 'polytipe-projects' fue agregado a Github">
         <a tabindex="-1" href="https://github.com/{{user}}/polytipe-projects" target="_blank">
+          <paper-button noink>Ver</paper-button>
+        </a>
+      </paper-toast>
+      <paper-toast id="prototype_toast" duration="6000" text="Se generó el prototipo del proyecto {{selected_project}}">
+        <a tabindex="-1" href="https://{{user}}.github.io/polytipe-projects" target="_blank">
           <paper-button noink>Ver</paper-button>
         </a>
       </paper-toast>
