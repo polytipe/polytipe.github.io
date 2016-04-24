@@ -197,6 +197,10 @@
     height: 17px;
   }
 
+  #collaborators_dialog{
+    min-height: 250px;
+  }
+
   #collaborators_dropdown{
     --paper-menu-button-content:{
       width: 252px;
@@ -289,7 +293,12 @@
   .save_button{
     color: #888;
   }
+  .save_button_white{
+    color: white;
+  }
   paper-tooltip{
+    text-align:center;
+
     --paper-tooltip:{
       font-size: 12px;
     }
@@ -347,23 +356,28 @@
   .prototype_button:hover{
     color: var(--polytipe-accent-color);
   }
+  .prototype_description{
+    margin: 20px 0;
+  }
 
   /* Drawer toolbar */
   #drawer_toolbar{
-    height: 112px;
-    padding: 0 20px;
+    height: 96px;
   }
   #avatar{
-    --iron-image-width: 60px;
-    --iron-image-height: 60px;
+    min-width: 50px;
+    --iron-image-width: 50px;
+    --iron-image-height: 50px;
     border-radius: 50%;
   }
   #toolbar_text{
     margin-left: 15px;
     color: white;
+    font-size: 14px;
+    font-weight: 300;
   }
   #toolbar_name{
-    font-size: 18px;
+    font-size: 14px;
   }
   .element_icon{
     margin-right: 20px;
@@ -773,7 +787,7 @@
       height: 420px;
     }
     #app_iframe{
-      transform: scale(0.75);
+      /*transform: scale(0.75);*/
     }
     /* User view */
     #user_box{
@@ -801,11 +815,8 @@
 	}
 
   @media (max-width: 600px) {
-    #app_container{
-      min-height: 400px;
-    }
     #app_iframe{
-      transform: scale(0.6);
+      /*transform: scale(0.6);*/
     }
     /* Screen editor */
     .right_drawer_toggle{

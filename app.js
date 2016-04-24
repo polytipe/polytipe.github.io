@@ -797,6 +797,8 @@ function deleteRepo(){
 
 /* Collaborator actions */
 
+//TODO: Add issues and stuff on polytipe-projects
+
 function addCollaborator(username) {
   app.user_to_add_delete = username;
   collaborators_ajax.method = "PUT";
@@ -819,6 +821,7 @@ function getCollaborators() {
 }
 
 function promptCollaboratorsDialog() {
+  app.collaborators = [];
   var collaborators_dialog = document.getElementById('collaborators_dialog');
   collaborators_dialog.open();
   collaborators_dialog.addEventListener("iron-overlay-opened", function () {
@@ -849,12 +852,10 @@ function promptGetCommits() {
   });
 }
 //IDEA: Display diff when making a new commit
-//NOTE: We can't use {{user}} when referencing the path of a project because
-//       it's gonna break on shared projects. We should ask who is the owner first
 function getCommits() {
   app.loading_commits = true;
   document.getElementById('commits_view_more').style.display = "none";
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   var options = {
      sha: app.selected_project,
      perpage: 20
@@ -895,7 +896,7 @@ function createProject() {
     }
   }
   document.getElementById("creating_spinner").active = true;
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.branch(app.project_name, function(err) {
     getProjects(function () {
       document.getElementById("creating_spinner").active = false;
@@ -929,23 +930,45 @@ function getProjects(callback) {
   });
 }
 
+function promptGeneratePrototype() {
+  document.getElementById('generate_prototype_dialog').open();
+}
+
 function generatePrototype() {
-  var repo = github.getRepo(app.user, "polytipe-projects");
-  repo.branch(app.selected_project, "gh-pages", function(err) {
-    console.log("https://"+app.user+".github.io/polytipe-projects");
-    repo.read('gh-pages', 'index.html', function(err, data) {
-      data = data.replace(/project_name/g, app.selected_project);
-      data = data.replace(/usuario/g, app.user);
-      repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(err) {
-        document.getElementById('prototype_toast').show();
+  document.getElementById('generating_prototype_spinner').active = true;
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
+  repo.listBranches(function(err, branches) {
+    var has_prototype = false;
+    for (var i = 0; i < branches.length; i++) {
+      if(branches[i] == "gh-pages"){
+        has_prototype = true;
+      }
+    }
+    if(has_prototype){
+      repo.read(app.selected_project, 'prototype.html', function(err, data) {
+        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(err) {
+          document.getElementById('generating_prototype_spinner').active = false;
+          document.getElementById('prototype_toast').show();
+        });
       });
-    });
+    }else if(!has_prototype){
+      repo.branch(app.selected_project, "gh-pages", function(err) {
+        repo.read('gh-pages', 'index.html', function(err, data) {
+          data = data.replace(/project_name/g, app.selected_project);
+          data = data.replace(/usuario/g, app.selected_repo);
+          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(err) {
+            document.getElementById('generating_prototype_spinner').active = false;
+            document.getElementById('prototype_toast').show();
+          });
+        });
+      });
+    }
   });
 }
 
 //Gets elapsed time since last commit
 function getLastSaved() {
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   var options = {
      sha: app.selected_project
   };
@@ -964,7 +987,7 @@ function promptSaveProject() {
 function saveProject() {
   //FIXME: Save change in styles
   var validate_msg = document.getElementById('save_project_input').validate();
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   if(validate_msg){
     document.getElementById('saving_spinner').active = true;
     var temp_dom = Polymer.dom(iframe_app_content).innerHTML;
@@ -1003,7 +1026,7 @@ function promptDeleteProject() {
 }
 
 function deleteProject(){
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.deleteRef('heads/'+app.selected_project, function(err) {
 
     document.getElementById('app_container').removeChild(frame);
@@ -1089,7 +1112,7 @@ function getScreens() {
   document.getElementById('screen_placeholder').style.display = "flex";
   app.last_saved = "...";
   app.project_screens = [];
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.read(app.selected_project, 'prototype.html', function(err, data) {
     frame = document.createElement("iframe");
     frame.id = "app_iframe";
@@ -1211,7 +1234,6 @@ function togglePreview() {
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
 
     preview_fab.icon = "close";
-    preview_fab.title = "Salir del modo previsualización";
     editor_back_button.icon = "polytipe-icons:icon";
 
     //app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
@@ -1231,8 +1253,7 @@ function togglePreview() {
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
 
-    preview_fab.icon = "av:play-arrow";
-    preview_fab.title = "Modo previsualización";
+    preview_fab.icon = "visibility";
     editor_back_button.icon = "arrow-back";
 
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};

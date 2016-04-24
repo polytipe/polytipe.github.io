@@ -58,13 +58,13 @@
 
 <body class="fullbleed main">
   <template id="app" is="dom-bind">
-    <paper-drawer-panel id="drawer_panel_wrapper" disable-swipe force-narrow drawer-width="290px" drawer-toggle-attribute="paper-drawer-left">
+    <paper-drawer-panel id="drawer_panel_wrapper" edge-swipe-sensitivity="15" force-narrow drawer-toggle-attribute="paper-drawer-left">
       <paper-header-panel drawer mode="seamed">
         <div id="drawer_toolbar" class="sidebar_polytipe_toolbar layout horizontal center-center">
             <iron-image id="avatar" alt="{{user}}" src="{{avatar}}" preload fade></iron-image>
             <div id="toolbar_text">
-              <div id="toolbar_name">{{name}}</div>
               <div class="paper-font-subhead">{{user}}</div>
+              <div id="toolbar_name">{{name}}</div>
             </div>
         </div>
         <paper-menu id="left_drawer_menu">
@@ -72,7 +72,7 @@
             <iron-icon class="left_toolbar_icon element_icon" icon="folder"></iron-icon>
             <div>Repositorios</div>
           </paper-item>
-          <a class="link" tabindex="-1" href="https://github.com/{{user}}/polytipe-projects" target="_blank">
+          <a class="link" tabindex="-1" href="https://github.com/{{user}}" target="_blank">
             <paper-item>
                 <iron-icon class="left_toolbar_icon element_icon" icon="polytipe-icons:github"></iron-icon>
                 <div>Ir a Github</div>
@@ -185,19 +185,20 @@
               <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('repos_view')"></paper-icon-button>
               <div class="paper-font-title">{{selected_repo}}</div>
               <div class="flex"></div>
-              <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
-                <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
-                <paper-menu class="dropdown-content">
-                  <paper-item onclick="promptCollaboratorsDialog()">
-                    <iron-icon class="element_icon" icon="social:group"></iron-icon>
-                    <div>Ver colaboradores</div>
-                  </paper-item>
-                  <paper-item onclick="promptDeleteRepo()">
-                    <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
-                    <div>Eliminar repositorio</div>
-                  </paper-item>
-                </paper-menu>
-              </paper-menu-button>
+              <div>
+                <paper-icon-button icon="social:group" onclick="promptCollaboratorsDialog()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Colaboradores</paper-tooltip>
+              </div>
+              <div>
+                <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects" target="_blank">
+                  <paper-icon-button icon="polytipe-icons:github"></paper-icon-button>
+                </a>
+                <paper-tooltip offset="0" animation-delay="0">Ver en Github</paper-tooltip>
+              </div>
+              <div>
+                <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteRepo()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Eliminar repositorio</paper-tooltip>
+              </div>
             </paper-toolbar>
 
             <div class="elements_group">
@@ -232,7 +233,10 @@
                 <paper-ripple recenters></paper-ripple>
               </paper-material>
             </div>
-            <paper-fab class="add_fab" onclick="addProjectDialog()" icon="add" title="Crear proyecto nuevo"></paper-fab>
+            <div>
+              <paper-fab id="add_project_fab" class="add_fab" onclick="addProjectDialog()" icon="add"></paper-fab>
+              <paper-tooltip for="add_project_fab" offset="10" animation-delay="0" position="top">Crear un proyecto</paper-tooltip>
+            </div>
           </section>
 
           <section id="project_view">
@@ -241,28 +245,23 @@
               <div class="paper-font-title">{{selected_project}}</div>
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
-                <div class="layout horizontal center">
+                <div>
                   <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
-                  <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                  <paper-tooltip offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                 </div>
               </template>
-              <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
-                <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
-                <paper-menu class="dropdown-content">
-                  <paper-item onclick="promptGetCommits()">
-                    <iron-icon class="element_icon" icon="history"></iron-icon>
-                    <div>Ver commits recientes</div>
-                  </paper-item>
-                  <paper-item onclick="">
-                    <iron-icon class="element_icon" icon="create"></iron-icon>
-                    <div>Cambiar nombre</div>
-                  </paper-item>
-                  <paper-item onclick="promptDeleteProject()">
-                    <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
-                    <div>Eliminar proyecto</div>
-                  </paper-item>
-                </paper-menu>
-              </paper-menu-button>
+              <div>
+                <paper-icon-button icon="history" onclick="promptGetCommits()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
+              </div>
+              <div>
+                <paper-icon-button icon="create" onclick=""></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Cambiar nombre</paper-tooltip>
+              </div>
+              <div>
+                <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteProject()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Eliminar proyecto</paper-tooltip>
+              </div>
             </paper-toolbar>
 
             <div class="elements_group">
@@ -301,11 +300,14 @@
                 </paper-material>
               </div>
             </div>
-            <paper-fab class="add_fab" onclick="addScreenDialog()" icon="add" title="Crear una pantalla"></paper-fab>
+            <div>
+              <paper-fab class="add_fab" id="add_screen_fab" onclick="addScreenDialog()" icon="add"></paper-fab>
+              <paper-tooltip offset="10" for="add_screen_fab" animation-delay="0" position="top">Crear una pantalla</paper-tooltip>
+            </div>
           </section>
 
           <section id="screen_editor">
-            <paper-drawer-panel id="editor_drawer" right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
+            <paper-drawer-panel id="editor_drawer" right-drawer edge-swipe-sensitivity="15" drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
               <paper-scroll-header-panel drawer id="sidebar_frame">
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
@@ -343,11 +345,23 @@
                   <iron-pages attr-for-selected="id" selected="{{screen_editor_bottom_mode}}">
                     <section id="editor_properties">
                       <div id="element_actions" class="sidebar_list layout horizontal end-justified">
-                        <paper-fab icon="arrow-upward" title="Mover arriba" class="move_button" onclick="moveElementUp()"></paper-fab>
-                        <paper-fab icon="arrow-downward" title="Mover abajo" class="move_button" onclick="moveElementDown()"></paper-fab>
-                        <paper-fab icon="content-copy" title="Duplicar elemento [Ctrl+D]" class="move_button" onclick="cloneElement()"></paper-fab>
+                        <div>
+                          <paper-fab icon="arrow-upward" class="move_button" onclick="moveElementUp()"></paper-fab>
+                          <paper-tooltip offset="10" animation-delay="0" position="bottom">Mover arriba</paper-tooltip>
+                        </div>
+                        <div>
+                          <paper-fab icon="arrow-downward" class="move_button" onclick="moveElementDown()"></paper-fab>
+                          <paper-tooltip offset="10" animation-delay="0" position="bottom">Mover abajo</paper-tooltip>
+                        </div>
+                        <div>
+                          <paper-fab icon="content-copy" class="move_button" onclick="cloneElement()"></paper-fab>
+                          <paper-tooltip offset="10" animation-delay="0" position="bottom">Duplicar [Ctrl+D]</paper-tooltip>
+                        </div>
                         <div class="flex"></div>
-                        <paper-fab id="delete_button" icon="delete" title="Eliminar elemento [Supr]" onclick="deleteElement(event)"></paper-fab>
+                        <div>
+                          <paper-fab id="delete_button" icon="delete" onclick="deleteElement(event)"></paper-fab>
+                          <paper-tooltip offset="10" animation-delay="0" position="bottom">Eliminar [Supr]</paper-tooltip>
+                        </div>
                       </div>
                       <div id="properties_list" class="sidebar_list"></div>
                     </section>
@@ -390,48 +404,36 @@
                   <template is="dom-if" if="{{preview_mode}}">
                     <div class="paper-font-title">Pantalla {{preview_selected_screen}}</div>
                     <span class="flex"></span>
-                    <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
-                      <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
-                      <paper-menu class="dropdown-content">
-                        <a class="link" tabindex="-1" href="https://{{user}}.github.io/polytipe-projects" target="_blank">
-                          <paper-item>
-                            <iron-icon class="element_icon" icon="visibility"></iron-icon>
-                            <div>Ver prototipo</div>
-                          </paper-item>
-                        </a>
-                        <paper-item onclick="generatePrototype()">
-                          <iron-icon class="element_icon" icon="autorenew"></iron-icon>
-                          <div>Regenerar prototipo</div>
-                        </paper-item>
-                      </paper-menu>
-                    </paper-menu-button>
+                    <template is="dom-if" if="{{unsaved_changes}}">
+                      <div>
+                        <template is="dom-if" if="{{wide}}">
+                          <paper-button noink class="save_button_white paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                        </template>
+                        <template is="dom-if" if="{{!wide}}">
+                          <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
+                        </template>
+                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                      </div>
+                    </template>
+                    <div>
+                      <paper-icon-button icon="cloud-upload" onclick="promptGeneratePrototype()"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
+                    </div>
                   </template>
                   <template is="dom-if" if="{{!preview_mode}}">
                     <div class="paper-font-title">Pantalla {{selected_screen}}</div>
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
-                      <div class="layout horizontal center">
-                        <paper-button id="editor_save_button" noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                      <div>
+                        <template is="dom-if" if="{{wide}}">
+                          <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                        </template>
+                        <template is="dom-if" if="{{!wide}}">
+                          <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
+                        </template>
                         <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                       </div>
                     </template>
-                    <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
-                      <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
-                      <paper-menu class="dropdown-content">
-                        <paper-item onclick="promptGetCommits()">
-                          <iron-icon class="element_icon" icon="history"></iron-icon>
-                          <div>Ver commits recientes</div>
-                        </paper-item>
-                        <paper-item onclick="">
-                          <iron-icon class="element_icon" icon="create"></iron-icon>
-                          <div>Cambiar nombre</div>
-                        </paper-item>
-                        <paper-item onclick="promptDeleteScreen()">
-                          <iron-icon class="element_icon delete_icon" icon="delete"></iron-icon>
-                          <div>Eliminar pantalla</div>
-                        </paper-item>
-                      </paper-menu>
-                    </paper-menu-button>
                     <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                   </template>
                 </paper-toolbar>
@@ -439,8 +441,10 @@
                 <div id="app_container" class="layout horizontal center-center">
                   <paper-spinner id="iframe_loading_spinner" active></paper-spinner>
                 </div>
-
-                <paper-fab icon="av:play-arrow" id="preview_fab" title="Previsualizar" onclick="togglePreview()"></paper-fab>
+                <div>
+                  <paper-tooltip for="preview_fab" offset="10" animation-delay="0" position="top">Previsualizar</paper-tooltip>
+                  <paper-fab icon="visibility" id="preview_fab" onclick="togglePreview()"></paper-fab>
+                </div>
               </paper-header-panel>
             </paper-drawer-panel>
           </section>
@@ -535,7 +539,7 @@
           <h2 class="flex">Colaboradores</h2>
           <paper-spinner id="collaborators_spinner"></paper-spinner>
         </div>
-        <paper-input id="collaborators_input" label="Agregar usuario" value="{{user_search}}" autofocus>
+        <paper-input id="collaborators_input" label="Agregar usuario" value="{{user_search}}">
           <paper-menu-button id="collaborators_dropdown" suffix horizontal-align="right" vertical-offset="-10">
             <paper-icon-button class="dropdown-trigger" onclick="searchUsers()" icon="search"></paper-icon-button>
             <paper-menu id="collaborators_items" class="dropdown-content" attr-for-selected="username">
@@ -655,16 +659,20 @@
         </div>
       </paper-dialog>
 
-      <paper-dialog id="generate_prototype_dialog" modal entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-        <div class="prototype_title">
-          <div class="paper-font-title">Generar prototipo</div>
-          <div class="paper-font-body1 prototype_button">
-            <a class="link" href="http://{{user}}.github.io/polytipe-projects" target="_blank">Actualizado hace 8 horas</a>
+      <paper-dialog id="generate_prototype_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="prototype_title layout horizontal center">
+          <div class="flex">
+            <div class="paper-font-title">Exportar prototipo</div>
+            <div class="paper-font-body1 prototype_button">
+              <a class="link" href="http://{{user}}.github.io/polytipe-projects" target="_blank">{{user}}.github.io/polytipe-projects</a>
+            </div>
           </div>
+          <paper-spinner id="generating_prototype_spinner"></paper-spinner>
         </div>
-        <div class="create_repo_description paper-font-subhead">
-          Exporta el prototipo a una página web para realizar pruebas
-          de usabilidad. Si utilizas Google Analytics puedes
+
+        <div class="prototype_description paper-font-subhead">
+          Genera una página web para realizar pruebas de usabilidad
+          con el prototipo. Si utilizas Google Analytics puedes
           <strong>
             <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
           </strong>
@@ -672,15 +680,16 @@
 
           <paper-input label="ID de seguimiento"></paper-input>
 
-          Una vez generado, puedes
+          Si deseas recibir feedback de los usuarios puedes
           <strong>
-            <a class="link" href="https://github.com/{{user}}/polytipe-projects/settings" target="_blank">habilitar la casilla de issues</a>
+            <a class="link" href="https://github.com/{{user}}/polytipe-projects/settings" target="_blank">activar la casilla de issues</a>
           </strong>
-          en el repositorio para recibir feedback de los usuarios.
+          en las opciones del repositorio en Github.
         </div>
+        <div class="prototype_description save_button paper-font-caption">*Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-          <paper-button class="accept_button" onclick="" noink autofocus>Generar</paper-button>
+          <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
         </div>
       </paper-dialog>
     </div>
