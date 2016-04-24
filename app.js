@@ -513,9 +513,20 @@ function update_tree(){
 }
 
 function goto(section) {
-  if(!app.preview_mode){
-    app.polytipe_section = section;
+  if(app.preview_mode){
+    return;
   }
+
+  if(section == "repos_view"){
+    app.selected_repo = "";
+  }else if(section == "user_view"){
+    app.selected_project = "";
+  }else if(section == "project_view"){
+    app.selected_screen = "";
+  }
+
+  app.polytipe_section = section;
+
 }
 
 /* WebComponentsReady listener */
@@ -565,12 +576,20 @@ window.addEventListener('WebComponentsReady', function(e) {
   document.getElementById('left_drawer_menu').addEventListener("iron-select", function (e) {
     document.querySelector('paper-drawer-panel').closeDrawer();
   });
+  document.getElementById('repo_selector').addEventListener('iron-select', function () {
+    goto('user_view');
+    getProjects(function () {
+      document.getElementById("loading_project_box").style.display = "none";
+    });
+  });
   document.getElementById('project_selector').addEventListener('iron-select', function () {
+    goto('project_view');
     getScreens();
     document.getElementById('iframe_loading_spinner').style.display = "inline-block";
   });
   document.getElementById('screen_selector').addEventListener('iron-select', function (e) {
-    if(iframeReady){
+    goto('screen_editor');
+    if(iframeReady){ //Fix for Firefox (only triggers in Chrome)
       screen_target = iframe_document.getElementById(app.selected_screen);
       selected_element = document.getElementById('app_container');
       update_tree();
@@ -601,6 +620,17 @@ window.addEventListener('WebComponentsReady', function(e) {
     document.getElementById('collaborators_items').selected = "";
     document.getElementById('collaborators_input').value = "";
     app.user_list = [];
+  });
+
+  document.getElementById('collaborators_app').addEventListener('dom-change', function() {
+    //Add event listener
+    var collaborator_chips = document.getElementsByClassName('collaborator_chip');
+    for (var i = 0; i < collaborator_chips.length; i++) {
+      collaborator_chips[i].addEventListener("remove", function (e) {
+        var username = e.target.querySelector('h1').innerHTML;
+        removeCollaborator(username);
+      });
+    }
   });
 
   /* iron-a11y-keys listeners */
@@ -652,7 +682,7 @@ function changeLIFX() {
       lifx_color = "hue:175 saturation:1.0";
       break;
   }
-  app.lifx_body =  {"power": "on", "color": lifx_color, "brightness":0.8, "duration": 1};
+  //app.lifx_body =  {"power": "on", "color": lifx_color, "brightness":0.8, "duration": 1};
 }
 
 function changeCarousel() {
@@ -676,11 +706,6 @@ function sign_out() {
   firebase_element.logout();
 }
 
-//NOTE: Add new screen to select different pack of projects belonging to other users
-/*user.repos(null, function(err, repos) {
-  console.log(repos);
-});*/
-
 function validate_user() {
   user = github.getUser();
   user.show(null, function(err, user) {
@@ -695,35 +720,40 @@ function validate_user() {
 
       app.user = user_input;
       app.token = token_input;
-      app.polytipe_section = "user_view";
-      document.getElementById("loading_project_box").style.display = "flex";
-      promptForkRepo();
+      app.polytipe_section = "repos_view";
+      getRepos();
     }else{ //If errors display the fail toast
       document.getElementById("sign_in_fail_toast").open();
     }
   });
 }
 
-//Forks the the polytipe-projects repo if it doesn't have it
-function promptForkRepo() {
-  app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  var hasProjects = false;
-  user.userRepos(app.user, function(err, repos) {
+function getRepos() {
+  user.repos(null, function(err, repos) {
+    var user_repos = [];
     for (var i = 0; i < repos.length; i++) {
-      if(repos[i].full_name==app.user+"/polytipe-projects"){
-        hasProjects = true;
+      if(repos[i].full_name.includes("polytipe-projects") && repos[i].full_name != "polytipe/polytipe-projects"){
+        if(repos[i].owner.login == app.user){
+          user_repos.push({"name": repos[i].owner.login, "icon": "folder"});
+        }else{
+          user_repos.push({"name": repos[i].owner.login, "icon": "folder-shared"});
+        }
       }
     }
-    if(!hasProjects){
-      document.getElementById('create_repo_dialog').open();
+    app.user_repos = user_repos;
+    if(app.user_repos.length==0){
+      promptForkRepo();
     }else{
-      getProjects(function () {
-        document.getElementById("loading_project_box").style.display = "none";
-      });
+      document.getElementById("loading_repos_box").style.display = "none";
     }
   });
 }
 
+function promptForkRepo() {
+  document.getElementById('create_repo_dialog').open();
+}
+
+//Forks the the polytipe-projects repo if it doesn't have it
 function forkRepo() {
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
@@ -781,21 +811,10 @@ function removeCollaborator(username) {
 
 function getCollaborators() {
   document.getElementById('collaborators_spinner').active = true;
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.collaborators(function(err, data) {
     app.collaborators = data;
     document.getElementById('collaborators_spinner').active = false;
-
-    document.getElementById('collaborators_app').addEventListener('dom-change', function() {
-      //Add event listener
-      var collaborator_chips = document.getElementsByClassName('collaborator_chip');
-      for (var i = 0; i < collaborator_chips.length; i++) {
-        collaborator_chips[i].addEventListener("remove", function (e) {
-          var username = e.target.querySelector('h1').innerHTML;
-          removeCollaborator(username);
-        });
-      }
-    });
   });
 }
 
@@ -890,7 +909,9 @@ function createProject() {
 }
 
 function getProjects(callback) {
-  var repo = github.getRepo(user_input, "polytipe-projects");
+  app.user_projects = [];
+  document.getElementById("loading_project_box").style.display = "flex";
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.listBranches(function(err, branches) {
     var user_projects = [];
     for (var i = 0; i < branches.length; i++) {
@@ -986,7 +1007,6 @@ function deleteProject(){
   repo.deleteRef('heads/'+app.selected_project, function(err) {
 
     document.getElementById('app_container').removeChild(frame);
-    app.selected_project = "";
 
     var dialog = document.getElementById("delete_project_dialog");
     dialog.close();
@@ -1063,8 +1083,7 @@ function createScreen() {
   var dialog = document.getElementById("add_screen_dialog");
   dialog.close();
 }
-//TODO: Remove focus and unfocus functions from polytipe-projects repo
-//TODO: Replace username and project_name on export
+//TODO: Remove focus and unfocus functions from polytipe-projects repo elements
 function getScreens() {
   document.getElementById('empty_state_screen').style.display = "none";
   document.getElementById('screen_placeholder').style.display = "flex";
@@ -1163,7 +1182,6 @@ function deleteScreen() {
 
   update_tree();
   app.unsaved_changes = true;
-  app.selected_screen = "";
   goto('project_view');
   displayScreens();
 }

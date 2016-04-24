@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- Tile color for Win8/10 -->
-  <meta name="msapplication-TileColor" content="">
+  <meta name="msapplication-TileColor" content="#212121">
   <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
   <!-- Add to homescreen for Safari on iOS -->
@@ -69,8 +69,8 @@
         </div>
         <paper-menu id="left_drawer_menu">
           <paper-item>
-            <iron-icon class="left_toolbar_icon element_icon" icon="description"></iron-icon>
-            <div>Proyectos</div>
+            <iron-icon class="left_toolbar_icon element_icon" icon="folder"></iron-icon>
+            <div>Repositorios</div>
           </paper-item>
           <a class="link" tabindex="-1" href="https://github.com/{{user}}/polytipe-projects" target="_blank">
             <paper-item>
@@ -153,10 +153,37 @@
             <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
           </section>
 
-          <section id="user_view">
+          <section id="repos_view">
             <paper-toolbar class="screen_view_toolbar">
               <paper-icon-button icon="menu" paper-drawer-left></paper-icon-button>
               <div class="paper-font-title">Polytipe</div>
+            </paper-toolbar>
+
+            <div class="elements_group">
+              <div class="elements_label" class="paper-font-subhead">Repositorios</div>
+              <iron-selector wide-layout$="{{wide}}" id="repo_selector" attr-for-selected="repo" selected="{{selected_repo}}" class="layout horizontal">
+                <template is="dom-repeat" items="{{user_repos}}">
+                  <paper-material elevation="2" repo="{{item.name}}" class="project_box layout vertical flex">
+                    <div class="flex layout vertical center end-justified">
+                      <iron-icon class="project_box_icon" icon="{{item.icon}}"></iron-icon>
+                    </div>
+                    <div class="flex layout vertical center-center">
+                      <div class="project_name paper-font-headline">{{item.name}}</div>
+                    </div>
+                    <paper-ripple recenters></paper-ripple>
+                  </paper-material>
+                </template>
+              </iron-selector>
+              <div id="loading_repos_box" class="project_box layout vertical center-center">
+                <paper-spinner active></paper-spinner>
+              </div>
+            </div>
+          </section>
+
+          <section id="user_view">
+            <paper-toolbar class="screen_view_toolbar">
+              <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('repos_view')"></paper-icon-button>
+              <div class="paper-font-title">{{selected_repo}}</div>
               <div class="flex"></div>
               <paper-menu-button horizontal-align="right" vertical-offset="15" horizontal-offset="5">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger" title="Más acciones"></paper-icon-button>
@@ -177,7 +204,7 @@
               <div class="elements_label" class="paper-font-subhead">Proyectos</div>
               <iron-selector wide-layout$="{{wide}}" id="project_selector" attr-for-selected="project" selected="{{selected_project}}" class="layout horizontal">
                 <template is="dom-repeat" items="{{user_projects}}">
-                  <paper-material elevation="2" project="{{item.name}}" onclick="goto('project_view')" class="project_box layout vertical flex">
+                  <paper-material elevation="2" project="{{item.name}}" class="project_box layout vertical flex">
                     <div class="flex layout vertical center end-justified">
                       <iron-icon class="project_box_icon" icon="description"></iron-icon>
                     </div>
@@ -243,7 +270,7 @@
               <div class="layout horizontal wrap">
                 <iron-selector wide-layout$="{{wide}}" id="screen_selector" attr-for-selected="screen" selected="{{selected_screen}}" class="layout horizontal">
                   <template is="dom-repeat" items="{{project_screens}}">
-                    <paper-material elevation="2" screen="{{item.name}}" onclick="goto('screen_editor')" class="screen_box layout vertical">
+                    <paper-material elevation="2" screen="{{item.name}}" class="screen_box layout vertical">
                       <div class="flex layout vertical center end-justified">
                         <iron-icon class="screen_box_icon" icon="hardware:smartphone"></iron-icon>
                       </div>
@@ -531,7 +558,7 @@
           <div id="collaborators_group_title">Lista de colaboradores</div>
           <div class="layout horizontal wrap">
             <template id="collaborators_app" is="dom-repeat" items="{{collaborators}}" as="collaborator">
-              <paper-chip class="collaborator_chip" actual="{{user}}" user="{{collaborator.login}}">
+              <paper-chip class="collaborator_chip" actual="{{selected_repo}}" user="{{collaborator.login}}">
                 <iron-icon class="icon" src="{{collaborator.avatar_url}}"></iron-icon>
                 <h1>{{collaborator.login}}</h1>
               </paper-chip>
