@@ -52,15 +52,17 @@ function iframe_ready() {
 
   drawer_panel = iframe_document.getElementById('drawer_panel');
   drawer_panel.addEventListener('selected-changed', function(e) {
-    app.async(function () { //Wait a little for the drawer_panel.selected to update
-      if(drawer_panel.selected == "drawer"){
-        iframe_drawer_content.style.border = "2px solid yellow";
-        unfocus("main");
-      }else if(drawer_panel.selected == "main"){
-        iframe_drawer_content.style.border = "none";
-        unfocus("drawer");
-      }
-    },10);
+    if(!app.preview_mode){
+      app.async(function () { //Wait a little for the drawer_panel.selected to update
+        if(drawer_panel.selected == "drawer"){
+          iframe_drawer_content.style.border = "2px solid yellow";
+          unfocus("main");
+        }else if(drawer_panel.selected == "main"){
+          iframe_drawer_content.style.border = "none";
+          unfocus("drawer");
+        }
+      },10);
+    }
   });
 
   iframe_document.addEventListener('elementSelection', function(e) {
@@ -241,26 +243,29 @@ function unfocus(e) {
 
   //Reset selected element
   selected_element = e.target;
-  //Add iframe outline
-  if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
-    if(selected_element.id == "app_container" || selected_element.id == "app_folder"){
-      iframe_document.querySelector('paper-drawer-panel').closeDrawer();
-      iframe_drawer_content.style.border = "none";
-      document.getElementById("app_iframe").classList.add('outlined_element');
-    } else if(selected_element.id == "drawer_folder"){
-      iframe_document.querySelector('paper-drawer-panel').openDrawer();
-      iframe_drawer_content.style.border = "2px solid yellow";
-      document.getElementById("app_iframe").classList.remove('outlined_element');
+
+  if(!app.preview_mode){
+    //Add iframe outline
+    if(selected_element != undefined){ //When deleting an element app_iframe has to be outlined
+      if(selected_element.id == "app_container" || selected_element.id == "app_folder"){
+        iframe_document.querySelector('paper-drawer-panel').closeDrawer();
+        iframe_drawer_content.style.border = "none";
+        document.getElementById("app_iframe").classList.add('outlined_element');
+      } else if(selected_element.id == "drawer_folder"){
+        iframe_document.querySelector('paper-drawer-panel').openDrawer();
+        iframe_drawer_content.style.border = "2px solid yellow";
+        document.getElementById("app_iframe").classList.remove('outlined_element');
+      }else{
+        iframe_drawer_content.style.border = "none";
+        document.getElementById("app_iframe").classList.remove('outlined_element');
+      }
     }else{
-      iframe_drawer_content.style.border = "none";
-      document.getElementById("app_iframe").classList.remove('outlined_element');
-    }
-  }else{
-    if(drawer_panel.selected == "main"){
-      document.getElementById("app_iframe").classList.add('outlined_element');
-    }
-    if(drawer_panel.selected == "drawer"){
-      document.getElementById("app_iframe").classList.remove('outlined_element');
+      if(drawer_panel.selected == "main"){
+        document.getElementById("app_iframe").classList.add('outlined_element');
+      }
+      if(drawer_panel.selected == "drawer"){
+        document.getElementById("app_iframe").classList.remove('outlined_element');
+      }
     }
   }
 
@@ -519,6 +524,8 @@ window.addEventListener('WebComponentsReady', function(e) {
   //Hide loader
   document.getElementById('drawer_panel_wrapper').style.opacity = 1;
 
+  //document.getElementById('generate_prototype_dialog').open();
+
   /* Firebase event listeners */
 
   firebase_element = document.getElementById('firebaseAuth');
@@ -534,9 +541,9 @@ window.addEventListener('WebComponentsReady', function(e) {
     });
     validate_user();
 
-    //Get contents from the original polytipe-projects/index.html
+    //Get contents from the original polytipe-projects/prototype.html
     var repo = github.getRepo("polytipe", "polytipe-projects");
-    repo.read("master", 'index.html', function(err, data) {
+    repo.read("master", 'prototype.html', function(err, data) {
       split_delimiter = '</iron-pages>';
       project_base_before = data.split(split_delimiter)[0];
       project_base_after = split_delimiter + data.split(split_delimiter)[1];
@@ -887,7 +894,7 @@ function getProjects(callback) {
   repo.listBranches(function(err, branches) {
     var user_projects = [];
     for (var i = 0; i < branches.length; i++) {
-      if(branches[i] != "master"){
+      if(branches[i] != "master" && branches[i] != "gh-pages"){
         user_projects.push({"name": branches[i]});
       }
     }
@@ -898,6 +905,20 @@ function getProjects(callback) {
       document.getElementById("empty_state_project").style.display = "flex";
     }
     callback();
+  });
+}
+
+function generatePrototype() {
+  var repo = github.getRepo(app.user, "polytipe-projects");
+  repo.branch(app.selected_project, "gh-pages", function(err) {
+    console.log("https://"+app.user+".github.io/polytipe-projects");
+    repo.read('gh-pages', 'index.html', function(err, data) {
+      data = data.replace(/project_name/g, app.selected_project);
+      data = data.replace(/usuario/g, app.user);
+      repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(err) {
+        document.getElementById('prototype_toast').show();
+      });
+    });
   });
 }
 
@@ -936,7 +957,7 @@ function saveProject() {
     beautified_html = temp.join("\n");
     var merged_html = project_base_before + beautified_html + project_base_after;
 
-    repo.write(app.selected_project, 'index.html', merged_html, app.commit_message, function(err) {
+    repo.write(app.selected_project, 'prototype.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
         dialog.close();
         document.getElementById('saving_spinner').active = false;
@@ -1042,14 +1063,15 @@ function createScreen() {
   var dialog = document.getElementById("add_screen_dialog");
   dialog.close();
 }
-
+//TODO: Remove focus and unfocus functions from polytipe-projects repo
+//TODO: Replace username and project_name on export
 function getScreens() {
   document.getElementById('empty_state_screen').style.display = "none";
   document.getElementById('screen_placeholder').style.display = "flex";
   app.last_saved = "...";
   app.project_screens = [];
   var repo = github.getRepo(user_input, "polytipe-projects");
-  repo.read(app.selected_project, 'index.html', function(err, data) {
+  repo.read(app.selected_project, 'prototype.html', function(err, data) {
     frame = document.createElement("iframe");
     frame.id = "app_iframe";
     frame.style.opacity = "0.05";
