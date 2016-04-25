@@ -158,24 +158,38 @@
               <paper-icon-button icon="menu" paper-drawer-left></paper-icon-button>
               <div class="paper-font-title">Polytipe</div>
             </paper-toolbar>
-
             <div class="elements_group">
               <div class="elements_label" class="paper-font-subhead">Repositorios</div>
-              <iron-selector wide-layout$="{{wide}}" id="repo_selector" attr-for-selected="repo" selected="{{selected_repo}}" class="layout horizontal">
-                <template is="dom-repeat" items="{{user_repos}}">
-                  <paper-material elevation="2" repo="{{item.name}}" class="project_box layout vertical flex">
-                    <div class="flex layout vertical center end-justified">
-                      <iron-icon class="project_box_icon" icon="{{item.icon}}"></iron-icon>
+              <div class="layout horizontal wrap">
+                <iron-selector wide-layout$="{{wide}}" id="repo_selector" attr-for-selected="repo" selected="{{selected_repo}}" class="layout horizontal">
+                  <template is="dom-repeat" items="{{user_repos}}">
+                    <paper-material elevation="2" repo="{{item.name}}" class="project_box layout vertical flex">
+                      <div class="flex layout vertical center end-justified">
+                        <iron-icon class="project_box_icon" icon="{{item.icon}}"></iron-icon>
+                      </div>
+                      <div class="flex layout vertical center-center">
+                        <div class="project_name paper-font-headline">{{item.name}}</div>
+                      </div>
+                      <paper-ripple recenters></paper-ripple>
+                    </paper-material>
+                  </template>
+                </iron-selector>
+                <div id="loading_repos_box" class="project_box layout vertical center-center">
+                  <paper-spinner active></paper-spinner>
+                </div>
+                <paper-material id="empty_state_repo" elevation="2" onclick="promptForkRepo()" class="project_box layout vertical flex">
+                  <div class="flex layout vertical">
+                    <iron-icon class="empty_state_icon" icon="folder"></iron-icon>
+                    <div class="empty_state_description">
+                      <div class="paper-font-title">Crea un repositorio</div>
+                      <div class="paper-font-subhead">Éste será tu repositorio personal.</div>
                     </div>
-                    <div class="flex layout vertical center-center">
-                      <div class="project_name paper-font-headline">{{item.name}}</div>
+                    <div class="layout horizontal end-justified">
+                      <iron-icon class="empty_state_arrow" icon="arrow-forward"></iron-icon>
                     </div>
-                    <paper-ripple recenters></paper-ripple>
-                  </paper-material>
-                </template>
-              </iron-selector>
-              <div id="loading_repos_box" class="project_box layout vertical center-center">
-                <paper-spinner active></paper-spinner>
+                  </div>
+                  <paper-ripple recenters></paper-ripple>
+                </paper-material>
               </div>
             </div>
           </section>
@@ -509,15 +523,14 @@
 
     <div class="dialogs">
       <!-- User view dialogs -->
-      <paper-dialog id="create_repo_dialog" modal entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-
-        <div class="create_repo_icon_container layout vertical center-center">
-          <iron-icon class="sign_in_icon" icon="create-new-folder"></iron-icon>
+      <paper-dialog id="create_repo_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Crear repositorio</h2>
+          <paper-spinner id="forking_spinner"></paper-spinner>
         </div>
-        <div class="sign_in_title paper-font-title">Bienvenido a Polytipe</div>
         <div class="create_repo_description paper-font-subhead">Lo primero que haremos será crear un repositorio en tu cuenta de Github donde se guardarán todos tus proyectos.</div>
         <div class="buttons">
-          <paper-button class="cancel_button" noink onclick="sign_out()" dialog-dismiss>Salir de Polytipe</paper-button>
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="forkRepo()" noink autofocus>Crear</paper-button>
         </div>
 
@@ -541,8 +554,8 @@
         </div>
         <p>
           ¿Estás seguro de que deseas eliminar el repositorio
-          <strong>{{user}}/polytipe-projects</strong>  de tu Github?
-          Todos los proyectos de Polytipe se eliminarán.
+          <strong>{{user}}/polytipe-projects</strong>?
+          Todos los proyectos que contiene se eliminarán.
         </p>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>

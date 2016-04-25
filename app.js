@@ -614,6 +614,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   collaborators_ajax = document.getElementById('collaborators_ajax');
   collaborators_ajax.addEventListener("response", function () {
+    console.log("getting data!");
     getCollaborators();
     document.getElementById('collaborators_items').selected = "";
     document.getElementById('collaborators_input').value = "";
@@ -727,22 +728,25 @@ function validate_user() {
 }
 
 function getRepos() {
+  document.getElementById("loading_repos_box").style.display = "flex";
+  document.getElementById("empty_state_repo").style.display = "none";
   user.repos(null, function(err, repos) {
+    var personal_repo = false;
     var user_repos = [];
     for (var i = 0; i < repos.length; i++) {
       if(repos[i].full_name.includes("polytipe-projects") && repos[i].full_name != "polytipe/polytipe-projects"){
         if(repos[i].owner.login == app.user){
           user_repos.push({"name": repos[i].owner.login, "icon": "folder"});
+          personal_repo = true;
         }else{
           user_repos.push({"name": repos[i].owner.login, "icon": "folder-shared"});
         }
       }
     }
     app.user_repos = user_repos;
-    if(app.user_repos.length==0){
-      promptForkRepo();
-    }else{
-      document.getElementById("loading_repos_box").style.display = "none";
+    document.getElementById("loading_repos_box").style.display = "none";
+    if(!personal_repo){
+      document.getElementById("empty_state_repo").style.display = "flex";
     }
   });
 }
@@ -753,12 +757,14 @@ function promptForkRepo() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function forkRepo() {
+  document.getElementById("forking_spinner").active = true;
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
-    var user_repos = [];
     user_repos.push({"name": res.owner.login, "icon": "folder"});
     app.user_repos = user_repos;
+    document.getElementById("forking_spinner").active = false;
     document.getElementById("loading_repos_box").style.display = "none";
+    document.getElementById("empty_state_repo").style.display = "none";
     document.getElementById('create_repo_dialog').close();
     document.getElementById('created_repo_toast').show();
   });
@@ -788,16 +794,18 @@ function deleteRepo(){
     document.getElementById("delete_repo_spinner").active = false;
     var dialog = document.getElementById("delete_repo_dialog");
     dialog.close();
+    goto("repos_view");
+    getRepos();
+    app.user_repos = [];
     app.user_projects = [];
-    document.getElementById("empty_state_project").style.display = "none";
-    document.getElementById("loading_project_box").style.display = "flex";
-    document.getElementById('create_repo_dialog').open();
+    //document.getElementById("loading_project_box").style.display = "flex";
+    //document.getElementById('create_repo_dialog').open();
   });
 }
 
 /* Collaborator actions */
 
-//TODO: Add issues and stuff on polytipe-projects
+//IDEA: Add issues dialog on prototype (requires Github user)
 
 function addCollaborator(username) {
   app.user_to_add_delete = username;
@@ -843,8 +851,6 @@ function searchUsers() {
 }
 
 /* Commit history actions */
-
-//TODO: Change manifest.json on save
 
 function promptGetCommits() {
   var get_commits_dialog = document.getElementById('get_commits_dialog');
@@ -937,7 +943,7 @@ function getProjects(callback) {
 function promptGeneratePrototype() {
   document.getElementById('generate_prototype_dialog').open();
 }
-
+//FIXME: Fix 2 clics for showing up the first time
 function generatePrototype() {
   document.getElementById('generating_prototype_spinner').active = true;
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
@@ -950,20 +956,35 @@ function generatePrototype() {
     }
     if(has_prototype){
       repo.read(app.selected_project, 'prototype.html', function(err, data) {
-        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(err) {
-          document.getElementById('generating_prototype_spinner').active = false;
-          document.getElementById('prototype_toast').show();
+        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(error) {
+          //document.getElementById('generating_prototype_spinner').active = false;
+          //document.getElementById('prototype_toast').show();
+          //TODO: Add boolean. When both are active, trigger the feedback
+        });
+      });
+      repo.read('gh-pages', 'manifest.json', function(error, data) {
+        //data.name = app.selected_project; //FIXME: Update JSON key value
+        repo.write('gh-pages', 'manifest.json', data, "Cambiar nombre de la aplicación en el manifest", function(error) {
+          //document.getElementById('generating_prototype_spinner').active = false;
+          //document.getElementById('prototype_toast').show();
         });
       });
     }else if(!has_prototype){
       repo.branch(app.selected_project, "gh-pages", function(err) {
-        repo.read('gh-pages', 'index.html', function(err, data) {
+        repo.read('gh-pages', 'index.html', function(error, data) {
           data = data.replace(/project_name/g, app.selected_project);
           data = data.replace(/usuario/g, app.selected_repo);
           data = data.replace(/avatar_url/g, app.avatar);
-          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(err) {
-            document.getElementById('generating_prototype_spinner').active = false;
-            document.getElementById('prototype_toast').show();
+          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(er) {
+            //document.getElementById('generating_prototype_spinner').active = false;
+            //document.getElementById('prototype_toast').show();
+          });
+        });
+        repo.read('gh-pages', 'manifest.json', function(error, data) {
+          //data.name = app.selected_project;
+          repo.write('gh-pages', 'manifest.json', data, "Cambiar nombre de la aplicación en el manifest", function(error) {
+            //document.getElementById('generating_prototype_spinner').active = false;
+            //document.getElementById('prototype_toast').show();
           });
         });
       });
@@ -991,6 +1012,8 @@ function promptSaveProject() {
 //Makes a commit
 function saveProject() {
   //FIXME: Save change in styles
+  //FIXME: Save elements added to the drawer
+  //TODO: Update poly-elements in polytipe-projects
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   if(validate_msg){
@@ -1288,7 +1311,6 @@ function timeAgo(time){
 }
 
 //IDEA: On paper-swatch-picker hover change the bulb color
-//IDEA: Add screenshots of the screens with html2canvas
 
 /* Key binding functions */
 
