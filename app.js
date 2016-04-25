@@ -578,9 +578,7 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
   document.getElementById('repo_selector').addEventListener('iron-select', function () {
     goto('user_view');
-    getProjects(function () {
-      document.getElementById("loading_project_box").style.display = "none";
-    });
+    getProjects(function () {});
   });
   document.getElementById('project_selector').addEventListener('iron-select', function () {
     goto('project_view');
@@ -757,10 +755,12 @@ function promptForkRepo() {
 function forkRepo() {
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
-    document.getElementById("created_repo_toast").open();
+    var user_repos = [];
+    user_repos.push({"name": res.owner.login, "icon": "folder"});
+    app.user_repos = user_repos;
+    document.getElementById("loading_repos_box").style.display = "none";
     document.getElementById('create_repo_dialog').close();
-    document.getElementById("loading_project_box").style.display = "none";
-    document.getElementById("empty_state_project").style.display = "flex";
+    document.getElementById('created_repo_toast').show();
   });
 }
 
@@ -769,7 +769,7 @@ function promptDeleteRepo() {
   var dialog = document.getElementById("delete_repo_dialog");
   dialog.open();
   //app.lifx_alert =  {"power": "on", "from_color": "hue:330" ,"color": "red", "brightness": 0.5, "period": 0.3, "cycles": 2.0, "persist": true};
-  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+  //app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
@@ -844,6 +844,8 @@ function searchUsers() {
 
 /* Commit history actions */
 
+//TODO: Change manifest.json on save
+
 function promptGetCommits() {
   var get_commits_dialog = document.getElementById('get_commits_dialog');
   get_commits_dialog.open();
@@ -912,6 +914,7 @@ function createProject() {
 function getProjects(callback) {
   app.user_projects = [];
   document.getElementById("loading_project_box").style.display = "flex";
+  document.getElementById("empty_state_project").style.display = "none";
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.listBranches(function(err, branches) {
     var user_projects = [];
@@ -926,6 +929,7 @@ function getProjects(callback) {
     }else{
       document.getElementById("empty_state_project").style.display = "flex";
     }
+    document.getElementById("loading_project_box").style.display = "none";
     callback();
   });
 }
@@ -956,6 +960,7 @@ function generatePrototype() {
         repo.read('gh-pages', 'index.html', function(err, data) {
           data = data.replace(/project_name/g, app.selected_project);
           data = data.replace(/usuario/g, app.selected_repo);
+          data = data.replace(/avatar_url/g, app.avatar);
           repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(err) {
             document.getElementById('generating_prototype_spinner').active = false;
             document.getElementById('prototype_toast').show();

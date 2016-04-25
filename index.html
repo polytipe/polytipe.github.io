@@ -416,6 +416,10 @@
                       </div>
                     </template>
                     <div>
+                      <paper-icon-button icon="history" onclick="promptGetCommits()"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
+                    </div>
+                    <div>
                       <paper-icon-button icon="cloud-upload" onclick="promptGeneratePrototype()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
                     </div>
@@ -434,6 +438,18 @@
                         <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                       </div>
                     </template>
+                    <div>
+                      <paper-icon-button icon="history" onclick="promptGetCommits()"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
+                    </div>
+                    <div>
+                      <paper-icon-button icon="create" onclick=""></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Cambiar nombre</paper-tooltip>
+                    </div>
+                    <div>
+                      <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteScreen()"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Eliminar pantalla</paper-tooltip>
+                    </div>
                     <paper-icon-button class="right_drawer_toggle" icon="menu" paper-drawer-right></paper-icon-button>
                   </template>
                 </paper-toolbar>
