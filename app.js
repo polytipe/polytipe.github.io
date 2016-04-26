@@ -17,7 +17,7 @@ head.insertBefore(style, head.firstChild);
 var pre_loader = document.createElement("div");
 pre_loader.id = "pre_loader";
 var loading_icon = document.createElement("div");
-loading_icon.innerHTML = "<img src='images/touch/icon-128x128.png'>";
+loading_icon.innerHTML = "<img src='images/touch/preloader.png'>";
 pre_loader.appendChild(loading_icon);
 document.body.appendChild(pre_loader);
 
@@ -534,8 +534,7 @@ function goto(section) {
 window.addEventListener('WebComponentsReady', function(e) {
   //Hide loader
   document.getElementById('drawer_panel_wrapper').style.opacity = 1;
-
-  //document.getElementById('generate_prototype_dialog').open();
+  pre_loader.style.display = "none";
 
   /* Firebase event listeners */
 
@@ -657,7 +656,6 @@ window.addEventListener('WebComponentsReady', function(e) {
 });
 
 /* Misc actions */
-//IDEA: Add pulse effect when final export to gh-pages
 
 function changeLIFX() {
   var lifx_color;
@@ -1246,14 +1244,14 @@ function promptGeneratePrototype() {
   document.getElementById('generate_prototype_dialog').open();
 }
 
-var write_html_ready = false;
-var write_manifest_ready = false;
+var write_index_ready = false;
+var write_prototype_ready = false;
+var has_prototype = false;
 
 function generatePrototype() {
   document.getElementById('generating_prototype_spinner').active = true;
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   repo.listBranches(function(err, branches) {
-    var has_prototype = false;
     for (var i = 0; i < branches.length; i++) {
       if(branches[i] == "gh-pages"){
         has_prototype = true;
@@ -1261,16 +1259,17 @@ function generatePrototype() {
     }
     if(has_prototype){
       repo.read(app.selected_project, 'prototype.html', function(err1, data) {
-        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(error) {
-          write_html_ready = true;
+        repo.write('gh-pages', 'prototype.html', data, "Actualizar prototype.html", function(error) {
+          write_prototype_ready = true;
           displayPrototypeToast();
         });
       });
-      repo.read('gh-pages', 'manifest.json', function(err1, data) {
-        data.name = app.selected_project;
-        data.short_name = app.selected_project;
-        repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(error) {
-          write_manifest_ready = true;
+      repo.read('gh-pages', 'index.html', function(err1, data) {
+        data = data.replace(/project_name/g, app.selected_project);
+        data = data.replace(/usuario/g, app.selected_repo);
+        data = data.replace(/avatar_url/g, app.avatar);
+        repo.write('gh-pages', 'index.html', data, "Actualizar index.html", function(error) {
+          write_index_ready = true;
           displayPrototypeToast();
         });
       });
@@ -1280,16 +1279,8 @@ function generatePrototype() {
           data = data.replace(/project_name/g, app.selected_project);
           data = data.replace(/usuario/g, app.selected_repo);
           data = data.replace(/avatar_url/g, app.avatar);
-          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(er) {
-            write_html_ready = true;
-            displayPrototypeToast();
-          });
-        });
-        repo.read('gh-pages', 'manifest.json', function(error, data) {
-          data.name = app.selected_project;
-          data.short_name = app.selected_project;
-          repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(er) {
-            write_manifest_ready = true;
+          repo.write('gh-pages', 'index.html', data, "Crear index.html", function(er) {
+            write_index_ready = true;
             displayPrototypeToast();
           });
         });
@@ -1299,7 +1290,7 @@ function generatePrototype() {
 }
 
 function displayPrototypeToast() {
-  if (write_html_ready && write_manifest_ready) {
+  if ((has_prototype && write_index_ready && write_prototype_ready) || (!has_prototype && write_index_ready)) {
     app.lifx_alert =  {"power": "on", "color": "green saturation:1.0", "brightness": 1.0, "period": 1.5, "cycles": 1.0, "persist": false};
     document.getElementById('generating_prototype_spinner').active = false;
     document.getElementById('generate_prototype_dialog').close();
