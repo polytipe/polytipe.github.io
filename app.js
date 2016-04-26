@@ -793,13 +793,12 @@ function deleteRepo(){
     var dialog = document.getElementById("delete_repo_dialog");
     dialog.close();
     goto("repos_view");
-    getRepos();
     //FIXME: Remove the selected_repo with pop()
     user_repos = [];
     app.user_repos = user_repos;
     app.user_projects = [];
-    //document.getElementById("loading_project_box").style.display = "flex";
-    //document.getElementById('create_repo_dialog').open();
+    document.getElementById("empty_state_repo").style.display = "flex";
+    document.getElementById("deleted_repo_toast").show();
   });
 }
 
@@ -1246,7 +1245,10 @@ function promptGeneratePrototype() {
 
 var write_index_ready = false;
 var write_prototype_ready = false;
+var write_manifest_ready = false;
 var has_prototype = false;
+
+//FIXME: Fix having to generate the prototype twice in order to appear the first time
 
 function generatePrototype() {
   document.getElementById('generating_prototype_spinner').active = true;
@@ -1284,13 +1286,21 @@ function generatePrototype() {
             displayPrototypeToast();
           });
         });
+        repo.read('gh-pages', 'manifest.json', function(error, data) {
+          data.name = app.selected_project;
+          data.short_name = app.selected_project;
+          repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(er) {
+            write_manifest_ready = true;
+            displayPrototypeToast();
+          });
+        });
       });
     }
   });
 }
 
 function displayPrototypeToast() {
-  if ((has_prototype && write_index_ready && write_prototype_ready) || (!has_prototype && write_index_ready)) {
+  if ((has_prototype && write_index_ready && write_prototype_ready) || (!has_prototype && write_index_ready && write_manifest_ready)) {
     app.lifx_alert =  {"power": "on", "color": "green saturation:1.0", "brightness": 1.0, "period": 1.5, "cycles": 1.0, "persist": false};
     document.getElementById('generating_prototype_spinner').active = false;
     document.getElementById('generate_prototype_dialog').close();
