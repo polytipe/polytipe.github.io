@@ -421,7 +421,7 @@
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
                         <template is="dom-if" if="{{wide}}">
-                          <paper-button noink class="save_button_white paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
+                          <paper-button noink class="save_button_white" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
                         </template>
                         <template is="dom-if" if="{{!wide}}">
                           <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
@@ -434,7 +434,17 @@
                       <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
                     </div>
                     <div>
-                      <paper-icon-button icon="cloud-upload" onclick="promptGeneratePrototype()"></paper-icon-button>
+                      <paper-icon-button icon="trending-up" onclick=""></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
+                    </div>
+                    <div>
+                      <a class="link" tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
+                        <paper-icon-button icon="visibility"></paper-icon-button>
+                      </a>
+                      <paper-tooltip offset="0" animation-delay="0">Ver prototipo</paper-tooltip>
+                    </div>
+                    <div>
+                      <paper-icon-button icon="launch" onclick="promptGeneratePrototype()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
                     </div>
                   </template>
@@ -473,7 +483,7 @@
                 </div>
                 <div>
                   <paper-tooltip for="preview_fab" offset="10" animation-delay="0" position="top">Previsualizar</paper-tooltip>
-                  <paper-fab icon="visibility" id="preview_fab" onclick="togglePreview()"></paper-fab>
+                  <paper-fab icon="view-carousel" id="preview_fab" onclick="togglePreview()"></paper-fab>
                 </div>
               </paper-header-panel>
             </paper-drawer-panel>
@@ -502,7 +512,7 @@
 
     <iron-ajax
         auto
-        url="https://api.lifx.com/v1/lights/all/effects/pulse"
+        url="https://api.lifx.com/v1/lights/all/effects/breathe"
         headers='{"Authorization": "Bearer "}'
         method="POST"
         content-type="application/json"
@@ -688,20 +698,32 @@
         </div>
       </paper-dialog>
 
-      <paper-dialog id="generate_prototype_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-        <div class="prototype_title layout horizontal center">
-          <div class="flex">
-            <div class="paper-font-title">Exportar prototipo</div>
-            <div class="paper-font-body1 prototype_button">
-              <a class="link" href="http://{{user}}.github.io/polytipe-projects" target="_blank">{{user}}.github.io/polytipe-projects</a>
-            </div>
-          </div>
+      <paper-dialog id="generate_prototype_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Exportar prototipo</h2>
           <paper-spinner id="generating_prototype_spinner"></paper-spinner>
+        </div>
+        <p class="paper-font-subhead">
+          Exporta el proyecto a una página web para realizar pruebas de usabilidad.
+          Antes de hacerlo, puedes activar las herramientas de análisis y feedback
+          en el ícono <iron-icon icon="trending-up"></iron-icon>
+        </p>
+        <div class="prototype_description">*Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
+        <div class="buttons">
+          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
+          <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="analytics_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
+        <div class="layout horizontal">
+          <h2 class="flex">Exportar prototipo</h2>
+          <paper-spinner id="analytics_spinner"></paper-spinner>
         </div>
 
         <div class="prototype_description paper-font-subhead">
-          Genera una página web para realizar pruebas de usabilidad
-          con el prototipo. Si utilizas Google Analytics puedes
+          Exporta el proyecto a una página web para realizar pruebas de usabilidad
+          con los usuarios. Si utilizas Google Analytics puedes
           <strong>
             <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
           </strong>
@@ -729,7 +751,7 @@
           <paper-button noink>Ver</paper-button>
         </a>
       </paper-toast>
-      <paper-toast id="prototype_toast" duration="6000" text="Se generó el prototipo del proyecto {{selected_project}}">
+      <paper-toast id="prototype_toast" duration="3500" text="Se generó el prototipo del proyecto {{selected_project}}">
         <a tabindex="-1" href="https://{{user}}.github.io/polytipe-projects" target="_blank">
           <paper-button noink>Ver</paper-button>
         </a>
@@ -739,6 +761,9 @@
       <paper-toast id="screen_reserved_toast" duration="3500" text="Esta es una palabra reservada. Intenta otra."></paper-toast>
       <paper-toast id="sign_in_fail_toast" duration="5000" text="Ocurrió un error al iniciar sesión">
         <paper-button noink onclick="sign_in()">Reintentar</paper-button>
+      </paper-toast>
+      <paper-toast id="prototype_unsaved_changes_toast" duration="5000" text="Tienes cambios sin guardar">
+        <paper-button noink onclick="promptSaveProject()">Guardar</paper-button>
       </paper-toast>
     </div>
   </template>

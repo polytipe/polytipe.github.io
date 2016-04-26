@@ -653,6 +653,7 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
 
   app.preview_mode = false;
+  user_repos = [];
 });
 
 /* Misc actions */
@@ -732,7 +733,6 @@ function getRepos() {
   document.getElementById("empty_state_repo").style.display = "none";
   user.repos(null, function(err, repos) {
     var personal_repo = false;
-    var user_repos = [];
     for (var i = 0; i < repos.length; i++) {
       if(repos[i].full_name.includes("polytipe-projects") && repos[i].full_name != "polytipe/polytipe-projects"){
         if(repos[i].owner.login == app.user){
@@ -760,6 +760,7 @@ function forkRepo() {
   document.getElementById("forking_spinner").active = true;
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
+    user_repos = [];
     user_repos.push({"name": res.owner.login, "icon": "folder"});
     app.user_repos = user_repos;
     document.getElementById("forking_spinner").active = false;
@@ -774,8 +775,7 @@ function forkRepo() {
 function promptDeleteRepo() {
   var dialog = document.getElementById("delete_repo_dialog");
   dialog.open();
-  //app.lifx_alert =  {"power": "on", "from_color": "hue:330" ,"color": "red", "brightness": 0.5, "period": 0.3, "cycles": 2.0, "persist": true};
-  //app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
+  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
@@ -796,7 +796,9 @@ function deleteRepo(){
     dialog.close();
     goto("repos_view");
     getRepos();
-    app.user_repos = [];
+    //FIXME: Remove the selected_repo with pop()
+    user_repos = [];
+    app.user_repos = user_repos;
     app.user_projects = [];
     //document.getElementById("loading_project_box").style.display = "flex";
     //document.getElementById('create_repo_dialog').open();
@@ -937,58 +939,6 @@ function getProjects(callback) {
     }
     document.getElementById("loading_project_box").style.display = "none";
     callback();
-  });
-}
-
-function promptGeneratePrototype() {
-  document.getElementById('generate_prototype_dialog').open();
-}
-//FIXME: Fix 2 clics for showing up the first time
-function generatePrototype() {
-  document.getElementById('generating_prototype_spinner').active = true;
-  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
-  repo.listBranches(function(err, branches) {
-    var has_prototype = false;
-    for (var i = 0; i < branches.length; i++) {
-      if(branches[i] == "gh-pages"){
-        has_prototype = true;
-      }
-    }
-    if(has_prototype){
-      repo.read(app.selected_project, 'prototype.html', function(err, data) {
-        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(error) {
-          //document.getElementById('generating_prototype_spinner').active = false;
-          //document.getElementById('prototype_toast').show();
-          //TODO: Add boolean. When both are active, trigger the feedback
-        });
-      });
-      repo.read('gh-pages', 'manifest.json', function(error, data) {
-        //data.name = app.selected_project; //FIXME: Update JSON key value
-        repo.write('gh-pages', 'manifest.json', data, "Cambiar nombre de la aplicación en el manifest", function(error) {
-          //document.getElementById('generating_prototype_spinner').active = false;
-          //document.getElementById('prototype_toast').show();
-        });
-      });
-    }else if(!has_prototype){
-      repo.branch(app.selected_project, "gh-pages", function(err) {
-        repo.read('gh-pages', 'index.html', function(error, data) {
-          data = data.replace(/project_name/g, app.selected_project);
-          data = data.replace(/usuario/g, app.selected_repo);
-          data = data.replace(/avatar_url/g, app.avatar);
-          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(er) {
-            //document.getElementById('generating_prototype_spinner').active = false;
-            //document.getElementById('prototype_toast').show();
-          });
-        });
-        repo.read('gh-pages', 'manifest.json', function(error, data) {
-          //data.name = app.selected_project;
-          repo.write('gh-pages', 'manifest.json', data, "Cambiar nombre de la aplicación en el manifest", function(error) {
-            //document.getElementById('generating_prototype_spinner').active = false;
-            //document.getElementById('prototype_toast').show();
-          });
-        });
-      });
-    }
   });
 }
 
@@ -1185,7 +1135,6 @@ function getScreens() {
         polytipeKeyPressed(e);
       });
     });
-
   });
 }
 
@@ -1237,6 +1186,8 @@ function deleteScreen() {
   displayScreens();
 }
 
+/* Prototype actions */
+
 function togglePreview() {
   app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
@@ -1263,8 +1214,7 @@ function togglePreview() {
 
     preview_fab.icon = "close";
     editor_back_button.icon = "polytipe-icons:icon";
-
-    //app.lifx_body =  {"power": "on", "color": "green saturation:0.8", "brightness": 1.0, "duration": 0.4};
+    app.lifx_body =  {"power": "on", "color": "green saturation:0.3", "brightness": 1.0, "duration": 0.4};
   }else{
     //Add iframe outline
     if(selected_element != undefined && (selected_element.id == "app_container" || selected_element.id == "app_folder")){
@@ -1281,10 +1231,79 @@ function togglePreview() {
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
 
-    preview_fab.icon = "visibility";
+    preview_fab.icon = "view-carousel";
     editor_back_button.icon = "arrow-back";
 
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};
+  }
+}
+
+function promptGeneratePrototype() {
+  if(app.unsaved_changes){
+    document.getElementById('prototype_unsaved_changes_toast').show();
+    return;
+  }
+  document.getElementById('generate_prototype_dialog').open();
+}
+
+var write_html_ready = false;
+var write_manifest_ready = false;
+
+function generatePrototype() {
+  document.getElementById('generating_prototype_spinner').active = true;
+  var repo = github.getRepo(app.selected_repo, "polytipe-projects");
+  repo.listBranches(function(err, branches) {
+    var has_prototype = false;
+    for (var i = 0; i < branches.length; i++) {
+      if(branches[i] == "gh-pages"){
+        has_prototype = true;
+      }
+    }
+    if(has_prototype){
+      repo.read(app.selected_project, 'prototype.html', function(err1, data) {
+        repo.write('gh-pages', 'prototype.html', data, "Generar prototipo", function(error) {
+          write_html_ready = true;
+          displayPrototypeToast();
+        });
+      });
+      repo.read('gh-pages', 'manifest.json', function(err1, data) {
+        data.name = app.selected_project;
+        data.short_name = app.selected_project;
+        repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(error) {
+          write_manifest_ready = true;
+          displayPrototypeToast();
+        });
+      });
+    }else if(!has_prototype){
+      repo.branch(app.selected_project, "gh-pages", function(err1) {
+        repo.read('gh-pages', 'index.html', function(error, data) {
+          data = data.replace(/project_name/g, app.selected_project);
+          data = data.replace(/usuario/g, app.selected_repo);
+          data = data.replace(/avatar_url/g, app.avatar);
+          repo.write('gh-pages', 'index.html', data, "Generar prototipo", function(er) {
+            write_html_ready = true;
+            displayPrototypeToast();
+          });
+        });
+        repo.read('gh-pages', 'manifest.json', function(error, data) {
+          data.name = app.selected_project;
+          data.short_name = app.selected_project;
+          repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(er) {
+            write_manifest_ready = true;
+            displayPrototypeToast();
+          });
+        });
+      });
+    }
+  });
+}
+
+function displayPrototypeToast() {
+  if (write_html_ready && write_manifest_ready) {
+    app.lifx_alert =  {"power": "on", "color": "green saturation:1.0", "brightness": 1.0, "period": 1.5, "cycles": 1.0, "persist": false};
+    document.getElementById('generating_prototype_spinner').active = false;
+    document.getElementById('generate_prototype_dialog').close();
+    document.getElementById('prototype_toast').show();
   }
 }
 
