@@ -1266,15 +1266,18 @@ function generatePrototype() {
           displayPrototypeToast();
         });
       });
-      repo.read('gh-pages', 'index.html', function(err1, data) {
-        data = data.replace(/project_name/g, app.selected_project);
-        data = data.replace(/usuario/g, app.selected_repo);
-        data = data.replace(/avatar_url/g, app.avatar);
-        repo.write('gh-pages', 'index.html', data, "Actualizar index.html", function(error) {
-          write_index_ready = true;
-          displayPrototypeToast();
+      app.async(function () {
+        repo.read('gh-pages', 'index.html', function(err1, data) {
+          data = data.replace(/project_name/g, app.selected_project);
+          data = data.replace(/usuario/g, app.selected_repo);
+          data = data.replace(/avatar_url/g, app.avatar);
+          repo.write('gh-pages', 'index.html', data, "Actualizar index.html", function(error) {
+            write_index_ready = true;
+            displayPrototypeToast();
+          });
         });
-      });
+      }, 1000);
+
     }else if(!has_prototype){
       repo.branch(app.selected_project, "gh-pages", function(err1) {
         repo.read('gh-pages', 'index.html', function(error, data) {
@@ -1286,14 +1289,16 @@ function generatePrototype() {
             displayPrototypeToast();
           });
         });
-        repo.read('gh-pages', 'manifest.json', function(error, data) {
-          data.name = app.selected_project;
-          data.short_name = app.selected_project;
-          repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(er) {
-            write_manifest_ready = true;
-            displayPrototypeToast();
+        app.async(function () {
+          repo.read('gh-pages', 'manifest.json', function(error, data) {
+            data.name = app.selected_project;
+            data.short_name = app.selected_project;
+            repo.write('gh-pages', 'manifest.json', JSON.stringify(data, null, ' '), "Cambiar nombre de la aplicación en el manifest", function(er) {
+              write_manifest_ready = true;
+              displayPrototypeToast();
+            });
           });
-        });
+        }, 1000);
       });
     }
   });
