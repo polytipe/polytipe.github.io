@@ -25,7 +25,9 @@ function iframe_ready() {
   frame.style.opacity = "1";
   document.getElementById('iframe_loading_spinner').style.display = "none";
   iframeReady = true;
-  iframe_app_content.selected = app.selected_screen;
+  if (typeof iframe_app_content != 'undefined'){
+    iframe_app_content.selected = app.selected_screen;
+  }
 
   //Firefox fix for updating the tree on element selection
   if (typeof screen_target == 'undefined') {
