@@ -556,9 +556,10 @@ window.addEventListener('WebComponentsReady', function(e) {
     //Get contents from the original polytipe-projects/prototype.html
     var repo = github.getRepo("polytipe", "polytipe-projects");
     repo.read("master", 'prototype.html', function(err, data) {
-      split_delimiter = '</iron-pages>';
-      project_base_before = data.split(split_delimiter)[0];
-      project_base_after = split_delimiter + data.split(split_delimiter)[1];
+      split_delimiter = '<paper-drawer-panel id="drawer_panel" disable-swipe force-narrow>';
+      split_delimiter_end = '</paper-drawer-panel>';
+      project_base_before = data.split(split_delimiter)[0] + split_delimiter + "\n";
+      project_base_after = split_delimiter_end + data.split(split_delimiter)[1].split(split_delimiter_end)[1];
     });
   });
   firebase_element.addEventListener('logout', function (e) { //On logout
@@ -795,10 +796,10 @@ function deleteRepo(){
     var dialog = document.getElementById("delete_repo_dialog");
     dialog.close();
     goto("repos_view");
-    //FIXME: Remove the selected_repo with pop()
     user_repos = [];
     app.user_repos = user_repos;
     app.user_projects = [];
+    getRepos();
     document.getElementById("empty_state_repo").style.display = "flex";
     document.getElementById("deleted_repo_toast").show();
   });
@@ -961,22 +962,22 @@ function promptSaveProject() {
 //Makes a commit
 function saveProject() {
   //FIXME: Save change in styles
-  //FIXME: Save elements added to the drawer
   //TODO: Update poly-elements in polytipe-projects
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   if(validate_msg){
     document.getElementById('saving_spinner').active = true;
-    var temp_dom = Polymer.dom(iframe_app_content).innerHTML;
+    var temp_dom = Polymer.dom(drawer_panel).innerHTML;
     temp_dom = temp_dom.replace(/ class=".*?"/g, '');
     var beautified_html = vkbeautify.xml(temp_dom, 2);
+    beautified_html = beautified_html.replace(/^\s*[\r\n]/gm, "");
     var temp = beautified_html.split("\n");
-    for (var i = 0; i < temp.length; i++) {
-      temp[i] = "\t" + temp[i];
+    for (var i = 0; i < temp.length-1; i++) {
+      temp[i] = "    " + temp[i];
     }
-    //NOTE: Fix first and last iron-pages lines when saving
     beautified_html = temp.join("\n");
     var merged_html = project_base_before + beautified_html + project_base_after;
+    console.log(merged_html);
 
     repo.write(app.selected_project, 'prototype.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
@@ -1249,8 +1250,6 @@ var write_index_ready = false;
 var write_prototype_ready = false;
 var write_manifest_ready = false;
 var has_prototype = false;
-
-//FIXME: Fix having to generate the prototype twice in order to appear the first time
 
 function generatePrototype() {
   document.getElementById('generating_prototype_spinner').active = true;
