@@ -456,10 +456,9 @@ function moveElementUp() {
 function moveElementDown() {
   var parent = selected_element.parentNode;
   var next_sibling = selected_element.nextSibling;
-  while(next_sibling != null && next_sibling.nodeType == 3){
+  while(next_sibling.nextSibling != null && next_sibling.nextSibling.nodeType == 3){
     next_sibling = next_sibling.nextSibling;
   }
-  //FIXME: Fix moving elements down inside layout
   if(next_sibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(selected_element, next_sibling.nextSibling);
   }
@@ -516,9 +515,9 @@ function update_tree(){
 
 function goto(section) {
   if(app.preview_mode){
+    togglePreview();
     return;
   }
-
   if(section == "repos_view"){
     app.selected_repo = "";
   }else if(section == "user_view"){
@@ -616,7 +615,6 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   collaborators_ajax = document.getElementById('collaborators_ajax');
   collaborators_ajax.addEventListener("response", function () {
-    console.log("getting data!");
     getCollaborators();
     document.getElementById('collaborators_items').selected = "";
     document.getElementById('collaborators_input').value = "";
@@ -790,7 +788,7 @@ function promptDeleteRepo() {
 //Deletes the polytipe-projects repository from the user
 function deleteRepo(){
   document.getElementById("delete_repo_spinner").active = true;
-  var naRepo = github.getRepo(user_input, "polytipe-projects");
+  var naRepo = github.getRepo(app.selected_repo, "polytipe-projects");
   naRepo.deleteRepo(function(err, res) {
     document.getElementById("delete_repo_spinner").active = false;
     var dialog = document.getElementById("delete_repo_dialog");
@@ -806,8 +804,6 @@ function deleteRepo(){
 }
 
 /* Collaborator actions */
-
-//IDEA: Add issues dialog on prototype (requires Github user)
 
 function addCollaborator(username) {
   app.user_to_add_delete = username;
@@ -861,7 +857,7 @@ function promptGetCommits() {
     getCommits();
   });
 }
-//IDEA: Display diff when making a new commit
+
 function getCommits() {
   app.loading_commits = true;
   document.getElementById('commits_view_more').style.display = "none";
@@ -977,7 +973,6 @@ function saveProject() {
     }
     beautified_html = temp.join("\n");
     var merged_html = project_base_before + beautified_html + project_base_after;
-    console.log(merged_html);
 
     repo.write(app.selected_project, 'prototype.html', merged_html, app.commit_message, function(err) {
         var dialog = document.getElementById("save_project_dialog");
@@ -1188,17 +1183,23 @@ function deleteScreen() {
 
 /* Prototype actions */
 
+function gotoPrototype() {
+  //Select first screen in the project
+  app.selected_screen = document.getElementById('screen_selector').items[0].screen;
+  app.polytipe_section = "screen_editor";
+  togglePreview();
+}
+
 function togglePreview() {
   app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
   var editor_back_button = document.getElementById('editor_back_button');
   document.getElementById('editor_drawer').forceNarrow = app.preview_mode;
-  preview_fab.classList.toggle("preview_mode");
 
   var all_layouts = iframe_document.querySelectorAll('poly-layout');
   var all_elements = iframe_document.querySelectorAll("[id^='poly']");
 
-  if(preview_fab.classList.contains("preview_mode")){
+  if(app.preview_mode){
     //Remove iframe outline
     document.getElementById("app_iframe").classList.remove('outlined_element');
 
@@ -1212,8 +1213,7 @@ function togglePreview() {
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
 
-    preview_fab.icon = "close";
-    editor_back_button.icon = "polytipe-icons:icon";
+    editor_back_button.icon = "close";
     app.lifx_body =  {"power": "on", "color": "green saturation:0.3", "brightness": 1.0, "duration": 0.4};
   }else{
     //Add iframe outline
@@ -1231,7 +1231,6 @@ function togglePreview() {
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
 
-    preview_fab.icon = "view-carousel";
     editor_back_button.icon = "arrow-back";
 
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};

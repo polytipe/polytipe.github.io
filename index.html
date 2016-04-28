@@ -202,7 +202,7 @@
               <div class="flex"></div>
               <div>
                 <paper-icon-button icon="social:group" onclick="promptCollaboratorsDialog()"></paper-icon-button>
-                <paper-tooltip offset="0" animation-delay="0">Colaboradores</paper-tooltip>
+                <paper-tooltip offset="0" animation-delay="0">Ver colaboradores</paper-tooltip>
               </div>
               <div>
                 <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects" target="_blank">
@@ -261,8 +261,8 @@
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div>
-                  <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
-                  <paper-tooltip offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                  <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
+                  <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                 </div>
               </template>
               <div>
@@ -270,8 +270,8 @@
                 <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
               </div>
               <div>
-                <paper-icon-button icon="create" onclick=""></paper-icon-button>
-                <paper-tooltip offset="0" animation-delay="0">Cambiar nombre</paper-tooltip>
+                <paper-icon-button icon="view-carousel" onclick="gotoPrototype()" onmouseover="getLastSaved()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
               </div>
               <div>
                 <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteProject()"></paper-icon-button>
@@ -421,19 +421,10 @@
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
-                        <template is="dom-if" if="{{wide}}">
-                          <paper-button noink class="save_button_white" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
-                        </template>
-                        <template is="dom-if" if="{{!wide}}">
-                          <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
-                        </template>
+                        <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
                         <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                       </div>
                     </template>
-                    <div>
-                      <paper-icon-button icon="history" onclick="promptGetCommits()"></paper-icon-button>
-                      <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
-                    </div>
                     <div>
                       <paper-icon-button icon="trending-up" onclick=""></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
@@ -454,12 +445,7 @@
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
-                        <template is="dom-if" if="{{wide}}">
-                          <paper-button noink class="save_button paper-font-button" onclick="promptSaveProject()" onmouseover="getLastSaved()">Tienes cambios sin guardar</paper-button>
-                        </template>
-                        <template is="dom-if" if="{{!wide}}">
-                          <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
-                        </template>
+                        <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
                         <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
                       </div>
                     </template>
@@ -468,8 +454,8 @@
                       <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
                     </div>
                     <div>
-                      <paper-icon-button icon="create" onclick=""></paper-icon-button>
-                      <paper-tooltip offset="0" animation-delay="0">Cambiar nombre</paper-tooltip>
+                      <paper-icon-button icon="view-carousel" onclick="gotoPrototype()" onmouseover="getLastSaved()"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
                     </div>
                     <div>
                       <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteScreen()"></paper-icon-button>
@@ -481,10 +467,6 @@
 
                 <div id="app_container" class="layout horizontal center-center">
                   <paper-spinner id="iframe_loading_spinner" active></paper-spinner>
-                </div>
-                <div>
-                  <paper-tooltip for="preview_fab" offset="10" animation-delay="0" position="top">Previsualizar</paper-tooltip>
-                  <paper-fab icon="view-carousel" id="preview_fab" onclick="togglePreview()"></paper-fab>
                 </div>
               </paper-header-panel>
             </paper-drawer-panel>
@@ -523,7 +505,7 @@
     <iron-ajax
         id="collaborators_ajax"
         auto
-        url="https://api.github.com/repos/{{user}}/polytipe-projects/collaborators/{{user_to_add_delete}}"
+        url="https://api.github.com/repos/{{selected_repo}}/polytipe-projects/collaborators/{{user_to_add_delete}}"
         content-type="application/json"
         params="{{collaborators_params}}">
     </iron-ajax>
@@ -544,7 +526,6 @@
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="forkRepo()" noink autofocus>Crear</paper-button>
         </div>
-
       </paper-dialog>
       <paper-dialog id="add_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
         <div class="layout horizontal">
