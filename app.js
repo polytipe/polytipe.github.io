@@ -192,11 +192,8 @@ function iframe_ready() {
           input.min = selected_element.min;
           input.max = selected_element.max;
 
-          if (key.startsWith("selected")) { //Prevent first position being 0
-            input.value = selected_element[key] + 1;
-          } else {
-            input.value = selected_element[key];
-          }
+          input.value = selected_element[key];
+
           properties_list.appendChild(input);
         } else if (element_properties[key].type.name == 'String') {
           var input = document.createElement("paper-input");
@@ -325,11 +322,7 @@ function propertyChanged() {
   } else if (element_properties[this.id].type.name == 'Boolean') {
     selected_element[this.id] = this.checked;
   } else if (element_properties[this.id].type.name == 'Number') {
-    if (this.id.startsWith("selected")) { //Prevent first position being 0
-      selected_element[this.id] = parseInt(this.value) - 1;
-    } else {
-      selected_element[this.id] = parseInt(this.value);
-    }
+    selected_element[this.id] = parseInt(this.value);
   } else if (element_properties[this.id].type.name == 'String') {
     selected_element[this.id] = this.value;
   }
@@ -380,10 +373,14 @@ function makeElement(element_name) {
         }
       }
       if(selected_element.id.startsWith("poly")){
-        if(selected_element.parentNode.tagName == "POLY-LAYOUT"){ //Add to layout (last)
-          Polymer.dom(selected_element.parentNode).appendChild(element);
-        }else{ //Add after selected_element
+        var next_sibling = selected_element.nextSibling;
+        if(next_sibling != null){
+          while(next_sibling != null && next_sibling.nodeType == 3){
+            next_sibling = next_sibling.nextSibling;
+          }
           Polymer.dom(selected_element.parentNode).insertBefore(element, selected_element.nextSibling);
+        }else{
+          Polymer.dom(selected_element.parentNode).appendChild(element);
         }
       }
     }
@@ -396,24 +393,15 @@ function makeElement(element_name) {
   }
 }
 
+//TODO: Prevent elements from triggering the drawer. Make it work on preview mode
+
 function cloneElement() {
-  var new_element = iframe_document.createElement(selected_element.tagName);
+  var new_element = selected_element.cloneNode(true);
   element_count++;
-  for(var i in selected_element.properties) {
-    new_element[i] = selected_element[i];
-  }
-  new_element.style.cssText = selected_element.style.cssText;
-  new_element.setAttribute("style", selected_element.getAttribute("style"));
-  new_element.updateStyles();
   new_element.id = "poly"+element_count;
   new_element.classList.remove("outlined_element");
-
-  if(selected_element.nextSibling != null){
-    Polymer.dom(selected_element.parentNode).insertBefore(new_element, selected_element.nextSibling);
-    app.unsaved_changes = true;
-  }else{
-    Polymer.dom(screen_target).appendChild(new_element);
-  }
+  Polymer.dom(selected_element.parentNode).insertBefore(new_element, selected_element);
+  app.unsaved_changes = true;
 
   //Wait for the element to be appended
   app.async(function () {
@@ -447,6 +435,7 @@ function moveElementUp() {
   if(previous_sibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(selected_element, previous_sibling);
   }
+  app.unsaved_changes = true;
   //Wait for the element to be appended
   app.async(function () {
     update_tree();
@@ -454,14 +443,14 @@ function moveElementUp() {
 }
 
 function moveElementDown() {
-  var parent = selected_element.parentNode;
   var next_sibling = selected_element.nextSibling;
-  while(next_sibling.nextSibling != null && next_sibling.nextSibling.nodeType == 3){
+  while(next_sibling != null && next_sibling.nextSibling != null && next_sibling.nextSibling.nodeType == 3){
     next_sibling = next_sibling.nextSibling;
   }
   if(next_sibling != null){
     Polymer.dom(selected_element.parentNode).insertBefore(selected_element, next_sibling.nextSibling);
   }
+  app.unsaved_changes = true;
   //Wait for the element to be appended
   app.async(function () {
     update_tree();
@@ -476,20 +465,15 @@ function generateTree(node) {
   for (var i=0; i < allChildren.length; i++) {
     var element_name = allChildren[i].tagName;
     if (element_name != undefined && element_name.startsWith("POLY")){
-      if (element_name == "POLY-LAYOUT"){
-        var child = node.children[i];
-        var obj;
+      var child = node.children[i];
+      var obj;
 
-        if(generateTree(child).length > 0){ //If element has children, generate children object
-          obj = {"id": allChildren[i].id, "name": element_name, "open": true, "children": generateTree(child)};
-        }else{
-          obj = {"id": allChildren[i].id, "name": element_name, "open": true};
-        }
-        treeArray.push(obj);
+      if(generateTree(child).length > 0){ //If element has children, generate children object
+        obj = {"id": allChildren[i].id, "name": element_name, "open": true, "children": generateTree(child)};
       }else{
-        var obj = {"id": allChildren[i].id, "name": element_name, "open": true};
-        treeArray.push(obj);
+        obj = {"id": allChildren[i].id, "name": element_name, "open": true};
       }
+      treeArray.push(obj);
     }
   }
   return treeArray;
@@ -514,10 +498,6 @@ function update_tree(){
 }
 
 function goto(section) {
-  if(app.preview_mode){
-    togglePreview();
-    return;
-  }
   if(section == "repos_view"){
     app.selected_repo = "";
   }else if(section == "user_view"){
@@ -525,9 +505,7 @@ function goto(section) {
   }else if(section == "project_view"){
     app.selected_screen = "";
   }
-
   app.polytipe_section = section;
-
 }
 
 /* WebComponentsReady listener */
@@ -1028,7 +1006,7 @@ function promptLeaveProject() {
     leaveProject();
   }
 }
-
+//TODO: On tab closed (unload event) alert the user to confirm the action
 function leaveProject() {
   app.unsaved_changes = false;
   //Reset selected project so iron-select triggers if you select the same project
@@ -1193,7 +1171,6 @@ function gotoPrototype() {
 function togglePreview() {
   app.preview_mode = !app.preview_mode;
   var preview_fab = document.getElementById('preview_fab');
-  var editor_back_button = document.getElementById('editor_back_button');
   document.getElementById('editor_drawer').forceNarrow = app.preview_mode;
 
   var all_layouts = iframe_document.querySelectorAll('poly-layout');
@@ -1213,7 +1190,6 @@ function togglePreview() {
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
 
-    editor_back_button.icon = "close";
     app.lifx_body =  {"power": "on", "color": "green saturation:0.3", "brightness": 1.0, "duration": 0.4};
   }else{
     //Add iframe outline
@@ -1230,8 +1206,6 @@ function togglePreview() {
       all_elements[i].classList.remove("no_outlined_element");
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
-
-    editor_back_button.icon = "arrow-back";
 
     app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};
   }
@@ -1359,3 +1333,9 @@ function polytipeKeyPressed(e) {
     }
   }
 }
+//TODO: Uncomment alert dialog when leaving
+/*window.onbeforeunload = function(e) {
+  if(app.unsaved_changes){
+    return 'Salir sin guardar cambios';
+  }
+};*/
