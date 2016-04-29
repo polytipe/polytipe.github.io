@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 
 <head>
@@ -270,6 +270,10 @@
                 <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
               </div>
               <div>
+                <paper-icon-button icon="trending-up" onclick="goto('analytics_view')"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
+              </div>
+              <div>
                 <paper-icon-button icon="view-carousel" onclick="gotoPrototype()" onmouseover="getLastSaved()"></paper-icon-button>
                 <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
               </div>
@@ -318,6 +322,24 @@
             <div>
               <paper-fab class="add_fab" id="add_screen_fab" onclick="addScreenDialog()" icon="add"></paper-fab>
               <paper-tooltip offset="10" for="add_screen_fab" animation-delay="0" position="top">Crear una pantalla</paper-tooltip>
+            </div>
+          </section>
+
+          <section id="analytics_view">
+
+            <paper-toolbar class="screen_view_toolbar">
+              <template is="dom-if" if="{{preview_mode}}">
+                <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('screen_editor')"></paper-icon-button>
+              </template>
+              <template is="dom-if" if="{{!preview_mode}}">
+                <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
+              </template>
+              <div class="paper-font-title">Analytics de {{selected_project}}</div>
+              <div class="flex"></div>
+            </paper-toolbar>
+
+            <div class="elements_group">
+              <div class="elements_label" class="paper-font-subhead">Proyectos</div>
             </div>
           </section>
 
@@ -415,8 +437,8 @@
 
               <paper-header-panel main id="editor_frame" class="main_frame" mode="waterfall">
                 <paper-toolbar id="editor_toolbar" class="screen_view_toolbar">
-                  <paper-icon-button id="editor_back_button" class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                   <template is="dom-if" if="{{preview_mode}}">
+                    <paper-icon-button class="back_icon" icon="close" onclick="togglePreview()"></paper-icon-button>
                     <div class="paper-font-title">Pantalla {{preview_selected_screen}}</div>
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
@@ -426,7 +448,7 @@
                       </div>
                     </template>
                     <div>
-                      <paper-icon-button icon="trending-up" onclick=""></paper-icon-button>
+                      <paper-icon-button icon="trending-up" onclick="goto('analytics_view')"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
                     </div>
                     <div>
@@ -441,6 +463,7 @@
                     </div>
                   </template>
                   <template is="dom-if" if="{{!preview_mode}}">
+                    <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
                     <div class="paper-font-title">Pantalla {{selected_screen}}</div>
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
