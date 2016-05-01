@@ -21,10 +21,15 @@
       @apply(--layout-horizontal);
       @apply(--layout-center);
       padding: 0 16px;
+      z-index: 1;
     }
     .outlined_element{
       box-sizing: border-box;
       border: 2px solid yellow !important;
+    }
+    .sticky{
+      position: sticky !important;
+      top: 10px;
     }
   </style>
 
@@ -38,7 +43,12 @@
         'tap': 'focus'
       },
       properties:{
-        //TODO: Add fixed header / mode = "waterfall" and so on
+        sticky:{
+          type: Boolean,
+          value: false,
+          observer: "_stickyChanged",
+          reflectToAttribute: true
+        }
       },
       addElements: function () {
         var el = document.createElement("poly-icon-button");
@@ -64,9 +74,12 @@
         Polymer.dom(this).appendChild(el);
       },
       ready: function () {
+        this.refreshStyles();
+        //If it already has elements inside stop
         if(this.children.length > 0){
           return;
         }
+        //Add elements with async to wait for the ID to be correctly appended
         this.async(function functionName() {
           this.addElements();
         },10);
@@ -80,11 +93,21 @@
         this.toggleClass('outlined_element', false);
       },
 
+      _stickyChanged: function () {
+        if(this.sticky){
+          this.style.position = "sticky";
+          this.style.top = "0px";
+        }else{
+          this.style.position = "static";
+          this.style.top = "auto";
+        }
+      },
+
       getStyles: function(){
         this.width = getComputedStyle(this)["width"];
         this.height = getComputedStyle(this)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this)["color"]);;
+        this['background-color'] = this.rgb2hex(getComputedStyle(this)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this)["color"]);
         this.display = getComputedStyle(this)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
@@ -104,7 +127,7 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
+      refreshStyles: function (property, value) {
         this.style[property] = value;
       }
     });
