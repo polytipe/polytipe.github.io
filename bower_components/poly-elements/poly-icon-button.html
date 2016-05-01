@@ -2,12 +2,22 @@
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../../styles.html">
 
 <dom-module id="poly-icon-button">
 
   <style>
     :host {
       display: inline-block;
+      background-color: transparent !important;
+      padding: 0 !important;
+    }
+    #icon{
+      margin: 0 !important;
+    }
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid yellow !important;
     }
   </style>
 
@@ -35,38 +45,44 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        toggles_drawer:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         }
       },
       ready: function () {
-        this._focused = false;
+        this.refreshStyles();
       },
       focus: function(event) {
-        this.getStyles();
-        if(!this.focused){
-          this.fire("elementSelection");
-          this.toggleClass('outlined_element', true);
-          event.stopPropagation();
+        if(this.toggles_drawer){
+          this._toggleDrawer();
         }
-        this._focused = true;
+        this.getStyles();
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+        event.stopPropagation();
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
-        this._focused = false;
       },
-
+      _toggleDrawer: function(){
+        document.querySelector('paper-drawer-panel').togglePanel();
+      },
 
       getStyles: function(){
         this.width = getComputedStyle(this.$.icon)["width"];
         this.height = getComputedStyle(this.$.icon)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.icon)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.icon)["color"]);;
+        this['background-color'] = this.rgb2hex(getComputedStyle(this.$.icon)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.icon)["color"]);
         this.display = getComputedStyle(this.$.icon)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this.$.icon)["margin"+values[j]]);
+          margin.push(getComputedStyle(this)["margin"+values[j]]);
           padding.push(getComputedStyle(this.$.icon)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
@@ -79,8 +95,9 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
-        this.$.icon.style[property] = value;
+      refreshStyles: function (property, value) {
+        this.style[property] = value;
+        this.$.icon.setAttribute('style', this.getAttribute('style'));
       }
     });
   </script>
