@@ -8,10 +8,14 @@
     :host {
       display: inline-block;
       padding: 5px;
+      background-color: transparent !important;
+      color: transparent !important;
     }
     paper-checkbox{
       --paper-checkbox-checked-color: var(--app-accent-color);
       --paper-checkbox-checked-ink-color: var(--app-accent-color);
+      background-color: transparent !important;
+      color: transparent !important;
     }
   </style>
 
@@ -37,28 +41,23 @@
         }
       },
       ready: function () {
-        this._focused = false;
+        this.refreshStyles();
       },
       focus: function(event) {
         this.getStyles();
-        if(!this.focused){
-          this.fire("elementSelection");
-          this.toggleClass('outlined_element', true);
-          event.stopPropagation();
-        }
-        this._focused = true;
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+        event.stopPropagation();
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
-        this._focused = false;
       },
-
 
       getStyles: function(){
         this.width = getComputedStyle(this.$.checkbox)["width"];
         this.height = getComputedStyle(this.$.checkbox)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.checkbox)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.checkbox)["color"]);;
+        this['background-color'] = this.rgb2hex(this.style.backgroundColor);
+        this.color = this.rgb2hex(this.style.color);
         this.display = getComputedStyle(this.$.checkbox)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
@@ -78,8 +77,24 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
-        this.$.checkbox.style[property] = value;
+      refreshStyles: function (property, value) {
+        if(this.style.backgroundColor != "transparent"){
+          this.$.checkbox.customStyle['--paper-checkbox-checked-color'] = this.style.backgroundColor;
+          this.updateStyles();
+        }
+        if(this.style.color != "transparent"){
+          this.$.checkbox.customStyle['--paper-checkbox-label-color'] = this.style.color;
+          this.updateStyles();
+        }
+
+        if(property=="background-color"){
+          this.$.checkbox.customStyle['--paper-checkbox-checked-color'] = value;
+          this.updateStyles();
+        }else if(property=="color"){
+          this.$.checkbox.customStyle['--paper-checkbox-label-color'] = value;
+          this.updateStyles();
+        }
+        this.style[property] = value;
       }
     });
   </script>
