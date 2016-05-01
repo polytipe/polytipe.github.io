@@ -196,10 +196,15 @@ function iframe_ready() {
 
           properties_list.appendChild(input);
         } else if (element_properties[key].type.name == 'String') {
-          var input = document.createElement("paper-input");
+          var input;
+          if (selected_element[key].length > 30) {
+            input = document.createElement("paper-textarea");
+          } else{
+            input = document.createElement("paper-input");
+            input.type = "text";
+          }
           input.label = key;
           input.id = key;
-          input.type = "text";
           input.addEventListener("change", propertyChanged);
           input.value = selected_element[key];
           properties_list.appendChild(input);
@@ -223,12 +228,12 @@ function iframe_ready() {
   //Add event listener when paper-swatch-picker is selected
   bgPicker.addEventListener('color-picker-selected', function () {
     style_inputs[4].value = bgPicker.color;
-    selected_element.updateStyles("background-color", bgPicker.color);
+    selected_element.refreshStyles("background-color", bgPicker.color);
     app.unsaved_changes = true;
   });
   colorPicker.addEventListener('color-picker-selected', function () {
     style_inputs[5].value = colorPicker.color;
-    selected_element.updateStyles("color", colorPicker.color);
+    selected_element.refreshStyles("color", colorPicker.color);
     app.unsaved_changes = true;
   });
 }
@@ -331,7 +336,12 @@ function propertyChanged() {
 }
 
 function styleChanged() {
-  selected_element.updateStyles(this.label, this.value);
+  selected_element.refreshStyles(this.label, this.value);
+  if (this.label == "color") {
+    colorPicker.color = this.value;
+  }else{
+    bgPicker.color = this.value;
+  }
   app.unsaved_changes = true;
 }
 
@@ -936,7 +946,6 @@ function promptSaveProject() {
 //Makes a commit
 function saveProject() {
   //FIXME: Save change in styles
-  //TODO: Update poly-elements in polytipe-projects
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   if(validate_msg){
@@ -1006,7 +1015,7 @@ function promptLeaveProject() {
     leaveProject();
   }
 }
-//TODO: On tab closed (unload event) alert the user to confirm the action
+
 function leaveProject() {
   app.unsaved_changes = false;
   //Reset selected project so iron-select triggers if you select the same project
