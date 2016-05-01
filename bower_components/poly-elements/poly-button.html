@@ -61,7 +61,7 @@
         }
       },
       ready: function () {
-        this.updateStyles();
+        this.refreshStyles();
       },
       focus: function(event) {
         this.getStyles();
@@ -84,7 +84,7 @@
         this.width = getComputedStyle(this.$.button)["width"];
         this.height = getComputedStyle(this.$.button)["height"];
         this['background-color'] = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
+        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);
         this.display = getComputedStyle(this.$.button)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
@@ -104,7 +104,7 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
+      refreshStyles: function (property, value) {
         this.style[property] = value;
         this.$.button.setAttribute('style', this.getAttribute('style'));
       }
