@@ -261,8 +261,8 @@
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div>
-                  <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
-                  <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                  <paper-icon-button icon="save" onclick="promptSaveProject()"></paper-icon-button>
+                  <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">Guardar</paper-tooltip>
                 </div>
               </template>
               <div>
@@ -274,7 +274,7 @@
                 <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
               </div>
               <div>
-                <paper-icon-button icon="view-carousel" onclick="gotoPrototype()" onmouseover="getLastSaved()"></paper-icon-button>
+                <paper-icon-button icon="view-carousel" onclick="gotoPrototype()"></paper-icon-button>
                 <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
               </div>
               <div>
@@ -355,12 +355,12 @@
                     <section id="elements_view" class="sidebar_section">
                       <paper-menu id="elements_list">
                         <polytipe-item icon="image:crop-landscape" onclick="makeElement('poly-button')">Button</polytipe-item>
-                        <polytipe-item icon="credit-card" onclick="makeElement('poly-card')">Card</polytipe-item>
+                        <polytipe-item icon="view-stream" onclick="makeElement('poly-card')">Card</polytipe-item>
                         <polytipe-item icon="check-box" onclick="makeElement('poly-checkbox')">Checkbox</polytipe-item>
                         <polytipe-item icon="add-circle" onclick="makeElement('poly-fab')">Floating Action Button</polytipe-item>
-                        <polytipe-item icon="star" onclick="makeElement('poly-icon-button')">Icon</polytipe-item>
+                        <polytipe-item icon="favorite" onclick="makeElement('poly-icon-button')">Icon</polytipe-item>
                         <polytipe-item icon="editor:short-text" onclick="makeElement('poly-label')">Label</polytipe-item>
-                        <polytipe-item icon="editor:format-align-left" onclick="makeElement('poly-paragraph')">Párrafo</polytipe-item>
+                        <polytipe-item icon="subject" onclick="makeElement('poly-paragraph')">Paragraph</polytipe-item>
                         <polytipe-item icon="dashboard" onclick="makeElement('poly-layout')">Layout</polytipe-item>
                         <polytipe-item icon="tab" onclick="makeElement('poly-tabs')">Tabs</polytipe-item>
                         <polytipe-item icon="av:web-asset" onclick="makeElement('poly-toolbar')">Toolbar</polytipe-item>
@@ -401,25 +401,32 @@
                           <paper-tooltip offset="10" animation-delay="0" position="bottom">Eliminar [Supr]</paper-tooltip>
                         </div>
                       </div>
-                      <div id="properties_list" class="sidebar_list"></div>
+                      <div id="properties_list" class="sidebar_list2"></div>
                     </section>
                     <section id="editor_styles">
-                      <div id="styles_list" class="sidebar_list">
-                        <!-- TODO: Add flex option (boolean) -->
-                        <!-- IDEA: Add a reset styles button -->
-                        <paper-input label="width"></paper-input>
-                        <paper-input label="height"></paper-input>
-                        <paper-input label="padding"></paper-input>
-                        <paper-input label="margin"></paper-input>
-                        <div class="layout horizontal center">
-                          <paper-swatch-picker id="bgPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
-                          <paper-input label="background-color"></paper-input>
+                      <div id="styles_list">
+                        <div class="sidebar_list layout horizontal end-justified">
+                          <div>
+                            <paper-fab class="move_button" icon="undo" onclick="clearStyle()"></paper-fab>
+                            <paper-tooltip offset="10" animation-delay="0" position="bottom">Restaurar estilos</paper-tooltip>
+                          </div>
                         </div>
-                        <div class="layout horizontal center">
-                          <paper-swatch-picker id="colorPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
-                          <paper-input label="color"></paper-input>
+                        <div class="sidebar_list2">
+                          <paper-input label="width"></paper-input>
+                          <paper-input label="height"></paper-input>
+                          <paper-input label="padding"></paper-input>
+                          <paper-input label="margin"></paper-input>
+                          <div class="layout horizontal center">
+                            <paper-swatch-picker id="bgPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
+                            <paper-input label="background-color"></paper-input>
+                          </div>
+                          <div class="layout horizontal center">
+                            <paper-swatch-picker id="colorPicker" horizontal-align="right" vertical-align="bottom"></paper-swatch-picker>
+                            <paper-input label="color"></paper-input>
+                          </div>
+                          <paper-input label="display"></paper-input>
+                          <paper-toggle-button checked>flex</paper-toggle-button>
                         </div>
-                        <paper-input label="display"></paper-input>
                       </div>
                     </section>
                     <section id="editor_links">
@@ -445,8 +452,8 @@
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
-                        <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
-                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                        <paper-icon-button icon="save" onclick="promptSaveProject()"></paper-icon-button>
+                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">Guardar</paper-tooltip>
                       </div>
                     </template>
                     <div>
@@ -470,8 +477,8 @@
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
-                        <paper-icon-button icon="save" onclick="promptSaveProject()" onmouseover="getLastSaved()"></paper-icon-button>
-                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">El último commit fue hace {{last_saved}}</paper-tooltip>
+                        <paper-icon-button icon="save" onclick="promptSaveProject()"></paper-icon-button>
+                        <paper-tooltip class="last_saved_tooltip" offset="0" animation-delay="0">Guardar</paper-tooltip>
                       </div>
                     </template>
                     <div>
@@ -479,7 +486,7 @@
                       <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
                     </div>
                     <div>
-                      <paper-icon-button icon="view-carousel" onclick="gotoPrototype()" onmouseover="getLastSaved()"></paper-icon-button>
+                      <paper-icon-button icon="view-carousel" onclick="gotoPrototype()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
                     </div>
                     <div>
@@ -694,11 +701,14 @@
 
       <!-- Shared dialogs -->
       <paper-dialog id="save_project_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-        <div class="layout horizontal">
-          <h2 class="flex">Crear commit</h2>
+        <div class="layout horizontal center">
+          <div class="flex">
+            <h2>Crear nuevo commit</h2>
+            <div id="last_saved" class="prototype_description">El último fue hace {{last_saved}}</div>
+          </div>
           <paper-spinner id="saving_spinner"></paper-spinner>
         </div>
-        <paper-input id="save_project_input" label="Mensaje del commit" maxlength="50" char-counter value="{{commit_message}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <paper-input id="save_project_input" label="Mensaje" maxlength="50" char-counter value="{{commit_message}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Crear</paper-button>
@@ -711,11 +721,9 @@
           <paper-spinner id="generating_prototype_spinner"></paper-spinner>
         </div>
         <p class="paper-font-subhead">
-          Exporta el proyecto a una página web para realizar pruebas de usabilidad.
-          Antes de hacerlo, puedes activar las herramientas de análisis y feedback
-          en el ícono <iron-icon icon="trending-up"></iron-icon>
+          Genera una página web para realizar pruebas de usabilidad.
+          Los cambios pueden tardar algunos minutos en actualizarse.
         </p>
-        <div class="prototype_description">*Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
@@ -744,7 +752,7 @@
           </strong>
           en las opciones del repositorio en Github.
         </div>
-        <div class="prototype_description save_button paper-font-caption">*Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
+        <div class="prototype_description save_button paper-font-caption">Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
@@ -759,14 +767,11 @@
         </a>
       </paper-toast>
       <paper-toast id="deleted_repo_toast" duration="3500" text="El repositorio fue eliminado de tu cuenta"></paper-toast>
-      <paper-toast id="prototype_toast" duration="3500" text="Se generó el prototipo del proyecto {{selected_project}}">
-        <a tabindex="-1" href="https://{{user}}.github.io/polytipe-projects" target="_blank">
-          <paper-button noink>Ver</paper-button>
-        </a>
-      </paper-toast>
+      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos"></paper-toast>
       <paper-toast id="project_taken_toast" duration="3500" text="Ya existe un proyecto con este nombre"></paper-toast>
       <paper-toast id="screen_taken_toast" duration="3500" text="Ya existe una pantalla con este nombre"></paper-toast>
-      <paper-toast id="screen_reserved_toast" duration="3500" text="Esta es una palabra reservada. Intenta otra."></paper-toast>
+      <paper-toast id="screen_reserved_toast" duration="4000" text="Esta es una palabra reservada. Intenta con otra."></paper-toast>
+      <paper-toast id="clear_style_toast" duration="4000" text="Función en desarrollo"></paper-toast>
       <paper-toast id="sign_in_fail_toast" duration="5000" text="Ocurrió un error al iniciar sesión">
         <paper-button noink onclick="sign_in()">Reintentar</paper-button>
       </paper-toast>

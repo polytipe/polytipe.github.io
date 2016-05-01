@@ -199,6 +199,7 @@ function iframe_ready() {
           var input;
           if (selected_element[key].length > 30) {
             input = document.createElement("paper-textarea");
+            input.maxRows = 2;
           } else{
             input = document.createElement("paper-input");
             input.type = "text";
@@ -343,6 +344,12 @@ function styleChanged() {
     bgPicker.color = this.value;
   }
   app.unsaved_changes = true;
+}
+
+function clearStyle() {
+  //TODO: Add a reset styles button
+  //TODO: Add flex option (boolean)
+  document.getElementById('clear_style_toast').show();
 }
 
 function arrayChanged() {
@@ -765,11 +772,11 @@ function promptDeleteRepo() {
   app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 
   dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 }
 
@@ -941,6 +948,8 @@ function getLastSaved() {
 function promptSaveProject() {
   var dialog = document.getElementById("save_project_dialog");
   dialog.open();
+  getLastSaved();
+  //El último commit fue hace {{last_saved}}
 }
 
 //Makes a commit
@@ -977,11 +986,11 @@ function promptDeleteProject() {
   app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 
   dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 }
 
@@ -1005,11 +1014,11 @@ function promptLeaveProject() {
     app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
     dialog.addEventListener("iron-overlay-canceled", function () {
-      app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
     });
 
     dialog.addEventListener("iron-overlay-closed", function () {
-      app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
     });
   }else{
     leaveProject();
@@ -1146,11 +1155,11 @@ function promptDeleteScreen() {
   app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
 
   dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 
   dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 1};
+    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
   });
 }
 
