@@ -22,14 +22,16 @@
       @apply(--layout-center);
       padding: 0 16px;
       z-index: 1;
+      @apply(--shadow-transition);
     }
     .outlined_element{
       box-sizing: border-box;
       border: 2px solid yellow !important;
     }
-    .sticky{
+    :host.fixed{
       position: sticky !important;
-      top: 10px;
+      top: 0px !important;
+      @apply(--shadow-elevation-2dp);
     }
   </style>
 
@@ -43,10 +45,10 @@
         'tap': 'focus'
       },
       properties:{
-        sticky:{
+        fixed:{
           type: Boolean,
           value: false,
-          observer: "_stickyChanged",
+          observer: "_fixedChanged",
           reflectToAttribute: true
         }
       },
@@ -93,13 +95,11 @@
         this.toggleClass('outlined_element', false);
       },
 
-      _stickyChanged: function () {
-        if(this.sticky){
-          this.style.position = "sticky";
-          this.style.top = "0px";
+      _fixedChanged: function () {
+        if(this.fixed) {
+          this.toggleClass("fixed", true);
         }else{
-          this.style.position = "static";
-          this.style.top = "auto";
+          this.toggleClass("fixed", false);
         }
       },
 

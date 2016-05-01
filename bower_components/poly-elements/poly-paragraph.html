@@ -71,7 +71,7 @@
       getStyles: function(){
         this.width = getComputedStyle(this.$.paragraph)["width"];
         this.height = getComputedStyle(this.$.paragraph)["height"];
-        this.background = this.rgb2hex(getComputedStyle(this.$.paragraph)["background-color"]);
+        this['background-color'] = this.rgb2hex(getComputedStyle(this.$.paragraph)["background-color"]);
         this.color = this.rgb2hex(getComputedStyle(this.$.paragraph)["color"]);
         this.display = getComputedStyle(this.$.paragraph)["display"];
 
