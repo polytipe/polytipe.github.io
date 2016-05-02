@@ -38,6 +38,12 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
@@ -51,6 +57,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
 
       getStyles: function(){

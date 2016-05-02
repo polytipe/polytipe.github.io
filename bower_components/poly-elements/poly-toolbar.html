@@ -50,6 +50,12 @@
           value: false,
           observer: "_fixedChanged",
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       addElements: function () {
@@ -93,6 +99,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
 
       _fixedChanged: function () {

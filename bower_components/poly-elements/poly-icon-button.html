@@ -50,10 +50,17 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
         this.refreshStyles();
+        // TODO: Add paper-icon-button with Javascript instead of declaring it above
       },
       focus: function(event) {
         if(this.toggles_drawer){
@@ -66,6 +73,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
       _toggleDrawer: function(){
         document.querySelector('paper-drawer-panel').togglePanel();

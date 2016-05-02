@@ -40,23 +40,27 @@
           type: Boolean,
           value: true,
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
-        this._focused = false;
       },
       focus: function(event) {
         this.getStyles();
-        if(!this.focused){
-          this.fire("elementSelection");
-          this.toggleClass('outlined_element', true);
-          event.stopPropagation();
-        }
-        this._focused = true;
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+        event.stopPropagation();
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
-        this._focused = false;
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
 
 
@@ -64,7 +68,7 @@
         this.width = getComputedStyle(this.$.button)["width"];
         this.height = getComputedStyle(this.$.button)["height"];
         this.background = this.rgb2hex(getComputedStyle(this.$.button)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);;
+        this.color = this.rgb2hex(getComputedStyle(this.$.button)["color"]);
         this.display = getComputedStyle(this.$.button)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
@@ -84,7 +88,7 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
+      refreshStyles: function (property, value) {
         this.$.button.style[property] = value;
       }
     });

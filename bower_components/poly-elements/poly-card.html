@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-card/paper-card.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../poly-elements/poly-button.html">
+<link rel="import" href="../poly-elements/poly-paragraph.html">
 
 <dom-module id="poly-card">
 
@@ -11,6 +13,11 @@
       background-color: transparent !important;
       padding: 0;
       margin: 0 !important;
+      position: relative;
+    }
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid yellow !important;
     }
     paper-card {
       -webkit-user-select: none;
@@ -19,7 +26,9 @@
       user-select: none;
       width: 100%;
       padding: 0 !important;
+      color: #141414 !important;
       position: relative;
+      --paper-card-header-color: #141414;
       --paper-card-header-image:{
         height: 150px;
         background-color: #fff;
@@ -31,15 +40,12 @@
   </style>
 
   <template>
-
     <paper-card id="card" heading="{{title}}" image="{{image}}" preload-image fade-image>
-      <div class="card-content">
+      <div id="card_content" class="card-content">
         {{text}}
       </div>
-      <div class="card-actions">
-        <template is="dom-repeat" items="{{action_buttons}}">
-          <paper-button>{{item.text}}</paper-button>
-        </template>
+      <div id="action_buttons" class="card-actions">
+
       </div>
     </paper-card>
 
@@ -56,29 +62,43 @@
           value: "Título",
           reflectToAttribute: true
         },
-        text:{
-          type: String,
-          value: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere voluptas illo inventore debitis et sit molestiae pariatur doloremque dicta.",
-          reflectToAttribute: true
-        },
         image:{
           type: String,
           value: "http://placehold.it/350x150/eee/33000000",
           reflectToAttribute: true
         },
-        action_buttons:{
-          type: Array,
-          value: [{text: 'Me gusta'}, {text: 'Comentar'}],
-          reflectToAttribute: true
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
-        //Default values when creating multiple elements
-        this.action_buttons = [{text: 'Me gusta'}, {text: 'Comentar'}];
-        this.number = 2;
-        this.min = 0;
-        this.max = 3;
-        this.updateStyles();
+        this.refreshStyles();
+        if(this.$.action_buttons.children.length > 0){
+          return;
+        }
+        this.async(function functionName() {
+          this.addElements();
+        },10);
+      },
+      addElements: function () {
+        var el = document.createElement("poly-paragraph");
+        el.id = this.id + "A";
+        Polymer.dom(this.$.card_content).appendChild(el);
+
+        var el = document.createElement("poly-button");
+        el.text = "Me gusta";
+        el.id = this.id + "B";
+        el.raised = false;
+        Polymer.dom(this.$.action_buttons).appendChild(el);
+
+        var el = document.createElement("poly-button");
+        el.text = "Compartir";
+        el.id = this.id + "C";
+        el.raised = false;
+        Polymer.dom(this.$.action_buttons).appendChild(el);
       },
       focus: function(event) {
         this.getStyles();
@@ -89,33 +109,23 @@
       unfocus: function() {
         this.toggleClass('outlined_element', false);
       },
-      addElement: function(){
-        if(this.number < this.max){
-          this.number = this.number + 1;
-          this.push("action_buttons", {text: 'Nuevo'} );
-          this.fire("elementSelection");
-        }
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
-      removeElement: function(){
-        if(this.number > this.min){
-          this.number = this.number - 1;
-          this.pop("action_buttons");
-          this.fire("elementSelection");
-        }
-      },
+      
       getStyles: function(){
         this.width = getComputedStyle(this.$.card)["width"];
         this.height = getComputedStyle(this.$.card)["height"];
         this['background-color'] = this.rgb2hex(getComputedStyle(this.$.card)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.card)["color"]);;
+        this.color = this.$.card.customStyle['--paper-card-header-color'];
         this.display = getComputedStyle(this.$.card)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this.$.card)["margin"+values[j]]);
-          padding.push(getComputedStyle(this.$.card)["padding"+values[j]]);
+          margin.push(getComputedStyle(this)["margin"+values[j]]);
+          padding.push(getComputedStyle(this)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
         this.padding = padding.join(' ');
@@ -127,9 +137,13 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
+      refreshStyles: function (property, value) {
+
+        if(property=="color"){
+          this.$.card.customStyle['--paper-card-header-color'] = value;
+          this.updateStyles();
+        }
         this.style[property] = value;
-        this.$.card.setAttribute('style', this.getAttribute('style'));
       }
     });
   </script>

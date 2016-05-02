@@ -50,6 +50,12 @@
           value: false,
           observer: "_bottom_right_Changed",
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
@@ -64,6 +70,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
 
       _bottom_right_Changed:function () {

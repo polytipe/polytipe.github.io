@@ -165,24 +165,26 @@ function iframe_ready() {
             properties_list.appendChild(input);
           }
         } else if (element_properties[key].type.name == 'Boolean') {
-          //Title of property
-          var div = document.createElement("div");
-          var innerDiv = document.createElement("div");
-          innerDiv.innerHTML = key;
-          innerDiv.classList.add("flex");
-          div.classList.add("property_name", "layout", "horizontal");
-          div.appendChild(innerDiv);
+          if(key != "flex"){
+            //Title of property
+            var div = document.createElement("div");
+            var innerDiv = document.createElement("div");
+            innerDiv.innerHTML = key;
+            innerDiv.classList.add("flex");
+            div.classList.add("property_name", "layout", "horizontal");
+            div.appendChild(innerDiv);
 
-          var input = document.createElement("paper-toggle-button");
-          if (selected_element[key] == true) {
-            input.checked = true;
-          } else {
-            input.checked = false;
+            var input = document.createElement("paper-toggle-button");
+            if (selected_element[key] == true) {
+              input.checked = true;
+            } else {
+              input.checked = false;
+            }
+            input.id = key;
+            input.addEventListener("change", propertyChanged);
+            div.appendChild(input);
+            properties_list.appendChild(div);
           }
-          input.id = key;
-          input.addEventListener("change", propertyChanged);
-          div.appendChild(input);
-          properties_list.appendChild(div);
         } else if (element_properties[key].type.name == 'Number') {
           var input = document.createElement("paper-input");
           input.label = key;
@@ -216,6 +218,7 @@ function iframe_ready() {
     for (var i = 0; i < element_styles.length; i++) {
       element_styles[i].value = selected_element[element_styles[i].label];
     }
+    document.getElementById('flex_toggle').checked = selected_element["flex"];
     bgPicker.color = selected_element["background-color"];
     colorPicker.color = selected_element["color"];
   });
@@ -225,6 +228,7 @@ function iframe_ready() {
   for (var i = 0; i < style_inputs.length; i++) {
     style_inputs[i].addEventListener("change", styleChanged);
   }
+  document.getElementById('flex_toggle').addEventListener("change", flexChanged);
 
   //Add event listener when paper-swatch-picker is selected
   bgPicker.addEventListener('color-picker-selected', function () {
@@ -346,9 +350,13 @@ function styleChanged() {
   app.unsaved_changes = true;
 }
 
+function flexChanged() {
+  selected_element["flex"] = this.checked;
+  app.unsaved_changes = true;
+}
+
 function clearStyle() {
-  //TODO: Add a reset styles button
-  //TODO: Add flex option (boolean)
+  //IDEA: Reset styles of selected_element
   document.getElementById('clear_style_toast').show();
 }
 
@@ -413,6 +421,8 @@ function makeElement(element_name) {
 //TODO: Prevent elements from triggering the drawer. Make it work on preview mode
 
 function cloneElement() {
+  //FIXME: Fix full DOM save. Only select poly-elements (priority 3)
+  //FIXME: Avoid ID duplicates (priority 5)
   var new_element = selected_element.cloneNode(true);
   element_count++;
   new_element.id = "poly"+element_count;
@@ -954,7 +964,6 @@ function promptSaveProject() {
 
 //Makes a commit
 function saveProject() {
-  //FIXME: Save change in styles
   var validate_msg = document.getElementById('save_project_input').validate();
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
   if(validate_msg){
@@ -1336,24 +1345,23 @@ function polytipeKeyPressed(e) {
     return;
   }
   if(app.polytipe_section == "project_view" || app.polytipe_section == "screen_editor"){
-    if(e.detail.combo == "ctrl+s" && app.unsaved_changes){
+    if((e.detail.combo == "ctrl+s" || e.detail.combo == "meta+s") && app.unsaved_changes){
       e.detail.keyboardEvent.preventDefault();
       promptSaveProject();
     }
   }
   if(app.polytipe_section == "screen_editor"){
-    if(!editor_active_input && e.detail.combo == "delete" && selected_element != undefined && selected_element.tagName.startsWith("POLY-")){
+    if(!editor_active_input && (e.detail.combo == "delete" || e.detail.combo == "backspace") && selected_element != undefined && selected_element.tagName.startsWith("POLY-")){
       deleteElement(e);
     }
-    if(e.detail.combo == "ctrl+d" && selected_element.tagName.startsWith("POLY-")){
+    if((e.detail.combo == "ctrl+d" || e.detail.combo == "meta+d") && selected_element.tagName.startsWith("POLY-")){
       e.detail.keyboardEvent.preventDefault();
       cloneElement();
     }
   }
 }
-//TODO: Uncomment alert dialog when leaving
-/*window.onbeforeunload = function(e) {
+window.onbeforeunload = function(e) {
   if(app.unsaved_changes){
     return 'Salir sin guardar cambios';
   }
-};*/
+};

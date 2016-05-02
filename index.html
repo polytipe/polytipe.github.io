@@ -425,7 +425,10 @@
                             <paper-input label="color"></paper-input>
                           </div>
                           <paper-input label="display"></paper-input>
-                          <paper-toggle-button checked>flex</paper-toggle-button>
+                          <div class="layout horizontal property_name">
+                            <div class="flex">flex</div>
+                            <paper-toggle-button id="flex_toggle"></paper-toggle-button>
+                          </div>
                         </div>
                       </div>
                     </section>
@@ -543,8 +546,8 @@
     </iron-ajax>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-a11y-keys id="polytipe_keys" keys="ctrl+s ctrl+d delete" target="[[polytipe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
-    <iron-a11y-keys id="iframe_keys" keys="ctrl+s ctrl+d delete" target="[[iframe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
+    <iron-a11y-keys id="polytipe_keys" keys="meta+s meta+d ctrl+s ctrl+d backspace delete" target="[[polytipe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
+    <iron-a11y-keys id="iframe_keys" keys="meta+s meta+d ctrl+s ctrl+d backspace delete" target="[[iframe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
 
     <div class="dialogs">
       <!-- User view dialogs -->

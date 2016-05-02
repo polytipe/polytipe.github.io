@@ -49,6 +49,12 @@
           value: "paper-font-subhead",
           reflectToAttribute: true,
           observer: "_sizeChanged"
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
@@ -62,6 +68,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
       _sizeChanged: function() {
         this.$.label.className = this.size;

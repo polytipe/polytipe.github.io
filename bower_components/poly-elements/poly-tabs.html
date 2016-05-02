@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../../styles.html">
 
 <dom-module id="poly-tabs">
@@ -9,6 +10,7 @@
     :host {
       display: block;
       min-width: 100%;
+      height: 100%;
       box-sizing: border-box;
     }
 
@@ -27,6 +29,11 @@
         <paper-tab>{{item.name}}</paper-tab>
       </template>
     </paper-tabs>
+    <iron-pages selected="{{selected_tab}}">
+      <section>0</section>
+      <section>1</section>
+      <section>2</section>
+    </iron-pages>
   </template>
 
   <script>
@@ -39,7 +46,7 @@
       properties: {
         tabs:{
           type: Array,
-          value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
+          value: [{name: 'Tab 0'}, {name: 'Tab 1'}],
           reflectToAttribute: true
         },
         selected_tab: {
@@ -47,20 +54,23 @@
           value: 0,
           observer: '_selected_tabChange',
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
 
       },
       _selected_tabChange: function() {
-        if(this._focused){
-          this.fire("elementSelection");
-        }
+        this.fire("elementSelection");
       },
       ready: function() {
-        this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}]; //Default values when creating multiple elements
-        this.number = 2;
-        this.min = 1;
+        this.tabs = [{name: 'Tab 0'}, {name: 'Tab 1'}]; //Default values when creating multiple elements
+        this.number = 1;
+        this.min = 0;
         this.max = this.number;
-        this._focused = false;
       },
       attached: function(){
       },
@@ -82,21 +92,22 @@
       },
       focus: function() {
         this.getStyles();
-        if(!this.focused){
-          this.fire("elementSelection");
-          this.toggleClass('outlined_element', true);
-        }
-        this._focused = true;
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
-        this._focused = false;
       },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
+      },
+      
       getStyles: function(){
         this.width = getComputedStyle(this.$.tabs)["width"];
         this.height = getComputedStyle(this.$.tabs)["height"];
         this.background = this.rgb2hex(getComputedStyle(this.$.tabs)["background-color"]);
-        this.color = this.rgb2hex(getComputedStyle(this.$.tabs)["color"]);;
+        this.color = this.rgb2hex(getComputedStyle(this.$.tabs)["color"]);
         this.display = getComputedStyle(this.$.tabs)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
@@ -116,7 +127,7 @@
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
-      updateStyles: function (property, value) {
+      refreshStyles: function (property, value) {
         this.$.tabs.style[property] = value;
       }
     });

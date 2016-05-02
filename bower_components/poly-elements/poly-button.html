@@ -58,6 +58,12 @@
           type: Boolean,
           value: true,
           reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
         }
       },
       ready: function () {
@@ -71,6 +77,9 @@
       },
       unfocus: function() {
         this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
       },
       _iconChanged: function() {
         //Show or hide the icon depending on the input
