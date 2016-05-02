@@ -545,6 +545,15 @@
         params="{{collaborators_params}}">
     </iron-ajax>
 
+    <iron-ajax
+        id="toggle_issues_ajax"
+        auto
+        url="https://api.github.com/repos/{{user}}/polytipe-projects"
+        method="PUT"
+        content-type="application/json"
+        params="{{toggle_issues_params}}">
+    </iron-ajax>
+
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
     <iron-a11y-keys id="polytipe_keys" keys="meta+s meta+d ctrl+s ctrl+d backspace delete" target="[[polytipe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
     <iron-a11y-keys id="iframe_keys" keys="meta+s meta+d ctrl+s ctrl+d backspace delete" target="[[iframe_target]]" stop-keyboard-event-propagation></iron-a11y-keys>

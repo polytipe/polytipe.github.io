@@ -627,6 +627,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     app.user_list = [];
   });
 
+//FIXME: Fix error
+  document.getElementById('toggle_issues_ajax').addEventListener("error", function () {
+    console.log("DONE");
+    console.log(document.getElementById('toggle_issues_ajax').lastError);
+  });
+
   document.getElementById('collaborators_app').addEventListener('dom-change', function() {
     //Add event listener
     var collaborator_chips = document.getElementsByClassName('collaborator_chip');
@@ -766,6 +772,10 @@ function forkRepo() {
   document.getElementById("forking_spinner").active = true;
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
+    app.toggle_issues_params = {
+                                "has_issues": false
+                              };
+                              document.getElementById('toggle_issues_ajax').generateRequest();
     user_repos = [];
     user_repos.push({"name": res.owner.login, "icon": "folder"});
     app.user_repos = user_repos;
