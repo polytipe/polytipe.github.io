@@ -423,6 +423,7 @@ function makeElement(element_name) {
 function cloneElement() {
   //FIXME: Fix full DOM save. Only select poly-elements (priority 3)
   //FIXME: Avoid ID duplicates (priority 5)
+  //FIXME: Avoid the need of IDs for creating the tree
   var new_element = selected_element.cloneNode(true);
   element_count++;
   new_element.id = "poly"+element_count;
@@ -761,6 +762,7 @@ function promptForkRepo() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function forkRepo() {
+  //TODO: Add issues automatically on fork
   document.getElementById("forking_spinner").active = true;
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
