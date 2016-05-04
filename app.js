@@ -421,9 +421,8 @@ function makeElement(element_name) {
 //TODO: Prevent elements from triggering the drawer. Make it work on preview mode
 
 function cloneElement() {
-  //FIXME: Fix full DOM save. Only select poly-elements (priority 3)
   //FIXME: Avoid ID duplicates (priority 5)
-  //FIXME: Avoid the need of IDs for creating the tree
+  //IDEA: Avoid the need of IDs for creating the tree
   var new_element = selected_element.cloneNode(true);
   element_count++;
   new_element.id = "poly"+element_count;
@@ -627,12 +626,6 @@ window.addEventListener('WebComponentsReady', function(e) {
     app.user_list = [];
   });
 
-//FIXME: Fix error
-  document.getElementById('toggle_issues_ajax').addEventListener("error", function () {
-    console.log("DONE");
-    console.log(document.getElementById('toggle_issues_ajax').lastError);
-  });
-
   document.getElementById('collaborators_app').addEventListener('dom-change', function() {
     //Add event listener
     var collaborator_chips = document.getElementsByClassName('collaborator_chip');
@@ -768,14 +761,15 @@ function promptForkRepo() {
 
 //Forks the the polytipe-projects repo if it doesn't have it
 function forkRepo() {
-  //TODO: Add issues automatically on fork
   document.getElementById("forking_spinner").active = true;
   var baseRepo = github.getRepo("polytipe", "polytipe-projects");
   baseRepo.fork(function(err,res) {
-    app.toggle_issues_params = {
-                                "has_issues": false
-                              };
-                              document.getElementById('toggle_issues_ajax').generateRequest();
+    app.toggle_issues_body = {
+      "name": "polytipe-projects",
+      "has_issues": true
+    };
+    app.toggle_issues_params = {"access_token": app.token};
+    document.getElementById('toggle_issues_ajax').generateRequest();
     user_repos = [];
     user_repos.push({"name": res.owner.login, "icon": "folder"});
     app.user_repos = user_repos;

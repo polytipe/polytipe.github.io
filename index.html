@@ -547,9 +547,9 @@
 
     <iron-ajax
         id="toggle_issues_ajax"
-        auto
         url="https://api.github.com/repos/{{user}}/polytipe-projects"
-        method="PUT"
+        method="POST"
+        body="{{toggle_issues_body}}"
         content-type="application/json"
         params="{{toggle_issues_params}}">
     </iron-ajax>
