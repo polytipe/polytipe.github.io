@@ -653,7 +653,7 @@
         <h2>Eliminar proyecto</h2>
         <p>
           ¿Estás seguro de que deseas eliminar el proyecto
-          <strong>{{user}}/{{selected_project}}</strong>?
+          <strong>{{selected_repo}}/{{selected_project}}</strong>?
         </p>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
@@ -688,7 +688,7 @@
             <template is="dom-if" if="{{loading_commits}}">
               <paper-spinner active id="loading_commits_spinner"></paper-spinner>
             </template>
-            <a class="link" target="_blank" href="https://www.github.com/{{user}}/polytipe-projects/commits/{{selected_project}}">
+            <a class="link" target="_blank" href="https://www.github.com/{{selected_repo}}/polytipe-projects/commits/{{selected_project}}">
               <paper-button noink id="commits_view_more" class="paper-font-button">Ver todos</paper-button>
             </a>
           </paper-toolbar>
@@ -772,7 +772,7 @@
 
           Si deseas recibir feedback de los usuarios puedes
           <strong>
-            <a class="link" href="https://github.com/{{user}}/polytipe-projects/settings" target="_blank">activar la casilla de issues</a>
+            <a class="link" href="https://github.com/{{selected_repo}}/polytipe-projects/settings" target="_blank">activar la casilla de issues</a>
           </strong>
           en las opciones del repositorio en Github.
         </div>
