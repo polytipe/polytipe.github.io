@@ -399,10 +399,10 @@ function makeElement(element_name) {
       }
       if(selected_element.id.startsWith("poly")){
         var next_sibling = selected_element.nextSibling;
+        while(next_sibling != null && next_sibling.nodeType == 3){
+          next_sibling = next_sibling.nextSibling;
+        }
         if(next_sibling != null){
-          while(next_sibling != null && next_sibling.nodeType == 3){
-            next_sibling = next_sibling.nextSibling;
-          }
           Polymer.dom(selected_element.parentNode).insertBefore(element, selected_element.nextSibling);
         }else{
           Polymer.dom(selected_element.parentNode).appendChild(element);
