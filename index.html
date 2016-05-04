@@ -278,6 +278,12 @@
                 <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
               </div>
               <div>
+                <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip">
+                  <paper-icon-button icon="file-download"></paper-icon-button>
+                </a>
+                <paper-tooltip offset="0" animation-delay="0">Descargar proyecto</paper-tooltip>
+              </div>
+              <div>
                 <paper-icon-button icon="delete" class="delete_icon" onclick="promptDeleteProject()"></paper-icon-button>
                 <paper-tooltip offset="0" animation-delay="0">Eliminar proyecto</paper-tooltip>
               </div>
@@ -472,6 +478,12 @@
                     <div>
                       <paper-icon-button icon="launch" onclick="promptGeneratePrototype()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
+                    </div>
+                    <div>
+                      <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip">
+                        <paper-icon-button icon="file-download"></paper-icon-button>
+                      </a>
+                      <paper-tooltip offset="0" animation-delay="0">Descargar proyecto</paper-tooltip>
                     </div>
                   </template>
                   <template is="dom-if" if="{{!preview_mode}}">
