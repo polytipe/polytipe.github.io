@@ -79,7 +79,7 @@
         if(this.$.action_buttons.children.length > 0){
           return;
         }
-        this.async(function functionName() {
+        this.async(function () {
           this.addElements();
         },10);
       },
@@ -112,7 +112,7 @@
       _flexChanged: function() {
         this.toggleClass('flex', this.flex);
       },
-      
+
       getStyles: function(){
         this.width = getComputedStyle(this.$.card)["width"];
         this.height = getComputedStyle(this.$.card)["height"];
