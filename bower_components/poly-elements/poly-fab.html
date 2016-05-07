@@ -89,7 +89,7 @@
         this.height = getComputedStyle(this.$.fab)["height"];
         this['background-color'] = this.rgb2hex(getComputedStyle(this.$.fab)["background-color"]);
         this.color = this.rgb2hex(getComputedStyle(this.$.fab)["color"]);
-        this.display = getComputedStyle(this.$.fab)["display"];
+        this.display = getComputedStyle(this)["display"];
 
         var values = ["-top","-right","-bottom","-left"];
         var margin = [];

@@ -81,11 +81,11 @@ function iframe_ready() {
 
     //Remove placeholder when no elements are selected
     document.getElementById('styles_list').style.display = "block";
-    document.getElementById('editor_links').style.display = "block";
     document.getElementById('properties_placeholder').style.display = "none";
 
     //Display element actions
     document.getElementById('element_actions').style.display = "flex";
+    document.getElementById('link_dropdown').style.display = "flex";
 
     //Add inputs for poly-layout elements
     if(selected_element.tagName == "POLY-LAYOUT"){
@@ -198,19 +198,21 @@ function iframe_ready() {
 
           properties_list.appendChild(input);
         } else if (element_properties[key].type.name == 'String') {
-          var input;
-          if (selected_element[key].length > 30) {
-            input = document.createElement("paper-textarea");
-            input.maxRows = 2;
-          } else{
-            input = document.createElement("paper-input");
-            input.type = "text";
+          if(key != "link"){
+            var input;
+            if (selected_element[key].length > 30) {
+              input = document.createElement("paper-textarea");
+              input.maxRows = 2;
+            } else{
+              input = document.createElement("paper-input");
+              input.type = "text";
+            }
+            input.label = key;
+            input.id = key;
+            input.addEventListener("change", propertyChanged);
+            input.value = selected_element[key];
+            properties_list.appendChild(input);
           }
-          input.label = key;
-          input.id = key;
-          input.addEventListener("change", propertyChanged);
-          input.value = selected_element[key];
-          properties_list.appendChild(input);
         }
       }
     }
@@ -221,6 +223,8 @@ function iframe_ready() {
     document.getElementById('flex_toggle').checked = selected_element["flex"];
     bgPicker.color = selected_element["background-color"];
     colorPicker.color = selected_element["color"];
+
+    screens_dropdown.selected = selected_element["link"];
   });
 
   //Add event listener when styles are changed
@@ -230,6 +234,12 @@ function iframe_ready() {
   }
   document.getElementById('flex_toggle').addEventListener("change", flexChanged);
 
+  //Add event listener when dropdown is selected
+
+  screens_dropdown.addEventListener('iron-select', function () {
+    selected_element["link"] = screens_dropdown.selected;
+    app.unsaved_changes = true;
+  });
   //Add event listener when paper-swatch-picker is selected
   bgPicker.addEventListener('color-picker-selected', function () {
     style_inputs[4].value = bgPicker.color;
@@ -281,7 +291,7 @@ function unfocus(e) {
   //Add placeholder when no elements are selected
   document.getElementById('element_actions').style.display = "none";
   document.getElementById('styles_list').style.display = "none";
-  document.getElementById('editor_links').style.display = "none";
+  document.getElementById('link_dropdown').style.display = "none";
   document.getElementById('properties_placeholder').style.display = "flex";
 
   //Unfocus all children elements except the one active
@@ -418,14 +428,22 @@ function makeElement(element_name) {
   }
 }
 
-//TODO: Prevent elements from triggering the drawer. Make it work on preview mode
-
 function cloneElement() {
-  //FIXME: Avoid ID duplicates (priority 5)
   //IDEA: Avoid the need of IDs for creating the tree
   var new_element = selected_element.cloneNode(true);
   element_count++;
   new_element.id = "poly"+element_count;
+  var all_the_children = new_element.getElementsByTagName("*");
+  for (var i = 0; i < all_the_children.length; i++) {
+    if(all_the_children[i].tagName.startsWith("POLY")){
+      //Generate random string with 5 alphanumeric characters
+      var randomId = Math.random().toString(36).substr(2, 5);
+      while(iframe_document.getElementById(randomId)!=null){
+        randomId = Math.random().toString(36).substr(2, 5);
+      }
+      all_the_children[i].id = "poly"+randomId;
+    }
+  }
   new_element.classList.remove("outlined_element");
   Polymer.dom(selected_element.parentNode).insertBefore(new_element, selected_element);
   app.unsaved_changes = true;
@@ -651,6 +669,8 @@ window.addEventListener('WebComponentsReady', function(e) {
   document.body.addEventListener("folderSelected", function () {
     editor_active_input = false;
   });
+
+  screens_dropdown = document.getElementById('link_menu');
 
   app.polytipe_target = document.body;
   document.getElementById('polytipe_keys').addEventListener('keys-pressed', function (e) {
@@ -1159,7 +1179,7 @@ function displayScreens() {
     document.getElementById('empty_state_screen').style.display = "flex";
   }
 }
-
+//TODO: Connect screens using selected attribute and creating link property on elements
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
 }
@@ -1220,11 +1240,15 @@ function togglePreview() {
     //Remove border to poly-elements
     for (var i = 0; i < all_elements.length; i++) {
       all_elements[i].classList.add("no_outlined_element");
+      all_elements[i].preview_mode = true;
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
 
     app.lifx_body =  {"power": "on", "color": "green saturation:0.3", "brightness": 1.0, "duration": 0.4};
   }else{
+    //Reset iframe selected screen
+    iframe_document.querySelector("iron-pages").selected = app.selected_screen;
+
     //Add iframe outline
     if(selected_element != undefined && (selected_element.id == "app_container" || selected_element.id == "app_folder")){
       document.getElementById("app_iframe").classList.add('outlined_element');
@@ -1237,6 +1261,7 @@ function togglePreview() {
     //Add border to poly-elements
     for (var i = 0; i < all_elements.length; i++) {
       all_elements[i].classList.remove("no_outlined_element");
+      all_elements[i].preview_mode = false;
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
 

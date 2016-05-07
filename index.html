@@ -80,7 +80,7 @@
             </paper-item>
           </a>
           <paper-item>
-            <iron-icon class="left_toolbar_icon element_icon" icon="info"></iron-icon>
+            <iron-icon class="left_toolbar_icon element_icon" icon="polytipe-icons:icon"></iron-icon>
             <div>Acerca de Polytipe</div>
           </paper-item>
           <paper-item onclick="sign_out()">
@@ -380,7 +380,6 @@
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
                     <paper-tab name="editor_properties">Propiedades</paper-tab>
                     <paper-tab name="editor_styles">Estilos</paper-tab>
-                    <paper-tab name="editor_links">Links</paper-tab>
                   </paper-tabs>
                   <div id="properties_placeholder" class="layout vertical center-center">
                     <iron-icon id="no_elements_selected" icon="touch-app"></iron-icon>
@@ -408,6 +407,16 @@
                         </div>
                       </div>
                       <div id="properties_list" class="sidebar_list2"></div>
+                      <div id="link_dropdown">
+                        <paper-dropdown-menu id="link_screen" label="goto_screen" vertical-align="bottom">
+                          <paper-menu id="link_menu" class="dropdown-content" attr-for-selected="data">
+                            <paper-item data=""></paper-item>
+                            <template is="dom-repeat" items="{{project_screens}}">
+                              <paper-item data="{{item.name}}">{{item.name}}</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
                     </section>
                     <section id="editor_styles">
                       <div id="styles_list">
@@ -438,17 +447,6 @@
                         </div>
                       </div>
                     </section>
-                    <section id="editor_links">
-                      <div class="sidebar_list">
-                        <paper-dropdown-menu id="link_screen" label="Link">
-                          <paper-menu class="dropdown-content">
-                            <template is="dom-repeat" items="{{screen_list}}">
-                              <paper-item>{{item}}</paper-item>
-                            </template>
-                          </paper-menu>
-                        </paper-dropdown-menu>
-                      </div>
-                    </section>
                   </iron-pages>
                 </paper-scroll-header-panel>
               </paper-scroll-header-panel>
@@ -457,7 +455,7 @@
                 <paper-toolbar id="editor_toolbar" class="screen_view_toolbar">
                   <template is="dom-if" if="{{preview_mode}}">
                     <paper-icon-button class="back_icon" icon="close" onclick="togglePreview()"></paper-icon-button>
-                    <div class="paper-font-title">Pantalla {{preview_selected_screen}}</div>
+                    <div class="paper-font-title">Previsualización</div>
                     <span class="flex"></span>
                     <template is="dom-if" if="{{unsaved_changes}}">
                       <div>
@@ -501,7 +499,7 @@
                       <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
                     </div>
                     <div>
-                      <paper-icon-button icon="view-carousel" onclick="gotoPrototype()"></paper-icon-button>
+                      <paper-icon-button icon="view-carousel" onclick="togglePreview()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
                     </div>
                     <div>

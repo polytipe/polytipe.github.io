@@ -26,7 +26,7 @@
     }
     .outlined_element{
       box-sizing: border-box;
-      border: 2px solid yellow !important;
+      border: 2px solid yellow;
     }
     :host.fixed{
       position: sticky !important;
@@ -68,7 +68,7 @@
         var el = document.createElement("poly-label");
         el.text = "Aplicación";
         el.id = this.id + "B";
-        el.style.width = "100%";
+        el.flex = true;
         Polymer.dom(this).appendChild(el);
 
         var el = document.createElement("poly-icon-button");
