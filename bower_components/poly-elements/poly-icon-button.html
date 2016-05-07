@@ -17,12 +17,12 @@
     }
     .outlined_element{
       box-sizing: border-box;
-      border: 2px solid yellow !important;
+      border: 2px solid yellow;
     }
   </style>
 
   <template>
-    <paper-icon-button id="icon" icon="{{icon}}" disabled="{{disabled}}" src="{{src}}"></paper-icon-button>
+    <paper-icon-button id="icon" icon="{{icon}}" src="{{src}}"></paper-icon-button>
   </template>
   <script>
     Polymer({
@@ -41,11 +41,6 @@
           value: "",
           reflectToAttribute: true
         },
-        disabled:{
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
         toggles_drawer:{
           type: Boolean,
           value: false,
@@ -56,15 +51,24 @@
           value: false,
           reflectToAttribute: true,
           observer: "_flexChanged"
+        },
+        link:{
+          type: String,
+          value: "",
+          reflectToAttribute: true
         }
       },
       ready: function () {
         this.refreshStyles();
-        // TODO: Add paper-icon-button with Javascript instead of declaring it above
       },
       focus: function(event) {
-        if(this.toggles_drawer){
-          this._toggleDrawer();
+        if(this.preview_mode){
+          if(this.toggles_drawer){
+            this._toggleDrawer();
+          }
+          if(this.link){
+            this._goto();
+          }
         }
         this.getStyles();
         this.fire("elementSelection");
@@ -79,6 +83,9 @@
       },
       _toggleDrawer: function(){
         document.querySelector('paper-drawer-panel').togglePanel();
+      },
+      _goto: function(){
+        document.querySelector("iron-pages").selected = this.link;
       },
 
       getStyles: function(){
