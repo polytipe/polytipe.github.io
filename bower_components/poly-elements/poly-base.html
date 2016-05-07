@@ -46,11 +46,21 @@
           value: false,
           reflectToAttribute: true,
           observer: "_flexChanged"
+        },
+        link:{
+          type: String,
+          value: "",
+          reflectToAttribute: true
         }
       },
       ready: function () {
       },
       focus: function(event) {
+        if(this.preview_mode){
+          if(this.link){
+            this._goto();
+          }
+        }
         this.getStyles();
         this.fire("elementSelection");
         this.toggleClass('outlined_element', true);
@@ -61,6 +71,9 @@
       },
       _flexChanged: function() {
         this.toggleClass('flex', this.flex);
+      },
+      _goto: function(){
+        document.querySelector("iron-pages").selected = this.link;
       },
 
 

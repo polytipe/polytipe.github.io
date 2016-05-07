@@ -10,7 +10,6 @@
     :host {
       display: block;
       min-width: 100%;
-      height: 100%;
       box-sizing: border-box;
     }
 
@@ -29,11 +28,6 @@
         <paper-tab>{{item.name}}</paper-tab>
       </template>
     </paper-tabs>
-    <iron-pages selected="{{selected_tab}}">
-      <section>0</section>
-      <section>1</section>
-      <section>2</section>
-    </iron-pages>
   </template>
 
   <script>
@@ -46,7 +40,7 @@
       properties: {
         tabs:{
           type: Array,
-          value: [{name: 'Tab 0'}, {name: 'Tab 1'}],
+          value: [{name: 'Tab 1'}, {name: 'Tab 2'}],
           reflectToAttribute: true
         },
         selected_tab: {
@@ -67,7 +61,7 @@
         this.fire("elementSelection");
       },
       ready: function() {
-        this.tabs = [{name: 'Tab 0'}, {name: 'Tab 1'}]; //Default values when creating multiple elements
+        this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}]; //Default values when creating multiple elements
         this.number = 1;
         this.min = 0;
         this.max = this.number;
@@ -102,7 +96,7 @@
       _flexChanged: function() {
         this.toggleClass('flex', this.flex);
       },
-      
+
       getStyles: function(){
         this.width = getComputedStyle(this.$.tabs)["width"];
         this.height = getComputedStyle(this.$.tabs)["height"];

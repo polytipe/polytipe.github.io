@@ -1179,7 +1179,7 @@ function displayScreens() {
     document.getElementById('empty_state_screen').style.display = "flex";
   }
 }
-//TODO: Connect screens using selected attribute and creating link property on elements
+
 function editScreen() {
   iframe_app_content.selected = app.selected_screen;
 }
