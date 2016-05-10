@@ -73,7 +73,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       if (event.target === this) {
         this._setFocused(event.type === 'focus');
-      } else if (!this.shadowRoot && !this.isLightDescendant(event.target)) {
+      } else if (!this.shadowRoot &&
+          !this.isLightDescendant(Polymer.dom(event).localTarget)) {
         this.fire(event.type, {sourceEvent: event}, {
           node: this,
           bubbles: event.bubbles,
@@ -87,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.style.pointerEvents = disabled ? 'none' : '';
       if (disabled) {
         this._oldTabIndex = this.tabIndex;
-        this.focused = false;
+        this._setFocused(false);
         this.tabIndex = -1;
         this.blur();
       } else if (this._oldTabIndex !== undefined) {
