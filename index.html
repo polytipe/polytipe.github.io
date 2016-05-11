@@ -76,7 +76,6 @@
 
   <link rel="import" href="elements.html">
   <link rel="import" href="styles.html">
-  <style is="custom-style" include="styles"></style>
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
 </head>
 
@@ -368,7 +367,72 @@
             </paper-toolbar>
 
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Proyectos</div>
+              <h1>Google Analytics</h1>
+              <google-signin client-id="599397003963-kip4vgg3irq6il6tbofdo617dpm1e49o.apps.googleusercontent.com"></google-signin>
+
+              <google-analytics-dashboard>
+
+                <google-analytics-view-selector></google-analytics-view-selector>
+
+                <google-analytics-chart
+                  type="area"
+                  metrics="ga:users"
+                  dimensions="ga:date">
+                  <h3>Últimos 7 días</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="geo"
+                  metrics="ga:users"
+                  dimensions="ga:country">
+                  <h3>Ubicación</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="pie"
+                  metrics="ga:users"
+                  dimensions="ga:deviceCategory"
+                  sort="-ga:users"
+                  max-results="6">
+                  <h3>Tipo de dispositivo</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="pie"
+                  metrics="ga:users"
+                  dimensions="ga:operatingSystem"
+                  sort="-ga:users"
+                  max-results="6">
+                  <h3>Sistema operativo</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="pie"
+                  metrics="ga:users"
+                  dimensions="ga:browser"
+                  sort="-ga:users"
+                  max-results="6">
+                  <h3>Navegador</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="column"
+                  dimensions=ga:userType
+                  metrics=ga:avgSessionDuration
+                  sort="-ga:avgSessionDuration">
+                  <h3>Duración promedio de la sesión (segundos)</h3>
+                </google-analytics-chart>
+
+                <google-analytics-chart
+                  type="column"
+                  metrics="ga:users"
+                  dimensions="ga:screenResolution"
+                  sort="-ga:users"
+                  max-results="6">
+                  <h3>Resolución de pantalla</h3>
+                </google-analytics-chart>
+
+              </google-analytics-dashboard>
             </div>
           </section>
 

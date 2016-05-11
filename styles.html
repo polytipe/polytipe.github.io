@@ -10,6 +10,34 @@
     --app-bg-color: #E5E5E5;
     --app-primary-color: var(--paper-light-blue-500);
     --app-accent-color: var(--paper-red-400);
+
+    --google-analytics-control: {
+        display: block;
+        -webkit-flex: 1 1 0%;
+        -ms-flex: 1 1 0%;
+        flex: 1 1 0%;
+        margin: 0 1.5em 1em 0;
+        min-width: 0;
+      };
+      --google-analytics-label: {
+        display: block;
+        font-weight: bold;
+        padding: 0 0 .4em 2px;
+      };
+      --google-analytics-field: {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        height: 34px;
+        line-height: 20px;
+        padding: 6px 12px;
+        transition: border-color .2s;
+        width: 100%;
+      };
+      --google-analytics-field-focus: {
+        border-color: #4d90fe;
+        outline: 0;
+      };
   }
 
   * {
@@ -764,6 +792,78 @@
     box-sizing: border-box;
   }
 
+
+  /**
+     * <google-signin> styles.
+     */
+    google-signin {
+      margin: 0;
+    }
+
+    /**
+     * <google-analytics-dashboard> styles.
+     */
+    google-analytics-dashboard {
+      display: block;
+      padding: 2em;
+      transition: opacity .3s ease;
+    }
+    google-analytics-dashboard:not([authorized]) {
+      opacity: .3;
+      pointer-events: none;
+    }
+
+    /**
+     * <google-analytics-chart> styles.
+     */
+    google-analytics-chart {
+      box-shadow: 0 0 .5em rgba(0,0,0,.1);
+      border-radius: 2px;
+      background: #fff;
+      float: left;
+      margin: 0 2em 2em 0;
+      padding: 2em 2em 1em;
+      transition: opacity .2s ease;
+      max-width: 100%;
+    }
+    google-analytics-chart:first-of-type {
+      clear: both;
+    }
+    google-analytics-chart h3 {
+      font-size: 1.3em;
+      font-weight: 300;
+      margin: 0;
+    }
+
+  google-analytics-view-selector {
+    box-shadow: 0 0 .5em rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: #fff;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin: 0 0 2em 0;
+    padding: 2em .5em 1em 2em;
+  }
+
+  google-analytics-view-selector {
+    max-width: 250px;
+  }
+
+  google-analytics-view-selector {
+    --google-analytics-view-selector-control:
+        var(--google-analytics-control);
+    --google-analytics-view-selector-label:
+        var(--google-analytics-label);
+    --google-analytics-view-selector-select:
+        var(--google-analytics-field);
+    --google-analytics-view-selector-select-focus:
+        var(--google-analytics-field-focus);
+  }
+
   @media (max-width: 1500px) {
     .add_fab{
       bottom: 24px;
@@ -823,6 +923,16 @@
     /* Screen editor */
     .right_drawer_toggle{
       display: flex;
+    }
+
+    google-analytics-view-selector,
+    google-analytics-date-selector {
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+      flex-direction: row;
     }
   }
 
