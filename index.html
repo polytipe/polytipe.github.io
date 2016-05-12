@@ -83,7 +83,7 @@
   <template id="app" is="dom-bind">
     <paper-drawer-panel id="drawer_panel_wrapper" disable-swipe force-narrow drawer-toggle-attribute="paper-drawer-left">
       <paper-header-panel drawer mode="seamed">
-        <div id="drawer_toolbar" class="sidebar_polytipe_toolbar layout horizontal center-center">
+        <div id="drawer_toolbar" class="sidebar_polytipe_toolbar layout horizontal center">
             <iron-image id="avatar" alt="{{user}}" src="{{avatar}}" preload fade></iron-image>
             <div id="toolbar_text">
               <div class="paper-font-subhead">{{user}}</div>
@@ -288,12 +288,20 @@
                 </div>
               </template>
               <div>
+                <paper-icon-button icon="social:group" onclick="promptCollaboratorsDialog()"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Ver colaboradores</paper-tooltip>
+              </div>
+              <div>
                 <paper-icon-button icon="history" onclick="promptGetCommits()"></paper-icon-button>
                 <paper-tooltip offset="0" animation-delay="0">Ver commits recientes</paper-tooltip>
               </div>
               <div>
                 <paper-icon-button icon="trending-up" onclick="goto('analytics_view')"></paper-icon-button>
                 <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
+              </div>
+              <div>
+                <paper-icon-button icon="feedback" onclick="goto('feedback_view')"></paper-icon-button>
+                <paper-tooltip offset="0" animation-delay="0">Ver feedback</paper-tooltip>
               </div>
               <div>
                 <paper-icon-button icon="view-carousel" onclick="gotoPrototype()"></paper-icon-button>
@@ -435,6 +443,36 @@
               </google-analytics-dashboard>
             </div>
           </section>
+            
+            
+          <section id="feedback_view">
+            <paper-toolbar class="screen_view_toolbar">
+              <template is="dom-if" if="{{preview_mode}}">
+                <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('screen_editor')"></paper-icon-button>
+              </template>
+              <template is="dom-if" if="{{!preview_mode}}">
+                <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('project_view')"></paper-icon-button>
+              </template>
+              <div class="paper-font-title">Feedback de {{selected_project}}</div>
+              <div class="flex"></div>
+            </paper-toolbar>
+
+            <div class="elements_group">
+              <div class="elements_label" class="paper-font-subhead">Issues</div>
+              <!-- TODO: Get issues and show them -->
+              <template is="dom-repeat" items="{{change_me}}">
+                <paper-material elevation="2" project="{{item.name}}" class="project_box layout vertical flex">
+                  <div class="flex layout vertical center end-justified">
+                    <iron-icon class="project_box_icon" icon="description"></iron-icon>
+                  </div>
+                  <div class="flex layout vertical center-center">
+                    <div class="project_name paper-font-headline">{{item.name}}</div>
+                  </div>
+                  <paper-ripple recenters></paper-ripple>
+                </paper-material>
+              </template>
+            </div>
+          </section>
 
           <section id="screen_editor">
             <paper-drawer-panel id="editor_drawer" right-drawer disable-swipe drawer-width="290px" drawer-toggle-attribute="paper-drawer-right">
@@ -555,10 +593,8 @@
                       <paper-tooltip offset="0" animation-delay="0">Analytics</paper-tooltip>
                     </div>
                     <div>
-                      <a class="link" tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
-                        <paper-icon-button icon="visibility"></paper-icon-button>
-                      </a>
-                      <paper-tooltip offset="0" animation-delay="0">Ver prototipo</paper-tooltip>
+                      <paper-icon-button icon="feedback" onclick="goto('feedback_view')"></paper-icon-button>
+                      <paper-tooltip offset="0" animation-delay="0">Ver feedback</paper-tooltip>
                     </div>
                     <div>
                       <paper-icon-button icon="launch" onclick="promptGeneratePrototype()"></paper-icon-button>
@@ -674,6 +710,7 @@
           <paper-spinner id="creating_spinner"></paper-spinner>
         </div>
         <paper-input id="add_project_input" label="Nombre (no se permiten espacios)" value="{{project_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="No puede dejarse en blanco"></paper-input>
+        <iron-a11y-keys id="add_project_keys" keys="enter" target="[[add_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="createProject()" noink autofocus>Crear</paper-button>
@@ -760,6 +797,8 @@
       <paper-dialog id="add_screen_dialog" class="modal_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
         <h2>Crear pantalla</h2>
         <paper-input id="add_screen_input" label="Nombre (no se permiten espacios)" value="{{screen_name}}" allowed-pattern="[a-zA-Z0-9-_]" autofocus required error-message="No puede dejarse en blanco"></paper-input>
+        <iron-a11y-keys id="add_screen_keys" keys="enter" target="[[add_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
+
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" noink onclick="createScreen()" autofocus>Crear</paper-button>
@@ -818,6 +857,8 @@
           <paper-spinner id="saving_spinner"></paper-spinner>
         </div>
         <paper-input id="save_project_input" label="Mensaje" maxlength="50" char-counter value="{{commit_message}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <iron-a11y-keys id="add_commit_keys" keys="enter" target="[[add_target]]" stop-keyboard-event-propagation></iron-a11y-keys>
+
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="saveProject()" noink autofocus>Crear</paper-button>
@@ -876,7 +917,11 @@
         </a>
       </paper-toast>
       <paper-toast id="deleted_repo_toast" duration="3500" text="El repositorio fue eliminado de tu cuenta"></paper-toast>
-      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos"></paper-toast>
+      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos">        
+          <a tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
+          <paper-button noink>Ver</paper-button>
+        </a>
+      </paper-toast>
       <paper-toast id="project_taken_toast" duration="3500" text="Ya existe un proyecto con este nombre"></paper-toast>
       <paper-toast id="screen_taken_toast" duration="3500" text="Ya existe una pantalla con este nombre"></paper-toast>
       <paper-toast id="screen_reserved_toast" duration="4000" text="Esta es una palabra reservada. Intenta con otra."></paper-toast>

@@ -918,6 +918,11 @@ function getCommits() {
 function addProjectDialog(){
   var dialog = document.getElementById('add_project_dialog');
   dialog.open();
+    
+  app.add_target = document.getElementById('add_project_input');    
+  document.getElementById('add_project_keys').addEventListener('keys-pressed', function (e) {
+    createProject();
+  });    
 }
 
 function createProject() {
@@ -981,11 +986,21 @@ function getLastSaved() {
 }
 
 //Opens the save dialog
+var save_dialog_open = false;
 function promptSaveProject() {
   var dialog = document.getElementById("save_project_dialog");
   dialog.open();
   getLastSaved();
-  //El último commit fue hace {{last_saved}}
+  save_dialog_open = true;
+    
+  dialog.addEventListener("iron-overlay-closed", function () {
+    save_dialog_open = false;
+  });
+    
+  app.add_target = document.getElementById('save_project_input');    
+  document.getElementById('add_commit_keys').addEventListener('keys-pressed', function (e) {
+    saveProject();
+  });
 }
 
 //Makes a commit
@@ -1076,7 +1091,12 @@ function leaveProject() {
 
 function addScreenDialog(){
   var dialog = document.getElementById('add_screen_dialog');
-  dialog.open();
+  dialog.open();    
+     
+  app.add_target = document.getElementById('add_screen_input');    
+  document.getElementById('add_screen_keys').addEventListener('keys-pressed', function (e) {
+    createScreen();
+  });
 }
 
 function createScreen() {
@@ -1382,7 +1402,8 @@ function polytipeKeyPressed(e) {
     }
   }
   if(app.polytipe_section == "screen_editor"){
-    if(!editor_active_input && (e.detail.combo == "delete" || e.detail.combo == "backspace") && selected_element != undefined && selected_element.tagName.startsWith("POLY-")){
+    if(!editor_active_input && !save_dialog_open && (e.detail.combo == "delete" || e.detail.combo == "backspace") && selected_element != undefined && selected_element.tagName.startsWith("POLY-")){
+      e.detail.keyboardEvent.preventDefault();
       deleteElement(e);
     }
     if((e.detail.combo == "ctrl+d" || e.detail.combo == "meta+d") && selected_element.tagName.startsWith("POLY-")){
