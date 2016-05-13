@@ -549,6 +549,11 @@ function goto(section) {
     app.selected_project = "";
   }else if(section == "project_view"){
     app.selected_screen = "";
+  }else if(section == "analytics_view"){
+    if(!app.tracking_exists){
+      document.getElementById('no_tracking_toast').show();
+      return;
+    }
   }
   app.polytipe_section = section;
 }
@@ -639,8 +644,18 @@ window.addEventListener('WebComponentsReady', function(e) {
   //Hide google-signin button on successful login
   document.querySelector('google-signin').addEventListener("google-signin-success", function () {
     document.querySelector('google-signin').style.display = "none";
-  });
 
+    //Select the property according to the selected_project
+    app.async(function () {
+      var analytics_dashboard = document.querySelector('google-analytics-view-selector');
+      var analytics_properties = analytics_dashboard.account.webProperties;
+      for (var i = 0; i < analytics_properties.length; i++) {
+        if(analytics_properties[i].name == app.selected_project){
+          analytics_dashboard.property = analytics_properties[i];
+        }
+      }
+    }, 2000);
+  });
 
   /* Collaborators listeners */
 
@@ -760,7 +775,6 @@ function validate_user() {
       app.user = user_input;
       app.token = token_input;
       app.polytipe_section = "repos_view";
-      document.getElementById('generate_prototype_dialog').open();
       getRepos();
     }else{ //If errors display the fail toast
       document.getElementById("sign_in_fail_toast").open();
@@ -1153,6 +1167,24 @@ function getScreens() {
   app.last_saved = "...";
   app.project_screens = [];
   var repo = github.getRepo(app.selected_repo, "polytipe-projects");
+
+  //See if there's already a tracking ID
+  repo.read('gh-pages', 'index.html', function(err, data) {
+    //Get title of current prototype if exists
+    if(err == null && data.indexOf("tracking_id") == -1 ){
+      prototyipe_name = data.match("<title>(.*?)</title>")[1];
+      prototyipe_name = prototyipe_name.split(" | ")[0];
+      //Check if there's already a prototype for the selected_project
+      if(prototyipe_name == app.selected_project){
+        app.tracking_exists = true;
+      }else{
+        app.tracking_exists = false;
+      }
+    }else{
+      app.tracking_exists = false;
+    }
+  });
+
   repo.read(app.selected_project, 'prototype.html', function(err, data) {
     frame = document.createElement("iframe");
     frame.id = "app_iframe";
@@ -1328,19 +1360,23 @@ function generatePrototype() {
       }
     }
     if(has_prototype){
-      repo.read(app.selected_project, 'prototype.html', function(err1, data) {
-        repo.write('gh-pages', 'prototype.html', data, "Actualizar prototype.html", function(error) {
-          write_prototype_ready = true;
+      repo.read('gh-pages', 'index.html', function(err1, data) {
+        data = data.replace(/project_name/g, app.selected_project);
+        data = data.replace(/usuario/g, app.selected_repo);
+        data = data.replace(/avatar_url/g, app.avatar);
+        if(app.analytics_id.length > 0){
+          data = data.replace(/tracking_id/g, app.analytics_id);
+          app.tracking_exists = true;
+        }
+        repo.write('gh-pages', 'index.html', data, "Actualizar index.html", function(error) {
+          write_index_ready = true;
           displayPrototypeToast();
         });
       });
       app.async(function () {
-        repo.read('gh-pages', 'index.html', function(err1, data) {
-          data = data.replace(/project_name/g, app.selected_project);
-          data = data.replace(/usuario/g, app.selected_repo);
-          data = data.replace(/avatar_url/g, app.avatar);
-          repo.write('gh-pages', 'index.html', data, "Actualizar index.html", function(error) {
-            write_index_ready = true;
+        repo.read(app.selected_project, 'prototype.html', function(err1, data) {
+          repo.write('gh-pages', 'prototype.html', data, "Actualizar prototype.html", function(error) {
+            write_prototype_ready = true;
             displayPrototypeToast();
           });
         });
@@ -1352,6 +1388,10 @@ function generatePrototype() {
           data = data.replace(/project_name/g, app.selected_project);
           data = data.replace(/usuario/g, app.selected_repo);
           data = data.replace(/avatar_url/g, app.avatar);
+          if(app.analytics_id.length > 0){
+            data = data.replace(/tracking_id/g, app.analytics_id);
+            app.tracking_exists = true;
+          }
           repo.write('gh-pages', 'index.html', data, "Crear index.html", function(er) {
             write_index_ready = true;
             displayPrototypeToast();
