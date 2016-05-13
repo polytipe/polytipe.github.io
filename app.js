@@ -563,7 +563,15 @@ window.addEventListener('WebComponentsReady', function(e) {
   /* Firebase event listeners */
 
   firebase_element = document.getElementById('firebaseAuth');
+
+  firebase_element.addEventListener('authenticated', function (e) { //On auth
+    document.getElementById('sign_in_button').disabled = false;
+    document.getElementById('start_button').style.display = "block";
+    document.getElementById('start_button_loading').style.display = "none";
+  });
+
   firebase_element.addEventListener('login', function (e) { //On login
+    document.getElementById('sign_in_button').disabled = true;
     document.getElementById('start_button').style.display = "none";
     document.getElementById('start_button_loading').style.display = "block";
     user_input = app.signed_user.github.username;
@@ -722,6 +730,7 @@ function changeCarousel() {
 /* Initialization actions */
 
 function sign_in() {
+  document.getElementById('sign_in_button').disabled = true;
   document.getElementById('start_button').style.display = "none";
   document.getElementById('start_button_loading').style.display = "block";
   firebase_element.login();
@@ -918,11 +927,11 @@ function getCommits() {
 function addProjectDialog(){
   var dialog = document.getElementById('add_project_dialog');
   dialog.open();
-    
-  app.add_target = document.getElementById('add_project_input');    
+
+  app.add_target = document.getElementById('add_project_input');
   document.getElementById('add_project_keys').addEventListener('keys-pressed', function (e) {
     createProject();
-  });    
+  });
 }
 
 function createProject() {
@@ -992,12 +1001,12 @@ function promptSaveProject() {
   dialog.open();
   getLastSaved();
   save_dialog_open = true;
-    
+
   dialog.addEventListener("iron-overlay-closed", function () {
     save_dialog_open = false;
   });
-    
-  app.add_target = document.getElementById('save_project_input');    
+
+  app.add_target = document.getElementById('save_project_input');
   document.getElementById('add_commit_keys').addEventListener('keys-pressed', function (e) {
     saveProject();
   });
@@ -1091,9 +1100,9 @@ function leaveProject() {
 
 function addScreenDialog(){
   var dialog = document.getElementById('add_screen_dialog');
-  dialog.open();    
-     
-  app.add_target = document.getElementById('add_screen_input');    
+  dialog.open();
+
+  app.add_target = document.getElementById('add_screen_input');
   document.getElementById('add_screen_keys').addEventListener('keys-pressed', function (e) {
     createScreen();
   });

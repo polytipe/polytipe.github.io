@@ -168,7 +168,7 @@
                 <div class="carousel_dot"></div>
                 <div class="carousel_dot"></div>
               </iron-selector>
-              <paper-button id="sign_in_button" raised onclick="sign_in()">
+              <paper-button id="sign_in_button" raised disabled onclick="sign_in()">
                 <div id="start_button">Empezar</div>
                 <paper-spinner active id="start_button_loading"></paper-spinner>
               </paper-button>
@@ -443,8 +443,8 @@
               </google-analytics-dashboard>
             </div>
           </section>
-            
-            
+
+
           <section id="feedback_view">
             <paper-toolbar class="screen_view_toolbar">
               <template is="dom-if" if="{{preview_mode}}">
@@ -917,7 +917,7 @@
         </a>
       </paper-toast>
       <paper-toast id="deleted_repo_toast" duration="3500" text="El repositorio fue eliminado de tu cuenta"></paper-toast>
-      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos">        
+      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos">
           <a tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
           <paper-button noink>Ver</paper-button>
         </a>

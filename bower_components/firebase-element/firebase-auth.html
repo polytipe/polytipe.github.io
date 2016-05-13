@@ -157,6 +157,7 @@ Element wrapper for the Firebase authentication API (https://www.firebase.com/do
     },
 
     _authHandler: function(user) {
+      this.fire('authenticated');
       if (user) {
         // user authenticated with Firebase
         this._setUser(user);
