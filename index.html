@@ -170,7 +170,7 @@
               </iron-selector>
               <paper-button id="sign_in_button" raised disabled onclick="sign_in()">
                 <div id="start_button">Empezar</div>
-                <paper-spinner active id="start_button_loading"></paper-spinner>
+                <paper-spinner-lite active id="start_button_loading"></paper-spinner-lite>
               </paper-button>
             </paper-material>
             <iron-icon id="sign_in_logo_small" icon="polytipe-icons:logo-square"></iron-icon>
@@ -220,7 +220,7 @@
           <section id="user_view">
             <paper-toolbar class="screen_view_toolbar">
               <paper-icon-button class="back_icon" icon="arrow-back" onclick="goto('repos_view')"></paper-icon-button>
-              <div class="paper-font-title">{{selected_repo}}</div>
+              <div class="paper-font-title">Repositorio de {{selected_repo}}</div>
               <div class="flex"></div>
               <div>
                 <paper-icon-button icon="social:group" onclick="promptCollaboratorsDialog()"></paper-icon-button>
@@ -279,7 +279,7 @@
           <section id="project_view">
             <paper-toolbar class="screen_view_toolbar">
               <paper-icon-button class="back_icon" icon="arrow-back" onclick="promptLeaveProject()"></paper-icon-button>
-              <div class="paper-font-title">{{selected_project}}</div>
+              <div class="paper-font-title">Proyecto {{selected_project}}</div>
               <span class="flex"></span>
               <template is="dom-if" if="{{unsaved_changes}}">
                 <div>
@@ -372,12 +372,11 @@
               </template>
               <div class="paper-font-title">Analytics de {{selected_project}}</div>
               <div class="flex"></div>
+              <google-signin label-signin="Iniciar sesión" label-signout="Cerrar sesión" scopes="https://www.googleapis.com/auth/analytics" theme="dark" client-id="599397003963-kip4vgg3irq6il6tbofdo617dpm1e49o.apps.googleusercontent.com"></google-signin>
             </paper-toolbar>
 
             <div class="elements_group">
-              <h1>Google Analytics</h1>
-              <google-signin client-id="599397003963-kip4vgg3irq6il6tbofdo617dpm1e49o.apps.googleusercontent.com"></google-signin>
-
+              <div class="elements_label" class="paper-font-subhead">Google Analytics</div>
               <google-analytics-dashboard>
 
                 <google-analytics-view-selector></google-analytics-view-selector>
@@ -872,37 +871,25 @@
         </div>
         <p class="paper-font-subhead">
           Genera una página web para realizar pruebas de usabilidad.
-          Los cambios pueden tardar algunos minutos en actualizarse.
-        </p>
-        <div class="buttons">
-          <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
-          <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
-        </div>
-      </paper-dialog>
-
-      <paper-dialog id="analytics_dialog" with-backdrop entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation">
-        <div class="layout horizontal">
-          <h2 class="flex">Exportar prototipo</h2>
-          <paper-spinner id="analytics_spinner"></paper-spinner>
-        </div>
-
-        <div class="prototype_description paper-font-subhead">
-          Exporta el proyecto a una página web para realizar pruebas de usabilidad
-          con los usuarios. Si utilizas Google Analytics puedes
+          Si deseas recibir datos de los usuarios, puedes
           <strong>
             <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
           </strong>
-          para monitorear la actividad de los usuarios.
-
-          <paper-input label="ID de seguimiento"></paper-input>
-
-          Si deseas recibir feedback de los usuarios puedes
-          <strong>
-            <a class="link" href="https://github.com/{{selected_repo}}/polytipe-projects/settings" target="_blank">activar la casilla de issues</a>
-          </strong>
-          en las opciones del repositorio en Github.
+          de Google Analytics para monitorear su actividad utilizando
+          los siguientes campos
+        </p>
+        <div class="analytics_field layout horizontal center">
+          <div>Nombre</div>
+          <clipboard-input title-text="Copiar al portapapeles" value='{{selected_project}}'></clipboard-input>
         </div>
-        <div class="prototype_description save_button paper-font-caption">Los cambios pueden tardar hasta 1 minuto en reflejarse</div>
+        <div class="analytics_field layout horizontal center">
+          <div>URL</div>
+          <clipboard-input title-text="Copiar al portapapeles" value='{{selected_repo}}.github.io/polytipe-projects'></clipboard-input>
+        </div>
+
+        <paper-input id="google_analytics_input" label="ID de seguimiento" value="{{analytics_id}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        <!-- <iron-a11y-keys id="add_commit_keys" keys="enter" target="[[add_target]]" stop-keyboard-event-propagation></iron-a11y-keys> -->
+
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
           <paper-button class="accept_button" onclick="generatePrototype()" noink autofocus>Exportar</paper-button>
@@ -932,6 +919,7 @@
       <paper-toast id="prototype_unsaved_changes_toast" duration="5000" text="Tienes cambios sin guardar">
         <paper-button noink onclick="promptSaveProject()">Guardar</paper-button>
       </paper-toast>
+      <paper-toast id="no_screens_toast" duration="4000" text="No hay pantallas para previsualizar"></paper-toast>
     </div>
   </template>
 

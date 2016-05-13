@@ -636,6 +636,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     changeCarousel();
   });
 
+  //Hide google-signin button on successful login
+  document.querySelector('google-signin').addEventListener("google-signin-success", function () {
+    document.querySelector('google-signin').style.display = "none";
+  });
+
+
   /* Collaborators listeners */
 
   document.getElementById('collaborators_items').addEventListener("iron-select", function (e) {
@@ -754,6 +760,7 @@ function validate_user() {
       app.user = user_input;
       app.token = token_input;
       app.polytipe_section = "repos_view";
+      document.getElementById('generate_prototype_dialog').open();
       getRepos();
     }else{ //If errors display the fail toast
       document.getElementById("sign_in_fail_toast").open();
@@ -1245,9 +1252,13 @@ function deleteScreen() {
 
 function gotoPrototype() {
   //Select first screen in the project
-  app.selected_screen = document.getElementById('screen_selector').items[0].screen;
-  app.polytipe_section = "screen_editor";
-  togglePreview();
+  if(app.project_screens.length > 0){
+    app.selected_screen = document.getElementById('screen_selector').items[0].screen;
+    app.polytipe_section = "screen_editor";
+    togglePreview();
+  } else{
+    document.getElementById('no_screens_toast').show();
+  }
 }
 
 function togglePreview() {
@@ -1272,8 +1283,6 @@ function togglePreview() {
       all_elements[i].preview_mode = true;
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#2AB767";
-
-    app.lifx_body =  {"power": "on", "color": "green saturation:0.3", "brightness": 1.0, "duration": 0.4};
   }else{
     //Reset iframe selected screen
     iframe_document.querySelector("iron-pages").selected = app.selected_screen;
@@ -1293,8 +1302,6 @@ function togglePreview() {
       all_elements[i].preview_mode = false;
     }
     document.getElementById("editor_toolbar").style.backgroundColor = "#212121";
-
-    app.lifx_body =  {"power": "on", "color": "white", "brightness": 1.0, "duration": 0.4};
   }
 }
 

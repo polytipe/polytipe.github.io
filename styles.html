@@ -376,6 +376,9 @@
     }
   }
 
+  #generate_prototype_dialog{
+    width: 330px;
+  }
   #generate_prototype_dialog paper-input{
     margin-top: 2px;
     margin-bottom: 20px;
@@ -398,6 +401,18 @@
   }
   #last_saved{
     margin-top: 4px;
+  }
+  .analytics_field{
+    margin-top: 4px;
+  }
+  .analytics_field div{
+    width: 80px;
+  }
+  clipboard-input{
+    margin-left: 8px;
+  }
+  #google_analytics_input{
+    margin-top: 10px;
   }
 
 
@@ -457,6 +472,7 @@
     bottom: 0px;
     width: 24px;
     height: 24px;
+    --paper-spinner-color: #aaa;
   }
   #sign_in_logo_small{
     width: 150px;
@@ -795,49 +811,35 @@
     box-sizing: border-box;
   }
 
+  /* Analytics view */
 
-  /**
-     * <google-signin> styles.
-     */
-    google-signin {
-      margin: 0;
-    }
-
-    /**
-     * <google-analytics-dashboard> styles.
-     */
-    google-analytics-dashboard {
-      display: block;
-      padding: 2em;
-      transition: opacity .3s ease;
-    }
-    google-analytics-dashboard:not([authorized]) {
-      opacity: .3;
-      pointer-events: none;
-    }
-
-    /**
-     * <google-analytics-chart> styles.
-     */
-    google-analytics-chart {
-      box-shadow: 0 0 .5em rgba(0,0,0,.1);
-      border-radius: 2px;
-      background: #fff;
-      float: left;
-      margin: 0 2em 2em 0;
-      padding: 2em 2em 1em;
-      transition: opacity .2s ease;
-      max-width: 100%;
-    }
-    google-analytics-chart:first-of-type {
-      clear: both;
-    }
-    google-analytics-chart h3 {
-      font-size: 1.3em;
-      font-weight: 300;
-      margin: 0;
-    }
-
+  google-analytics-dashboard {
+    margin-top: 24px;
+    display: block;
+    transition: opacity .3s ease;
+  }
+  google-analytics-dashboard:not([authorized]) {
+    opacity: .3;
+    pointer-events: none;
+  }
+  google-analytics-chart {
+    box-shadow: 0 0 .5em rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: #fff;
+    float: left;
+    margin: 0 2em 2em 0;
+    padding: 2em 2em 1em;
+    transition: opacity .2s ease;
+    max-width: 100%;
+  }
+  google-analytics-chart:first-of-type {
+    clear: both;
+  }
+  google-analytics-chart h3 {
+    font-size: 1.3em;
+    font-weight: 300;
+    margin: 0;
+  }
   google-analytics-view-selector {
     box-shadow: 0 0 .5em rgba(0,0,0,.1);
     border-radius: 2px;
@@ -851,20 +853,17 @@
     margin: 0 0 2em 0;
     padding: 2em .5em 1em 2em;
   }
-
   google-analytics-view-selector {
     max-width: 250px;
   }
-
   google-analytics-view-selector {
-    --google-analytics-view-selector-control:
-        var(--google-analytics-control);
-    --google-analytics-view-selector-label:
-        var(--google-analytics-label);
-    --google-analytics-view-selector-select:
-        var(--google-analytics-field);
-    --google-analytics-view-selector-select-focus:
-        var(--google-analytics-field-focus);
+    --google-analytics-view-selector-control: var(--google-analytics-control);
+    --google-analytics-view-selector-label: var(--google-analytics-label);
+    --google-analytics-view-selector-select: var(--google-analytics-field);
+    --google-analytics-view-selector-select-focus: var(--google-analytics-field-focus);
+  }
+  google-signin{
+    margin-right: 12px;
   }
 
   @media (max-width: 1500px) {
