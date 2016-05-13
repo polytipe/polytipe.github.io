@@ -847,6 +847,68 @@
     margin-right: 12px;
   }
 
+  /* Feedback */
+  #issues_label{
+    width: 600px;
+    margin-bottom: 20px;
+  }
+  #issues_spinner_wrapper{
+    height: 100%;
+  }
+  #issues_spinner{
+    width: 45px;
+    height: 45px;
+  }
+  #view_all_issues{
+    padding: 0;
+    color: #888;
+    display: none;
+  }
+  .issues_container{
+    background-color: white;
+    width: 600px;
+    height: 476px;
+    overflow-y: scroll;
+  }
+  .issues_box{
+    padding: 10px 20px;
+  }
+  .badge_icon{
+    --iron-icon-width: 20px;
+    --iron-icon-height: 20px;
+    color: #999;
+  }
+  .issues_comments{
+    margin-left: 4px;
+    color: #999;
+  }
+  .issues_box:hover{
+    background-color: #eee;
+  }
+  .issue_open{
+    margin-right: 15px;
+    --iron-icon-width: 32px;
+    --iron-icon-height: 32px;
+    color: var(--polytipe-accent-color);
+  }
+  .issue_closed{
+    margin-right: 15px;
+    --iron-icon-width: 32px;
+    --iron-icon-height: 32px;
+    color: var(--app-accent-color);
+  }
+  #issues_empty_state{
+    color: #888;
+  }
+  #issues_empty_state iron-icon{
+    --iron-icon-width: 64px;
+    --iron-icon-height: 64px;
+    color: #aaa;
+  }
+  #issues_empty_state div{
+    margin-top: 8px;
+  }
+
   @media (max-width: 1500px) {
     .add_fab{
       bottom: 24px;

@@ -182,7 +182,7 @@
               <div class="paper-font-title">Polytipe</div>
             </paper-toolbar>
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Repositorios</div>
+              <div class="elements_label paper-font-subhead">Repositorios</div>
               <div class="layout horizontal wrap">
                 <iron-selector wide-layout$="{{wide}}" id="repo_selector" attr-for-selected="repo" selected="{{selected_repo}}" class="layout horizontal">
                   <template is="dom-repeat" items="{{user_repos}}">
@@ -239,7 +239,7 @@
             </paper-toolbar>
 
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Proyectos</div>
+              <div class="elements_label paper-font-subhead">Proyectos</div>
               <iron-selector wide-layout$="{{wide}}" id="project_selector" attr-for-selected="project" selected="{{selected_project}}" class="layout horizontal">
                 <template is="dom-repeat" items="{{user_projects}}">
                   <paper-material elevation="2" project="{{item.name}}" class="project_box layout vertical flex">
@@ -320,7 +320,7 @@
             </paper-toolbar>
 
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Pantallas</div>
+              <div class="elements_label paper-font-subhead">Pantallas</div>
               <div class="layout horizontal wrap">
                 <iron-selector wide-layout$="{{wide}}" id="screen_selector" attr-for-selected="screen" selected="{{selected_screen}}" class="layout horizontal">
                   <template is="dom-repeat" items="{{project_screens}}">
@@ -376,7 +376,7 @@
             </paper-toolbar>
 
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Google Analytics</div>
+              <div class="elements_label paper-font-subhead">Google Analytics</div>
               <google-analytics-dashboard>
 
                 <google-analytics-view-selector></google-analytics-view-selector>
@@ -457,19 +457,45 @@
             </paper-toolbar>
 
             <div class="elements_group">
-              <div class="elements_label" class="paper-font-subhead">Issues</div>
-              <!-- TODO: Get issues and show them -->
-              <template is="dom-repeat" items="{{change_me}}">
-                <paper-material elevation="2" project="{{item.name}}" class="project_box layout vertical flex">
-                  <div class="flex layout vertical center end-justified">
-                    <iron-icon class="project_box_icon" icon="description"></iron-icon>
+              <div id="issues_label" class="elements_label paper-font-subhead layout horizontal center">
+                <div class="flex">Issues</div>
+                <a href="https://github.com/{{selected_repo}}/polytipe-projects/issues?q=label%3A{{selected_project}}" target="_blank" class="link">
+                  <paper-button noink id="view_all_issues" class="paper-font-button">Ver todos</paper-button>
+                </a>
+              </div>
+              <paper-material elevation="2" class="issues_container">
+                <template is="dom-repeat" items="{{project_issues}}">
+                  <a href="{{item.url}}" target="_blank" class="link">
+                    <paper-item class="issues_box layout horizontal center">
+                      <template is="dom-if" if="{{item.state}}">
+                        <iron-icon class="issue_open" icon="info-outline"></iron-icon>
+                      </template>
+                      <template is="dom-if" if="{{!item.state}}">
+                        <iron-icon class="issue_closed" icon="info-outline"></iron-icon>
+                      </template>
+                      <div class="layout vertical flex">
+                        <div class="paper-font-subhead">{{item.title}}</div>
+                        <div class="layout horizontal paper-font-menu">
+                          <div class="commit_author">#{{item.number}}</div>
+                          <div class="commit_date">{{item.date}} por {{item.author}}</div>
+                        </div>
+                      </div>
+                      <div class="layout horizontal center">
+                        <iron-icon class="badge_icon" icon="communication:chat-bubble-outline"></iron-icon>
+                        <div class="issues_comments paper-font-caption">{{item.comments}}</div>
+                      </div>
+                      <paper-ripple recenters></paper-ripple>
+                    </paper-item>
+                  </a>
+                </template>
+                <div id="issues_spinner_wrapper" class="flex layout vertical center-center">
+                  <paper-spinner id="issues_spinner" active></paper-spinner>
+                  <div id="issues_empty_state" class="layout vertical center">
+                    <iron-icon icon="info-outline"></iron-icon>
+                    <div>No hay issues que ver</div>
                   </div>
-                  <div class="flex layout vertical center-center">
-                    <div class="project_name paper-font-headline">{{item.name}}</div>
-                  </div>
-                  <paper-ripple recenters></paper-ripple>
-                </paper-material>
-              </template>
+                </div>
+              </paper-material>
             </div>
           </section>
 

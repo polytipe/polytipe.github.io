@@ -554,6 +554,8 @@ function goto(section) {
       document.getElementById('no_tracking_toast').show();
       return;
     }
+  }else if(section == "feedback_view"){
+    getIssues();
   }
   app.polytipe_section = section;
 }
@@ -1117,6 +1119,48 @@ function leaveProject() {
   goto('user_view');
 }
 
+/* Feedback / issues actions */
+
+function getIssues() {
+  document.getElementById('issues_spinner_wrapper').style.display = "flex";
+  document.getElementById('issues_spinner').style.display = "flex";
+  document.getElementById('issues_empty_state').style.display = "none";
+  app.project_issues = [];
+  //var issues = github.getIssues(app.selected_repo, "polytipe-projects");
+  var issues = github.getIssues("alejost848", "polytipe-projects");
+  var options = {
+    labels: app.selected_project,
+    state: "all"
+  };
+
+  issues.list(options, function(err, issues) {
+    var project_issues = [];
+    var number_of_issues = issues.length;
+    if(number_of_issues > 10){
+      number_of_issues = 10;
+    }
+    for (var i=0; i < number_of_issues; i++) {
+      var date = "Hace " + timeAgo(Date.parse(issues[i].created_at));
+      var state = issues[i].state;
+      if(state == "open"){
+        state = true;
+      }else if(state == "closed"){
+        state = false;
+      }
+      project_issues.push({"number": issues[i].number, "title": issues[i].title, "author": issues[i].user.login, "date": date, "url": issues[i].html_url, "state": state, "comments": issues[i].comments});
+    }
+    app.project_issues = project_issues;
+    if(app.project_issues.length > 0){
+      document.getElementById("view_all_issues").style.display = "flex";
+      document.getElementById('issues_spinner_wrapper').style.display = "none";
+    }else{
+      document.getElementById('issues_spinner').style.display = "none";
+      document.getElementById('issues_empty_state').style.display = "flex";
+    }
+
+  });
+}
+
 /* Screen actions */
 
 function addScreenDialog(){
@@ -1360,7 +1404,7 @@ function generatePrototype() {
       }
     }
     if(has_prototype){
-      repo.read('gh-pages', 'index.html', function(err1, data) {
+      repo.read(app.selected_project, 'index.html', function(err1, data) {
         data = data.replace(/project_name/g, app.selected_project);
         data = data.replace(/usuario/g, app.selected_repo);
         data = data.replace(/avatar_url/g, app.avatar);
