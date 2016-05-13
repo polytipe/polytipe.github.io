@@ -1,0 +1,29 @@
+{
+  "name": "clipboard-input",
+  "version": "1.2.1",
+  "authors": [
+    "Josh Crowther <jshcrowthe@gmail.com>"
+  ],
+  "description": "An type extension element for a copyable input field",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "clipboard",
+    "copy",
+    "type-extension"
+  ],
+  "main": "clipboard-input.html",
+  "license": "MIT",
+  "homepage": "https://github.com/jshcrowthe/clipboard-input/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.3.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0"
+  }
+}
