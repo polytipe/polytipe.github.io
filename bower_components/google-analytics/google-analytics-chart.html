@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-chart/google-chart.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
 <link rel="import" href="google-analytics-query.html">
 <link rel="import" href="google-analytics-loader.html">
@@ -25,6 +27,7 @@ Google Chart.
 -->
 
 <dom-module is="google-analytics-chart">
+  <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
 
   <style>
     :host {
@@ -47,6 +50,20 @@ Google Chart.
       -ms-flex: 1 0 0%;
       flex: 1 0 0%;
       width: auto;
+    }
+    #no_data{
+      -webkit-flex: 1 0 0%;
+      -ms-flex: 1 0 0%;
+      flex: 1 0 0%;
+      width: auto;
+      display: none;
+      color: #ccc;
+    }
+    iron-icon{
+      width: 100px;
+      height: 100px;
+      color: #ddd;
+      margin-bottom: 12px;
     }
   </style>
 
@@ -75,6 +92,10 @@ Google Chart.
       type="{{type}}"
       data="{{data.dataTable}}">
     </google-chart>
+    <div id="no_data" class="layout vertical center-center">
+      <iron-icon icon="error-outline"></iron-icon>
+      <div>No hay datos suficientes</div>
+    </div>
     <content select="footer"></content>
   </template>
 
@@ -392,6 +413,17 @@ Google Chart.
      * @param {Object} dataTable - The dataTable data.
      */
     function ensureProperDataTableTypes(dataTable) {
+      if(!dataTable.rows){
+        var all_charts = document.querySelectorAll('#chart');
+        for (var i = 0; i < all_charts.length; i++) {
+          all_charts[i].style.display = "none";
+        }
+        var all_no_data = document.querySelectorAll('#no_data');
+        for (var i = 0; i < all_no_data.length; i++) {
+          all_no_data[i].style.display = "flex";
+        }
+        return;
+      }
       for (var i = 0; i < dataTable.rows.length; i++) {
         var row = dataTable.rows[i];
         for (var j = 0; j < row.c.length; j++) {
