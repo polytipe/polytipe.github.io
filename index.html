@@ -595,6 +595,14 @@
                       <paper-icon-button icon="feedback" onclick="goto('feedback_view')"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Ver feedback</paper-tooltip>
                     </div>
+                    <template is="dom-if" if="{{tracking_exists}}">
+                      <div>
+                        <a class="link" tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
+                          <paper-icon-button icon="visibility"></paper-icon-button>
+                        </a>
+                        <paper-tooltip offset="0" animation-delay="0">Ver prototipo</paper-tooltip>
+                      </div>
+                    </template>
                     <div>
                       <paper-icon-button icon="launch" onclick="promptGeneratePrototype()"></paper-icon-button>
                       <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
@@ -869,26 +877,34 @@
           <h2 class="flex">Exportar prototipo</h2>
           <paper-spinner id="generating_prototype_spinner"></paper-spinner>
         </div>
-        <p class="paper-font-subhead">
-          Genera una página web para realizar pruebas de usabilidad.
-          Si deseas recibir datos de los usuarios, puedes
-          <strong>
-            <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
-          </strong>
-          de Google Analytics para monitorear su actividad utilizando
-          los siguientes campos
-        </p>
-        <div class="analytics_field layout horizontal center">
-          <div>Nombre</div>
-          <clipboard-input title-text="Copiar al portapapeles" value='{{selected_project}}'></clipboard-input>
-        </div>
-        <div class="analytics_field layout horizontal center">
-          <div>URL</div>
-          <clipboard-input title-text="Copiar al portapapeles" value='{{selected_repo}}.github.io/polytipe-projects'></clipboard-input>
-        </div>
 
-        <paper-input id="google_analytics_input" label="ID de seguimiento" value="{{analytics_id}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
-        <!-- <iron-a11y-keys id="add_commit_keys" keys="enter" target="[[add_target]]" stop-keyboard-event-propagation></iron-a11y-keys> -->
+        <template is="dom-if" if="{{tracking_exists}}">
+          <p class="paper-font-subhead">
+            Genera una página web para realizar pruebas de usabilidad.
+            Ya tienes un ID de seguimiento de Google Analytics activo.
+          </p>
+        </template>
+
+        <template is="dom-if" if="{{!tracking_exists}}">
+          <p class="paper-font-subhead">
+            Genera una página web para realizar pruebas de usabilidad.
+            Si deseas recibir datos de los usuarios, puedes
+            <strong>
+              <a class="link" href="https://support.google.com/analytics/answer/1042508?hl=es" target="_blank">generar un ID de seguimiento</a>
+            </strong>
+            de Google Analytics para monitorear su actividad utilizando
+            los siguientes campos
+          </p>
+          <div class="analytics_field layout horizontal center">
+            <div>Nombre</div>
+            <clipboard-input title-text="Copiar al portapapeles" value='{{selected_project}}'></clipboard-input>
+          </div>
+          <div class="analytics_field layout horizontal center">
+            <div>URL</div>
+            <clipboard-input title-text="Copiar al portapapeles" value='{{selected_repo}}.github.io/polytipe-projects'></clipboard-input>
+          </div>
+          <paper-input id="google_analytics_input" label="ID de seguimiento" value="{{analytics_id}}" autofocus required error-message="Este campo no puede dejarse en blanco"></paper-input>
+        </template>
 
         <div class="buttons">
           <paper-button class="cancel_button" noink dialog-dismiss>Cancelar</paper-button>
@@ -904,7 +920,7 @@
         </a>
       </paper-toast>
       <paper-toast id="deleted_repo_toast" duration="3500" text="El repositorio fue eliminado de tu cuenta"></paper-toast>
-      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en pocos minutos">
+      <paper-toast id="prototype_toast" duration="5000" text="El prototipo estará listo en breve aquí">
           <a tabindex="-1" href="https://{{selected_repo}}.github.io/polytipe-projects" target="_blank">
           <paper-button noink>Ver</paper-button>
         </a>
@@ -920,6 +936,7 @@
         <paper-button noink onclick="promptSaveProject()">Guardar</paper-button>
       </paper-toast>
       <paper-toast id="no_screens_toast" duration="4000" text="No hay pantallas para previsualizar"></paper-toast>
+      <paper-toast id="no_tracking_toast" duration="5000" text="No se ha configurado un ID de seguimiento para este proyecto"></paper-toast>
     </div>
   </template>
 
