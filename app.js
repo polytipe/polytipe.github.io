@@ -200,12 +200,17 @@ function iframe_ready() {
         } else if (element_properties[key].type.name == 'String') {
           if(key != "link"){
             var input;
-            if (selected_element[key].length > 30) {
-              input = document.createElement("paper-textarea");
-              input.maxRows = 2;
-            } else{
-              input = document.createElement("paper-input");
-              input.type = "text";
+            if(key == "icon"){
+              input = document.createElement("paper-autocomplete");
+              input.source = app.all_icons;
+            }else{
+              if (selected_element[key].length > 30) {
+                input = document.createElement("paper-textarea");
+                input.maxRows = 2;
+              } else{
+                input = document.createElement("paper-input");
+                input.type = "text";
+              }
             }
             input.label = key;
             input.id = key;
@@ -710,6 +715,13 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   app.preview_mode = false;
   user_repos = [];
+  var all_icons = [];
+  for (var i = 0; i < app.iconsets.length; i++) {
+    for (var j = 0; j < app.iconsets[i].getIconNames().length; j++) {
+      all_icons.push(app.iconsets[i].getIconNames()[j]);
+    }
+  }
+  app.all_icons = all_icons;
 });
 
 /* Misc actions */
