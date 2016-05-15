@@ -45,10 +45,10 @@
           value: false,
           reflectToAttribute: true
         },
-        bottom_right:{
+        float:{
           type: Boolean,
           value: true,
-          observer: "_bottom_right_Changed",
+          observer: "_floatChanged",
           reflectToAttribute: true
         },
         flex:{
@@ -85,8 +85,8 @@
         this.toggleClass('flex', this.flex);
       },
 
-      _bottom_right_Changed:function () {
-        if (this.bottom_right) {
+      _floatChanged:function () {
+        if (this.float) {
           this.toggleClass("bottom", true);
         }else{
           this.toggleClass("bottom", false);

@@ -308,7 +308,7 @@
                 <paper-tooltip offset="0" animation-delay="0">Previsualizar</paper-tooltip>
               </div>
               <div>
-                <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip">
+                <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip" target="_blank">
                   <paper-icon-button icon="file-download"></paper-icon-button>
                 </a>
                 <paper-tooltip offset="0" animation-delay="0">Descargar proyecto</paper-tooltip>
@@ -504,8 +504,8 @@
               <paper-scroll-header-panel drawer id="sidebar_frame">
                 <paper-scroll-header-panel class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_top_mode}}">
-                    <paper-tab name="elements_view">Elementos</paper-tab>
-                    <paper-tab name="tree_view">Tree</paper-tab>
+                    <paper-tab name="elements_view">ELEMENTOS</paper-tab>
+                    <paper-tab name="tree_view">TREE</paper-tab>
                   </paper-tabs>
                   <iron-pages attr-for-selected="id" selected="{{screen_editor_top_mode}}">
                     <section id="elements_view" class="sidebar_section">
@@ -528,8 +528,8 @@
 
                 <paper-scroll-header-panel id="inputs_frame" class="sidebar_panel" fixed>
                   <paper-tabs noink attr-for-selected="name" class="sidebar_tabs paper-header" selected="{{screen_editor_bottom_mode}}">
-                    <paper-tab name="editor_properties">Propiedades</paper-tab>
-                    <paper-tab name="editor_styles">Estilos</paper-tab>
+                    <paper-tab name="editor_properties">PROPIEDADES</paper-tab>
+                    <paper-tab name="editor_styles">ESTILOS</paper-tab>
                   </paper-tabs>
                   <div id="properties_placeholder" class="layout vertical center-center">
                     <iron-icon id="no_elements_selected" icon="touch-app"></iron-icon>
@@ -634,7 +634,7 @@
                       <paper-tooltip offset="0" animation-delay="0">Exportar prototipo</paper-tooltip>
                     </div>
                     <div>
-                      <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip">
+                      <a class="link" tabindex="-1" href="https://github.com/{{selected_repo}}/polytipe-projects/archive/{{selected_project}}.zip" target="_blank">
                         <paper-icon-button icon="file-download"></paper-icon-button>
                       </a>
                       <paper-tooltip offset="0" animation-delay="0">Descargar proyecto</paper-tooltip>
