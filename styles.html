@@ -1,55 +1,18 @@
 <style is="custom-style">
-  /*Color variables*/
   :root {
     --polytipe-bg-color: #303030;
     --polytipe-toolbar-color: #212121;
     --polytipe-accent-color: #2AB767;
-    --polytipe-secondary-color: #FFEB3B;
-    --sidebar-bg-color: #242424;
-
-    --app-bg-color: #E5E5E5;
-    --app-primary-color: var(--paper-light-blue-500);
-    --app-accent-color: var(--paper-red-400);
-
-    --google-analytics-control: {
-      display: block;
-      -webkit-flex: 1 1 0%;
-      -ms-flex: 1 1 0%;
-      flex: 1 1 0%;
-      margin: 0 1.5em 1em 0;
-      min-width: 0;
-    };
-    --google-analytics-label: {
-      display: block;
-      font-weight: bold;
-      padding: 0 0 .4em 2px;
-    };
-    --google-analytics-field: {
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      height: 34px;
-      line-height: 20px;
-      padding: 6px 12px;
-      transition: border-color .2s;
-      width: 100%;
-    };
-    --google-analytics-field-focus: {
-      border-color: #4d90fe;
-      outline: 0;
-    };
   }
 
-  * {
-		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-	}
-
-  html{
+  body,
+  html {
     font-family: "Roboto", 'Helvetica Neue';
+    background-color: var(--polytipe-bg-color);
   }
 
-  body.main{
-    background-color: var(--polytipe-bg-color);
+  a{
+    color: inherit;
   }
 
   #drawer_panel_wrapper{
@@ -71,913 +34,386 @@
   .paper-font-menu {@apply(--paper-font-menu);}
   .paper-font-button {@apply(--paper-font-button);}
 
-  /*Element defaults*/
+  /* Toolbar */
 
-  .sidebar_panel paper-toggle-button{
-    --paper-toggle-button-checked-bar-color: var(--polytipe-accent-color);
-    --paper-toggle-button-checked-button-color: var(--polytipe-accent-color);
-    --paper-toggle-button-checked-ink-color: var(--polytipe-accent-color);
+  #drawer_toggle{
+    display: none;
   }
-
-  .sidebar_panel paper-input{
-    --paper-input-container-input-color: white;
-		--paper-input-container-focus-color: var(--polytipe-accent-color);
-	}
-
-  .sidebar_panel paper-autocomplete{
-    --paper-input-container-input-color: white;
-		--paper-input-container-focus-color: var(--polytipe-accent-color);
-	}
-
-  .sidebar_panel paper-textarea{
-    --paper-input-container-input-color: white;
-    --paper-input-container-focus-color: var(--polytipe-accent-color);
+  #main_toolbar{
+    padding: 0 60px;
+    --paper-toolbar-background: var(--polytipe-bg-color);
+    height: 85px;
+    width: 100vw;
+    padding-top: 10px;
   }
-
-  paper-fab{
-    --paper-fab-keyboard-focus-background: var(--polytipe-accent-color);
+  #main_logo{
+    width: 170px;
+    height: 50px;
   }
-
-  paper-menu-button{
-    padding: 0;
+  #toolbar_logo{
+    width: 170px;
+    height: 50px;
   }
-
-  paper-item{
-    cursor: pointer;
-  }
-
-  /*Sidebar frame*/
-
-  #sidebar_frame{
-    background-color: var(--sidebar-bg-color);
-    font-size: 20px;
-  }
-
-  .sidebar_polytipe_logo{
-    width: 230px;
-    height: 60px;
-    color: rgba(0, 0, 0, 0.15);
-  }
-
-  .sidebar_polytipe_toolbar{
-    background-color: var(--polytipe-accent-color);
-  }
-
-  .sidebar_panel{
-    height: 50%;
-  }
-  .sidebar_section{
-    height: 100%;
-  }
-  .sidebar_tabs{
-    background-color: var(--polytipe-toolbar-color);
+  paper-tabs {
     --paper-tabs-selection-bar-color: var(--polytipe-accent-color);
-    color: white;
-    height: 64px;
+    text-transform: uppercase;
+    height: 85px;
   }
-
-  #elements_list{
-    height: 100%;
-    background-color: inherit;
-    color: #fafafa;
-    cursor: pointer;
+  #editor_button {
+    padding: 10px;
+    background-color: var(--polytipe-accent-color);
+    margin-left: 18px;
   }
-
-  .sidebar_list{
-    padding: 20px;
-  }
-  .sidebar_list2{
-    padding: 10px 20px;
-  }
-
-  #properties_placeholder{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.2);
-  }
-
-  #properties_placeholder div{
-    margin-top: 10px;
-    width: 90px;
-    font-size: 16px;
-  }
-
-  #styles_list{
+  #editor_button_narrow{
     display: none;
-  }
-
-  #editor_links{
-    display: none;
-  }
-
-  paper-swatch-picker {
-    margin-right: 15px;
-    margin-top: 12px;
-    color: rgba(255, 255, 255, 0.5);
-    --paper-swatch-picker-color-size: 15px;
-    --paper-swatch-picker-icon: {
-      width: 35px;
-      height: 35px;
-      padding: 0;
-    }
-  }
-
-  #no_elements_selected{
-    width: 75px;
-    height: 75px;
-  }
-
-  .array_fab{
-    padding: 4px;
-    @apply(--shadow-none);
-    --paper-fab-background: #323232;
-    --paper-fab-keyboard-focus-background: #505050;
-    width: 25px;
-    height: 25px;
-    --iron-icon-width: 20px;
-    --iron-icon-height: 20px;
-  }
-
-  .outlined_element{
-    box-sizing: border-box;
-    border: 2px solid yellow !important;
-  }
-
-  .no_outlined_element{
-    border: none !important;
-  }
-
-  .property_name{
-    padding: 10px 0;
-    margin-top: 8px;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 24px;
-    color: #737373;
-  }
-
-  .sub_property{
-    margin-left: 15px;
-  }
-
-  #tree_view{
-    padding: 15px;
-  }
-
-  file-tree{
-    color: #eee;
-    text-transform: lowercase;
-  }
-
-  paper-icon-button{
-    --paper-icon-button-ink-color: rgba(255, 255, 255, 0.4);
-  }
-  .commit_spinner{
-    width: 17px;
-    height: 17px;
-  }
-
-  #collaborators_dialog{
-    min-height: 250px;
-  }
-
-  #collaborators_dropdown{
-    --paper-menu-button-content:{
-      width: 252px;
-      @apply(--shadow-elevation-12dp);
-    }
-  }
-  .collaborators_item{
-    cursor: pointer;
-  }
-  .collaborators_item:hover{
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
-  /*Element actions*/
-
-  #element_actions{
-    display: none;
-  }
-  #link_dropdown{
-    display: none;
-    padding: 0 20px 20px 20px;
-  }
-  #link_screen{
-    width: 100%;
-    --paper-input-container-input-color: white;
-		--paper-input-container-focus-color: var(--polytipe-accent-color);
-  }
-
-  #link_screen paper-item{
-    position: relative;
-    min-height: 32px;
-    width: 177px;
-  }
-  .move_button{
-    background-color: var(--polytipe-bg-color);
-    color: white;
-    width: 35px;
-    height: 35px;
-    margin-right: 2px;
-  }
-  #delete_button{
-    background-color: var(--app-accent-color);
-    color: white;
-    width: 35px;
-    height: 35px;
-    margin-left: 10px;
-  }
-
-  /*Screen editor*/
-
-  #iframe_loading_spinner{
-    position: absolute;
-    right: 0;
-    left: 0;
-    margin: auto;
-    width: 45px;
-    height: 45px;
-  }
-
-  #editor_toolbar{
-    transition: background-color 0.4s;
-  }
-
-  .main_frame{
-    position: relative;
-    background-color: var(--polytipe-bg-color);
-  }
-  .screen_view_toolbar{
-    background-color: var(--polytipe-toolbar-color);
-  }
-  .back_icon{
-    margin-right: 24px;
-  }
-  .right_drawer_toggle{
-    margin: 0 !important;
-    display: none;
-  }
-  #app_container{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    min-height: 700px;
-  }
-  #app_iframe{
-    width: 360px;
-    height: 640px;
-    background-color: var(--app-bg-color);
-    border: none;
-  }
-  paper-toast{
-    background-color: #424242;
-    color: white;
-  }
-  paper-material{
-    border-radius: 2px;
-  }
-  .delete_icon{
-    color: var(--app-accent-color);
-  }
-
-  iron-pages section{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-  .save_button{
-    color: #888;
-  }
-  .save_button_white{
-    color: white;
-    font-size: 14px;
-  }
-  paper-tooltip{
-    text-align:center;
-    --paper-tooltip:{
-      font-size: 12px;
-    }
-  }
-  iron-selector[wide-layout]{
-    @apply(--layout-horizontal);
-    @apply(--layout-wrap);
-  }
-  iron-selector:not([wide-layout]){
-    @apply(--layout-horizontal);
-    @apply(--layout-around-justified);
-  }
-  #editor_links paper-item{
-    position: relative;
-    min-height: 32px;
-    width: 177px;
-  }
-  #editor_links paper-dropdown-menu {
-    width: 100%;
-    --paper-input-container-focus-color: var(--polytipe-accent-color);
-    --paper-input-container-input: {
-      color: white;
-    }
-  }
-
-  #generate_prototype_dialog{
-    width: 330px;
-  }
-  #generate_prototype_dialog paper-input{
-    margin-top: 2px;
-    margin-bottom: 20px;
-    width: 200px;
-    --paper-input-container-focus-color: var(--polytipe-accent-color);
-  }
-  .prototype_title{
-    margin-bottom: 30px;
-  }
-  .prototype_button{
-    color: #888;
-  }
-  .prototype_button:hover{
     color: var(--polytipe-accent-color);
   }
-  .prototype_description{
-    color: #888;
-    font-size: 13px;
-    line-height: 13px;
-  }
-  #last_saved{
-    margin-top: 4px;
-  }
-  .analytics_field{
-    margin-top: 4px;
-  }
-  .analytics_field div{
-    width: 80px;
-  }
-  clipboard-input{
-    margin-left: 8px;
-  }
-  #google_analytics_input{
+  #sign_in_button{
+    padding: 10px;
     margin-top: 10px;
+    background-color: var(--polytipe-accent-color);
+    display: none;
   }
 
+  /* Drawer */
 
-  /* Drawer toolbar */
   #drawer_toolbar{
     height: 96px;
-  }
-  #avatar{
-    min-width: 50px;
-    --iron-image-width: 50px;
-    --iron-image-height: 50px;
-    border-radius: 50%;
-    margin-left: 24px;
-  }
-  #toolbar_text{
-    margin-left: 15px;
-    color: white;
-    font-size: 14px;
-    font-weight: 300;
-  }
-  #toolbar_name{
-    font-size: 14px;
-  }
-  .element_icon{
-    margin-right: 20px;
-  }
-  .light_gray_icon{
-    color: rgba(0, 0, 0, 0.2);;
+    background-color: var(--polytipe-accent-color);
   }
   .left_toolbar_icon{
     color: #bbb;
   }
-  .link{
-    color: inherit;
-    text-decoration: none;
+  .element_icon{
+    margin-right: 20px;
+  }
+  section {
+    background-color: var(--polytipe-bg-color);
+    min-height: calc(100vh - 85px);
+  }
+  .white_layer{
+    background-color: #ddd;
   }
 
-  /* Sign in screen */
+  #intro_wrapper{
+    width: 50%;
+    margin-bottom: 50px;
+  }
 
-  #sign_in_screen{
-    position: relative;
-    height: 100vh;
-    min-height: 850px;
-  }
-  #sign_in_button{
-    height: 36px;
-  }
-  #start_button{
-    display: none;
-  }
-  #start_button_loading{
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    margin: auto;
-    top: 0px;
-    bottom: 0px;
-    width: 24px;
-    height: 24px;
-    --paper-spinner-color: #aaa;
-  }
-  #sign_in_logo_small{
-    width: 150px;
-    height: auto;
+  #welcome_text{
+    margin-top: 50px;
     color: white;
-  }
-  #sign_in_box{
-    width: 288px;
-    height: 512px;
-    overflow: hidden;
-    color: rgba(20, 20, 20, 0.75);
-    border-radius: 2px;
-    padding: 40px;
-  }
-  #sign_in_box section{
-    width: 100%;
-    height: 100%;
-    padding: 40px;
-    box-sizing: border-box;
     text-align: center;
+    background-color: rgba(48, 48, 48, 0.7);
   }
-  .sign_in_title{
-    margin-bottom: 20px;
+  #tagline{
+    font-size: 28px;
+    text-transform: uppercase;
+    width: 60%;
+    font-weight: 500;
   }
-  .sign_in_description{
-    font-size: 18px;
-    width: 80%;
+  #description{
+    font-size: 22px;
+    font-weight: 300;
+    padding: 20px 0;
+    width: 60%;
     margin: 0 auto;
   }
-  #sign_in_box section:nth-child(1){
+
+  neon-animated-pages{
+    width: 100vw;
+    min-height: calc(100vh - 85px);
+    overflow: hidden;
+  }
+  .features_wrapper{
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+    @apply(--layout-flex);
+    width: 100vw;
+    min-height: calc(100vh - 85px);
+    padding: 0 25%;
+    box-sizing: border-box;
+  }
+  .features_wrapper div{
+    color: rgba(20, 20, 20, 0.75);
+  }
+  .features_title{
+    font-size: 36px;
+    width: 200px;
+    margin-bottom: 24px;
+  }
+  .features_description{
+    width: 350px;
+    font-size: 20px;
+  }
+
+  neon-animated-pages neon-animatable:nth-child(1){
     background-color: var(--polytipe-accent-color);
   }
-  #sign_in_box section:nth-child(2){
+  neon-animated-pages neon-animatable:nth-child(2){
     background-color: var(--paper-lime-400);
   }
-  #sign_in_box section:nth-child(3){
+  neon-animated-pages neon-animatable:nth-child(3){
     background-color: var(--paper-amber-400);
   }
-  #sign_in_box section:nth-child(4){
+  neon-animated-pages neon-animatable:nth-child(4){
     background-color: var(--paper-red-400);
   }
-  #sign_in_box section:nth-child(5){
+  neon-animated-pages neon-animatable:nth-child(5){
     background-color: var(--paper-deep-purple-300);
   }
-  #sign_in_box section:nth-child(6){
+  neon-animated-pages neon-animatable:nth-child(6){
     background-color: var(--paper-cyan-400);
   }
-  #sign_in_material paper-button{
-    font-size: 14px;
-    color: #555;
-    background-color: #eee;
-    position: absolute;
-    left: 0;
-    bottom: 70px;
-    right: 0;
-    width: 100px;
-    margin: auto;
-  }
-  .sign_in_icon_container{
-    height: 280px;
-  }
-  .sign_in_icon{
-    width: 150px;
-    height: 150px;
-    color: rgba(0, 0, 0, 0.2);
-  }
+
   #carousel_dots{
     position: absolute;
-    bottom: 30px;
     left: 0;
     right: 0;
-    width: 80px;
+    z-index: 1;
+    bottom: auto !important;
+    width: 100px;
     margin: 0 auto;
+    margin-top: 80px;
   }
   .carousel_dot{
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background-color: rgba(0, 0, 0, 0.1);
     transition: all 0.5s;
     cursor: pointer;
   }
   .carousel_dot + .carousel_dot{
-    margin-left: 3px;
+    margin-left: 5px;
   }
   .carousel_dot.iron-selected{
     background-color: rgba(255,255,255,0.9);
   }
-
-  /* Repos view */
-  #loading_repos_box{
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: default;
+  .link{
+    color: inherit;
+    text-decoration: none;
   }
-  #loading_repos_box paper-spinner{
-    width: 45px;
-    height: 45px;
-  }
-  #empty_state_repo{
-    display: none;
-  }
-
-  /* User view */
-
-  #create_repo_dialog{
-    width: 300px;
-    border-radius: 2px;
-    padding: 5px;
-    margin: 0;
-  }
-  .create_repo_description{
-    margin-top: 25px;
-    margin-bottom: 15px;
-  }
-
-  #empty_state_project{
-    background-color: var(--app-bg-color);
-    display: none;
-  }
-  .empty_state_icon{
-    color: rgba(0, 0, 0, 0.2);
-    width: 75px;
-    height: 75px;
-    margin: 20px 0px;
-  }
-  .empty_state_description{
-    margin: 0px 5px 0px 5px;
-    color: rgba(0, 0, 0, 0.7);
-    word-wrap: break-word;
-  }
-  .empty_state_description div:first-child{
-    font-size: 18px;
-  }
-  .empty_state_description div:last-child{
-    font-size: 16px;
-    line-height: 20px;
-  }
-  .empty_state_arrow{
-    @apply(--shadow-none);
-    color: rgba(0, 0, 0, 0.7);
-    width: 26px;
-    height: 26px;
-  }
-  .project_box{
-    min-width: 250px;
-    min-height: 250px;
-    max-width: 250px;
-    max-height: 250px;
-    margin: 15px;
-    background-color: var(--app-bg-color);
-    cursor: pointer;
-    padding: 15px;
-    box-sizing: border-box;
-  }
-  .project_box_icon{
-    color: rgba(0, 0, 0, 0.2);
-    width: 50px;
-    height: 50px;
-  }
-  .project_name{
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    color: rgba(0, 0, 0, 0.7);
-    word-break: break-all;
-    text-align: center;
-  }
-  #loading_project_box{
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: default;
-  }
-  #loading_project_box paper-spinner{
-    width: 45px;
-    height: 45px;
-  }
-  .add_fab{
-    position: fixed;
-    bottom: 36px;
-    right: 36px;
-    background-color: var(--polytipe-accent-color);
-  }
-  #loading_projects_text{
-    margin-top: 20px;
-    width: 100px;
-    text-align: center;
-    color: #aaa;
-  }
-  .toasts paper-toast a{
-    color: var(--polytipe-accent-color);
-  }
-  .toasts paper-toast paper-button{
-    width: 30px;
-    color: var(--polytipe-accent-color);
-  }
-
-  /*Screens view*/
-
-  #empty_state_screen{
-    display: none;
-  }
-  .empty_state_screen_icon{
-    color: rgba(0, 0, 0, 0.2);
-    width: 75px;
-    height: 75px;
-    margin: 60px 0px;
-  }
-  .elements_label{
-    color: #888;
-    margin-bottom: 10px;
-  }
-  .elements_group{
-    padding: 100px;
-  }
-  .elements_group iron-selector{
-    flex-wrap: wrap;
-  }
-  .screen_box{
-    width: 216px;
-    height: 384px;
-    margin: 10px;
-    background-color: var(--app-bg-color);
-    cursor: pointer;
-    padding: 15px;
-    box-sizing: border-box;
-  }
-  .screen_box paper-fab{
-    background-color: var(--polytipe-accent-color);
-    @apply(--shadow-none);
-  }
-  .screen_box div{
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    color: rgba(0, 0, 0, 0.7);
-  }
-  .screen_box_icon{
-    color: rgba(0, 0, 0, 0.2);
-    width: 50px;
-    height: 50px;
-  }
-  #screen_placeholder{
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  #screen_placeholder paper-spinner{
-    width: 45px;
-    height: 45px;
-    margin-top: 20px;
-  }
-  #no_screens_message{
-    display: none;
-  }
-
-  #get_commits_dialog{
-    width: 700px;
-    height: 500px;
-  }
-  #commits_toolbar{
-    padding: 0;
-  }
-  #commits_header_panel{
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  #commits_header_panel paper-toolbar{
-    background-color: white;
-    color: black;
-    padding: 0px;
-  }
-  #commits_header_panel h2{
-    padding-left: 12px;
-  }
-  #loading_commits_spinner{
-    padding-right: 12px;
-  }
-  #commits_view_more{
-    color: var(--polytipe-accent-color);
-  }
-  .commit_box{
-    padding: 10px 20px;
-  }
-  .commit_box:hover{
-    background-color: #eee;
-  }
-  .commit_avatar{
-    --iron-image-width: 48px;
-    --iron-image-height: 48px;
-    margin-right: 8px;
+  .circle_material{
+    padding: 44px;
     border-radius: 50%;
+    background-color: white;
+    color: #444;
+    margin-left: 100px;
   }
-  .commit_author{
+  .circle_material_icon{
+    width: 100px;
+    height: 100px;
+  }
+
+  #plans_section_title{
+    margin-top: 150px;
+    margin-bottom: 30px;
+    font-size: 32px;
+    color: rgba(20, 20, 20, 0.75);
+    display: block;
+  }
+
+  #plans_container{
+    width: 60%;
+    margin-bottom: 150px;
+  }
+  .plan_box{
+    background-color: white;
+    border-radius: 2px;
+    width: 250px;
+    min-height: 350px;
+    padding: 30px;
+    margin: 12px;
+    box-sizing: border-box;
+  }
+  .plan_title{
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 44px;
     color: #555;
   }
-  .commit_date{
+  .plan_pricing{
+    font-size: 50px;
+    color: #555;
+  }
+  .plan_pricing_month{
+    font-size: 14px;
     margin-left: 5px;
-    color: #888;
-    font-weight: 400;
+    color: #999;
+  }
+  .plan_description{
+    margin-top: 24px;
+    font-size: 15px;
+    text-align: center;
+    color: #999;
+  }
+  .plan_button{
+    background-color: #ddd;
+    color: #aaa;
+    width: 150px;
+    transition: all 0.3s;
+  }
+  .plan_button:hover{
+    background-color: var(--polytipe-accent-color);
+    color: #fff;
   }
 
-  .modal_dialog{
-    width: 300px;
+  #contact_section_title{
+    margin-top: 80px;
+    font-size: 32px;
+    color: white;
   }
-  .modal_dialog paper-input{
-    margin-top: 10px;
-    --paper-input-container-focus-color: var(--polytipe-accent-color);
-  }
-  .modal_dialog .buttons{
-    margin-top: 25px;
-  }
-  .accept_button{
-    color: var(--polytipe-accent-color);
-    font-weight: 700;
-  }
-  .cancel_button{
-    color: #777;
-  }
-  .modal_dialog .buttons .red_button{
-    color: var(--app-accent-color);
-    font-weight: 700;
-  }
-  #collaborators_group{
-    margin-top: 20px;
-  }
-  #collaborators_group_title{
-    margin-bottom: 10px;
-  }
-
-  /*Iframe frame*/
-
-  #drawer_content{
-    margin: 0;
-    height: 100vh;
+  .contact_box{
+    background-color: white;
+    border-radius: 2px;
+    width: 350px;
+    height: 450px;
+    padding: 40px;
+    margin-top: 80px;
     box-sizing: border-box;
   }
-
-  /* Analytics view */
-
-  google-analytics-dashboard {
-    margin-top: 24px;
-    display: block;
-    transition: opacity .3s ease;
-  }
-  google-analytics-dashboard:not([authorized]) {
-    opacity: .3;
-    pointer-events: none;
-  }
-  google-analytics-chart {
-    box-shadow: 0 0 .5em rgba(0,0,0,.1);
-    border-radius: 2px;
-    background: #fff;
-    float: left;
-    margin: 0 2em 2em 0;
-    padding: 2em 2em 1em;
-    transition: opacity .2s ease;
-    max-width: 100%;
-  }
-  google-analytics-chart:first-of-type {
-    clear: both;
-  }
-  google-analytics-chart h3 {
-    font-size: 1.3em;
-    font-weight: 300;
-    margin: 0;
-  }
-  google-analytics-view-selector {
-    display: none;
-  }
-  google-signin{
-    margin-right: 12px;
-  }
-
-  /* Feedback */
-  #issues_label{
-    width: 600px;
-    margin-bottom: 20px;
-  }
-  #issues_spinner_wrapper{
+  #form{
+    width: 100%;
     height: 100%;
   }
-  #issues_spinner{
-    width: 45px;
-    height: 45px;
+  #contact_inputs_container{
+    width: 100%;
   }
-  #view_all_issues{
-    padding: 0;
-    color: #888;
+  .contact_input{
+    width: 100%;
+    --paper-input-container-focus-color: var(--polytipe-accent-color);
+  }
+  #contact_button{
+    width: 100%;
+    color: white;
+    background-color: var(--polytipe-accent-color);
+    margin-top: 100px;
+  }
+  paper-textarea{
+    margin-top: 24px;
+  }
+  paper-toast{
+    background-color: #424242;
+    color: white;
+  }
+  .mail_text{
+    margin-top: 40px;
+    line-height: 24px;
+    color: #ddd;
+    font-weight: 300;
+    font-size: 14px;
+    text-align: center;
+  }
+  #mail_link{
+    font-size: 18px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #eee;
+  }
+  .social_icon{
+    margin-top: 48px;
+    color: white;
+  }
+  #github_link{
+    text-align: center;
+    color: #ddd;
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 24px;
+  }
+
+  #spinner_box{
+    text-align: center;
+    width: 100%;
+    margin-top: 100px;
     display: none;
   }
-  .issues_container{
-    background-color: white;
-    width: 600px;
-    height: 476px;
-    overflow-y: scroll;
-  }
-  .issues_box{
-    padding: 10px 20px;
-  }
-  .badge_icon{
-    --iron-icon-width: 20px;
-    --iron-icon-height: 20px;
-    color: #999;
-  }
-  .issues_comments{
-    margin-left: 4px;
-    color: #999;
-  }
-  .issues_box:hover{
-    background-color: #eee;
-  }
-  .issue_open{
-    margin-right: 15px;
-    --iron-icon-width: 32px;
-    --iron-icon-height: 32px;
-    color: var(--polytipe-accent-color);
-  }
-  .issue_closed{
-    margin-right: 15px;
-    --iron-icon-width: 32px;
-    --iron-icon-height: 32px;
-    color: var(--app-accent-color);
-  }
-  #issues_empty_state{
-    color: #888;
-  }
-  #issues_empty_state iron-icon{
-    --iron-icon-width: 64px;
-    --iron-icon-height: 64px;
-    color: #aaa;
-  }
-  #issues_empty_state div{
-    margin-top: 8px;
+
+  paper-spinner-lite{
+    --paper-spinner-color: #999;
   }
 
-  @media (max-width: 1500px) {
-    .add_fab{
-      bottom: 24px;
-      right: 24px;
+  @media (max-width: 1200px) {
+    .features_wrapper{
+      padding: 0 15%;
     }
-    #sign_in_box{
-      width: 252px;
-      height: 448px;
-    }
-    .sign_in_icon_container{
-      height: 240px;
-    }
-    .sign_in_title{
-      font-size: 20px;
-      margin: 0;
-    }
-    .sign_in_description{
-      font-size: 16px;
+    #plans_container{
       width: 100%;
+      margin-top: 50px;
     }
-	}
+
+    #tagline{
+      font-size: 18px;
+      width: 80%;
+    }
+    #description{
+      font-size: 16px;
+      width: 80%;
+    }
+    #intro_wrapper{
+      width: 80%;
+    }
+  }
 
   @media (max-width: 850px) {
-    #sign_in_box{
-      width: 210px;
-      height: 420px;
+    #drawer_toggle{
+      display: inline;
     }
-    /* User view */
-    #user_box{
-      margin-right: 10px;
+    #main_toolbar{
+      padding: 0px;
+      height: 64px;
     }
-    .elements_group{
-      padding: 40px 20px;
+    #main_logo{
+      display: none;
     }
-
-    .project_box{
-      margin: 7px;
+    #main_tabs{
+      display: none;
     }
-
-    .sign_in_icon_container{
-      height: 220px;
+    #editor_button{
+      display: none;
     }
-    .sign_in_title{
-      font-size: 18px;
-      margin: 0;
+    #editor_button_narrow{
+      display: flex;
+      padding: 0;
     }
-    .sign_in_description{
-      font-size: 14px;
+    section{
+      min-height: calc(100vh - 64px);
+    }
+    neon-animated-pages{
+      min-height: calc(100vh - 64px);
+    }
+    #intro_wrapper{
+      width: 100%;
+      margin-bottom: 50px;
+    }
+    .features_title{
       width: 100%;
     }
-	}
 
-  @media (max-width: 600px) {
-    #app_container{
-      min-height: 650px;
+    .features_wrapper{
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      text-align: center;
+      margin: 0 auto;
+      min-height: calc(100vh - 64px);
     }
-    /* Screen editor */
-    .right_drawer_toggle{
-      display: flex;
+    .features_description{
+      width: 100%;
     }
-    .sidebar_tabs{
-      height: 48px;
+    .circle_material{
+      display: none;
+    }
+    #plans_container{
+      @apply(--layout-vertical);
+    }
+    .contact_box{
+      width: 300px;
+    }
+    #plans{
+      height: 1536px;
     }
   }
+
 
 </style>
