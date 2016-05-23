@@ -617,7 +617,7 @@ window.addEventListener('WebComponentsReady', function(e) {
 
   /* Selection listeners */
 
-  document.getElementById('left_drawer_menu').addEventListener("iron-select", function (e) {
+  document.getElementById('left_drawer_menu').addEventListener("iron-activate", function (e) {
     document.querySelector('paper-drawer-panel').closeDrawer();
   });
   document.getElementById('repo_selector').addEventListener('iron-select', function () {

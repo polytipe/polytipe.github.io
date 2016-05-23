@@ -50,10 +50,6 @@ function changeCarousel() {
   handle = app.async(changeCarousel, 10000);
 }
 
-function startPlan() {
-  document.getElementById('plan_toast').show();
-}
-
 function _submit(event) {
   Polymer.dom(event).localTarget.parentElement.submit();
 }
