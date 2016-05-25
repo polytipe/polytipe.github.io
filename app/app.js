@@ -203,6 +203,23 @@ function iframe_ready() {
             if(key == "icon"){
               input = document.createElement("paper-autocomplete");
               input.source = app.all_icons;
+            }else if(key == "size"){
+              input = document.createElement("paper-autocomplete");
+              var all_text_sizes = [
+                "paper-font-display4",
+                "paper-font-display3",
+                "paper-font-display2",
+                "paper-font-display1",
+                "paper-font-headline",
+                "paper-font-title",
+                "paper-font-subhead",
+                "paper-font-body2",
+                "paper-font-body1",
+                "paper-font-caption",
+                "paper-font-menu",
+                "paper-font-button"
+              ];
+              input.source = all_text_sizes;
             }else{
               if (selected_element[key].length > 30) {
                 input = document.createElement("paper-textarea");
@@ -631,6 +648,9 @@ window.addEventListener('WebComponentsReady', function(e) {
   });
   document.getElementById('screen_selector').addEventListener('iron-select', function (e) {
     goto('screen_editor');
+    if(selected_element != undefined){
+      unfocus(document.getElementById("app_container"));
+    }
     if(iframeReady){ //Fix for Firefox (only triggers in Chrome)
       screen_target = iframe_document.getElementById(app.selected_screen);
       selected_element = document.getElementById('app_container');
@@ -1420,7 +1440,7 @@ function generatePrototype() {
         data = data.replace(/project_name/g, app.selected_project);
         data = data.replace(/usuario/g, app.selected_repo);
         data = data.replace(/avatar_url/g, app.avatar);
-        if(app.analytics_id.length > 0){
+        if(app.analytics_id != undefined && app.analytics_id.length > 0){
           data = data.replace(/tracking_id/g, app.analytics_id);
           app.tracking_exists = true;
         }
