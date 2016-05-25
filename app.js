@@ -17,10 +17,10 @@ window.addEventListener('WebComponentsReady', function(e) {
   pre_loader.style.display = "none";
 
   app.carousel = 0;
-  changeCarousel();
+  //changeCarousel();
   document.getElementById('carousel_dots').addEventListener("iron-select", function() {
     app.cancelAsync(handle);
-    changeCarousel();
+    //changeCarousel();
   });
 
   document.getElementById('drawer_menu').addEventListener("iron-activate", function() {
