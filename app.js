@@ -39,6 +39,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     input_message.value = "";
     mail_sent_toast.show();
   });
+
+  var easter_egg = new Konami();
+  easter_egg.code = function() {
+    document.querySelector('emoji-rain').style.display = "block";
+  }
+  easter_egg.load();
 });
 
 function changeCarousel() {
