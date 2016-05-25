@@ -1,13 +1,15 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
 <link rel="import" href="../../styles.html">
 
-<dom-module id="poly-input">
+<dom-module id="poly-textarea">
 
   <style>
     :host {
       display: block;
       --paper-input-container-focus-color: var(--app-accent-color);
+      width: 100%;
     }
     .outlined_element{
       box-sizing: border-box;
@@ -16,11 +18,11 @@
   </style>
 
   <template>
-    <paper-input id="input" label="{{label}}" type="{{type}}" char-counter="{{charCounter}}" value="{{value}}"></paper-input>
+    <paper-textarea id="input" label="{{label}}" type="{{type}}" char-counter="{{charCounter}}" value="{{value}}"></paper-textarea>
   </template>
   <script>
     Polymer({
-      is: 'poly-input',
+      is: 'poly-textarea',
       listeners: {
         'tap': 'focus',
         'keydown': 'keyInput'
@@ -100,8 +102,8 @@
         var margin = [];
         var padding = [];
         for (var j = 0; j < values.length; j++) {
-          margin.push(getComputedStyle(this.$.input)["margin"+values[j]]);
-          padding.push(getComputedStyle(this.$.input)["padding"+values[j]]);
+          margin.push(getComputedStyle(this)["margin"+values[j]]);
+          padding.push(getComputedStyle(this)["padding"+values[j]]);
         }
         this.margin = margin.join(' ');
         this.padding = padding.join(' ');
