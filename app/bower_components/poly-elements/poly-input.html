@@ -1,0 +1,131 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../../styles.html">
+
+<dom-module id="poly-input">
+
+  <style>
+    :host {
+      display: inline-block;
+      --paper-input-container-focus-color: var(--app-accent-color);
+    }
+    .outlined_element{
+      box-sizing: border-box;
+      border: 2px solid yellow;
+    }
+  </style>
+
+  <template>
+    <paper-input id="input" label="{{label}}" type="{{type}}" char-counter="{{charCounter}}" value="{{value}}"></paper-input>
+  </template>
+  <script>
+    Polymer({
+      is: 'poly-input',
+      listeners: {
+        'tap': 'focus',
+        'keydown': 'keyInput'
+      },
+      properties:{
+        label:{
+          type: String,
+          value: "Input",
+          reflectToAttribute: true
+        },
+        type:{
+          type: String,
+          value: "text",
+          reflectToAttribute: true
+        },
+        value:{
+          type: String,
+          value: "",
+          reflectToAttribute: true
+        },
+        charCounter:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        flex:{
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_flexChanged"
+        },
+        link:{
+          type: String,
+          value: "",
+          reflectToAttribute: true
+        }
+      },
+      ready: function () {
+      },
+      keyInput: function (event) {
+        if(!this.preview_mode){
+          event.preventDefault();
+        }
+      },
+      focus: function(event) {
+        if(this.preview_mode){
+          if(this.link){
+            this._goto();
+          }
+        }else{
+          this.value = "";
+        }
+        this.getStyles();
+        this.fire("elementSelection");
+        this.toggleClass('outlined_element', true);
+        event.stopPropagation();
+      },
+      unfocus: function() {
+        this.toggleClass('outlined_element', false);
+      },
+      _flexChanged: function() {
+        this.toggleClass('flex', this.flex);
+      },
+      _goto: function(){
+        document.querySelector("iron-pages").selected = this.link;
+      },
+
+
+      getStyles: function(){
+        this.width = getComputedStyle(this.$.input)["width"];
+        this.height = getComputedStyle(this.$.input)["height"];
+        this.background = this.rgb2hex(getComputedStyle(this.$.input)["background-color"]);
+        this.color = this.rgb2hex(getComputedStyle(this.$.input)["color"]);
+        this.display = getComputedStyle(this.$.input)["display"];
+
+        var values = ["-top","-right","-bottom","-left"];
+        var margin = [];
+        var padding = [];
+        for (var j = 0; j < values.length; j++) {
+          margin.push(getComputedStyle(this.$.input)["margin"+values[j]]);
+          padding.push(getComputedStyle(this.$.input)["padding"+values[j]]);
+        }
+        this.margin = margin.join(' ');
+        this.padding = padding.join(' ');
+      },
+      rgb2hex: function(rgb){
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      },
+      refreshStyles: function (property, value) {
+        if(this.style.backgroundColor != "transparent"){
+          this.$.input.customStyle['--paper-input-container-focus-color'] = this.style.backgroundColor;
+          this.updateStyles();
+        }
+
+        if(property=="background-color"){
+          this.$.input.customStyle['--paper-input-container-focus-color'] = value;
+          this.updateStyles();
+        }
+
+        this.style[property] = value;
+      }
+    });
+  </script>
+</dom-module>

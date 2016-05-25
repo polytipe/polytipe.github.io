@@ -15,7 +15,7 @@
 
     paper-tabs{
       background-color: var(--app-primary-color);
-      --paper-tabs-selection-bar-color: var(--app-accent-color);
+      --paper-tabs-selection-bar-color: yellow;
       color: #fff;
       text-transform: uppercase;
     }
@@ -61,8 +61,8 @@
         this.fire("elementSelection");
       },
       ready: function() {
-        this.tabs = [{name: 'Tab 1'}, {name: 'Tab 2'}]; //Default values when creating multiple elements
-        this.number = 1;
+        this.refreshStyles();
+        this.number = this.tabs.length;
         this.min = 0;
         this.max = this.number;
       },
@@ -122,7 +122,8 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       },
       refreshStyles: function (property, value) {
-        this.$.tabs.style[property] = value;
+        this.style[property] = value;
+        this.$.tabs.setAttribute('style', this.getAttribute('style'));
       }
     });
 
