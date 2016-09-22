@@ -17,10 +17,10 @@ window.addEventListener('WebComponentsReady', function(e) {
   pre_loader.style.display = "none";
 
   app.carousel = 0;
-  //changeCarousel();
+  changeCarousel();
   document.getElementById('carousel_dots').addEventListener("iron-select", function() {
     app.cancelAsync(handle);
-    //changeCarousel();
+    changeCarousel();
   });
 
   document.getElementById('drawer_menu').addEventListener("iron-activate", function() {
@@ -39,12 +39,6 @@ window.addEventListener('WebComponentsReady', function(e) {
     input_message.value = "";
     mail_sent_toast.show();
   });
-
-  var easter_egg = new Konami();
-  easter_egg.code = function() {
-    document.querySelector('emoji-rain').style.display = "block";
-  }
-  easter_egg.load();
 });
 
 function changeCarousel() {

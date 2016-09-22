@@ -46,10 +46,9 @@
   <link rel="apple-touch-icon" href="app/images/touch/apple-touch-icon.png">
 
   <script src="app/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="app/elements.html">
+  <link rel="import" href="app/elements.vulcanized.html">
   <link rel="import" href="styles.html">
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
-  <script src="konami.js"></script>
 </head>
 
 <body class="fullbleed">
@@ -87,29 +86,29 @@
         </paper-menu>
       </paper-header-panel>
       <paper-header-panel main mode="seamed">
-        <paper-toolbar id="main_toolbar">
-          <a href="#home" onclick="resetSelected()">
-            <iron-icon id="main_logo" icon="polytipe-icons:logo"></iron-icon>
-          </a>
-          <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex"></span>
-          <paper-tabs id="main_tabs" noink no-bar selected="{{selected_tab}}">
-            <paper-tab>
-              <a href="#features" class="link layout vertical center-center">Características</a>
-            </paper-tab>
-            <paper-tab>
-              <a href="#plans" class="link layout vertical center-center">Planes</a>
-            </paper-tab>
-            <paper-tab>
-              <a href="#contact" class="link layout vertical center-center">Contacto</a>
-            </paper-tab>
-          </paper-tabs>
-          <a href="app" class="link">
-            <paper-button id="editor_button_narrow" noink class="paper-font-button">Iniciar sesión</paper-button>
-            <paper-button id="editor_button" class="paper-font-button" raised>Iniciar sesión</paper-button>
-          </a>
-        </paper-toolbar>
         <section id="home" class="layout vertical center-center">
+          <paper-toolbar id="main_toolbar">
+            <a href="#home" onclick="resetSelected()">
+              <iron-icon id="main_logo" icon="polytipe-icons:logo"></iron-icon>
+            </a>
+            <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+            <span class="flex"></span>
+            <paper-tabs id="main_tabs" noink no-bar selected="{{selected_tab}}">
+              <paper-tab>
+                <a href="#features" class="link layout vertical center-center">Características</a>
+              </paper-tab>
+              <paper-tab>
+                <a href="#plans" class="link layout vertical center-center">Planes</a>
+              </paper-tab>
+              <paper-tab>
+                <a href="#contact" class="link layout vertical center-center">Contacto</a>
+              </paper-tab>
+            </paper-tabs>
+            <a href="app" class="link">
+              <paper-button id="editor_button_narrow" noink class="paper-font-button">Iniciar sesión</paper-button>
+              <paper-button id="editor_button" class="paper-font-button" raised>Iniciar sesión</paper-button>
+            </a>
+          </paper-toolbar>
           <div id="intro_wrapper" class="fullbleed layout vertical center-center">
             <google-youtube
               video-id="3rWnuuRp0lI"
@@ -299,10 +298,6 @@
               </div>
             </form>
           </paper-material>
-          <div class="mail_text">
-            ó escríbenos directamente a <br/>
-            <a id="mail_link" target="_blank" href="mailto:hello@polytipe.me">hello@polytipe.me</a>
-          </div>
           <a href="http://git.io/polytipe" target="_blank" class="link layout vertical center">
             <paper-icon-button class="social_icon" icon="polytipe-icons:github"></paper-icon-button>
             <div id="github_link">Únete en Github</div>

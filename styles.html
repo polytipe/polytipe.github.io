@@ -89,7 +89,8 @@
   }
   section {
     background-color: var(--polytipe-bg-color);
-    min-height: calc(100vh - 85px);
+    height: 100vh;
+    min-height: 700px;
   }
   .white_layer{
     background-color: #ddd;
@@ -122,7 +123,8 @@
 
   neon-animated-pages{
     width: 100vw;
-    min-height: calc(100vh - 85px);
+    height: 100vh;
+    min-height: 700px;
     overflow: hidden;
   }
   .features_wrapper{
@@ -130,7 +132,7 @@
     @apply(--layout-center);
     @apply(--layout-flex);
     width: 100vw;
-    min-height: calc(100vh - 85px);
+    height: 100%;
     padding: 0 25%;
     box-sizing: border-box;
   }
@@ -270,7 +272,7 @@
     width: 350px;
     height: 450px;
     padding: 40px;
-    margin-top: 80px;
+    margin-top: 40px;
     box-sizing: border-box;
   }
   #form{
@@ -288,7 +290,7 @@
     width: 100%;
     color: white;
     background-color: var(--polytipe-accent-color);
-    margin-top: 100px;
+    margin-top: 60px;
   }
   paper-textarea{
     margin-top: 24px;
@@ -332,7 +334,7 @@
 
   paper-spinner-lite{
     --paper-spinner-color: #999;
-  }  
+  }
 
   emoji-rain{
     display: none;
@@ -382,12 +384,6 @@
       display: flex;
       padding: 0;
     }
-    section{
-      min-height: calc(100vh - 64px);
-    }
-    neon-animated-pages{
-      min-height: calc(100vh - 64px);
-    }
     #intro_wrapper{
       width: 100%;
       margin-bottom: 50px;
@@ -401,7 +397,7 @@
       @apply(--layout-center-center);
       text-align: center;
       margin: 0 auto;
-      min-height: calc(100vh - 64px);
+      height: 100%;
     }
     .features_description{
       width: 100%;
