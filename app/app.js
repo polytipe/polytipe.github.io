@@ -746,35 +746,8 @@ window.addEventListener('WebComponentsReady', function(e) {
 
 /* Misc actions */
 
-function changeLIFX() {
-  var lifx_color;
-  //Change the LIFX bulb color
-  switch (app.carousel) {
-    case 0:
-      lifx_color = "hue:120 saturation:1.0";
-      break;
-    case 1:
-      lifx_color = "hue:70 saturation:1.0";
-      break;
-    case 2:
-      lifx_color = "hue:52 saturation:1.0";
-      break;
-    case 3:
-      lifx_color = "hue:342 saturation:1.0";
-      break;
-    case 4:
-      lifx_color = "hue:265 saturation:1.0";
-      break;
-    case 5:
-      lifx_color = "hue:175 saturation:1.0";
-      break;
-  }
-  //app.lifx_body =  {"power": "on", "color": lifx_color, "brightness":0.8, "duration": 1};
-}
-
 function changeCarousel() {
   this.carousel = this.carousel === 5 ? 0 : (this.carousel + 1);
-  changeLIFX();
   //Resets the async timeout
   if (typeof handle != 'undefined'){
     app.cancelAsync(handle);
@@ -802,9 +775,8 @@ function validate_user() {
       app.avatar = user["avatar_url"];
       app.name = user["name"];
 
-      //Stop carousel and change the LIFX bulb color
+      //Stop carousel
       app.cancelAsync(handle);
-      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
 
       app.user = user_input;
       app.token = token_input;
@@ -869,15 +841,6 @@ function forkRepo() {
 function promptDeleteRepo() {
   var dialog = document.getElementById("delete_repo_dialog");
   dialog.open();
-  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
-
-  dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
-
-  dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
 }
 
 //Deletes the polytipe-projects repository from the user
@@ -1097,15 +1060,6 @@ function saveProject() {
 function promptDeleteProject() {
   var dialog = document.getElementById("delete_project_dialog");
   dialog.open();
-  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
-
-  dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
-
-  dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
 }
 
 function deleteProject(){
@@ -1125,15 +1079,6 @@ function promptLeaveProject() {
   if(app.unsaved_changes){
     var dialog = document.getElementById("leave_project_dialog");
     dialog.open();
-    app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
-
-    dialog.addEventListener("iron-overlay-canceled", function () {
-      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-    });
-
-    dialog.addEventListener("iron-overlay-closed", function () {
-      app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-    });
   }else{
     leaveProject();
   }
@@ -1331,15 +1276,6 @@ function editScreen() {
 function promptDeleteScreen() {
   var dialog = document.getElementById("delete_screen_dialog");
   dialog.open();
-  app.lifx_body =  {"power": "on", "color": "red", "brightness": 0.5, "duration": 1};
-
-  dialog.addEventListener("iron-overlay-canceled", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
-
-  dialog.addEventListener("iron-overlay-closed", function () {
-    app.lifx_body =  {"power": "on", "color": "white kelvin:9000", "brightness": 1.0, "duration": 1};
-  });
 }
 
 function deleteScreen() {
@@ -1490,7 +1426,6 @@ function generatePrototype() {
 
 function displayPrototypeToast() {
   if ((has_prototype && write_index_ready && write_prototype_ready) || (!has_prototype && write_index_ready && write_manifest_ready)) {
-    app.lifx_alert =  {"power": "on", "color": "green saturation:1.0", "brightness": 1.0, "period": 1.5, "cycles": 1.0, "persist": false};
     document.getElementById('generating_prototype_spinner').active = false;
     document.getElementById('generate_prototype_dialog').close();
     document.getElementById('prototype_toast').show();
@@ -1518,8 +1453,6 @@ function timeAgo(time){
     }
   };
 }
-
-//IDEA: On paper-swatch-picker hover change the bulb color
 
 /* Key binding functions */
 

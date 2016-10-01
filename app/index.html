@@ -74,7 +74,7 @@
     ga('send', 'pageview');
   </script>
 
-  <link rel="import" href="elements.html">
+  <link rel="import" href="elements.vulcanized.html">
   <link rel="import" href="styles.html">
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
 </head>
@@ -686,24 +686,6 @@
       user="{{signed_user}}"
       params='{"scope": "public_repo, delete_repo"}'> <!-- TODO: Remove delete_repo scope -->
     </firebase-auth>
-
-    <iron-ajax
-        auto
-        url="https://api.lifx.com/v1/lights/all/state"
-        headers='{"Authorization": "Bearer "}'
-        method="PUT"
-        content-type="application/json"
-        body='{{lifx_body}}'>
-    </iron-ajax>
-
-    <iron-ajax
-        auto
-        url="https://api.lifx.com/v1/lights/all/effects/breathe"
-        headers='{"Authorization": "Bearer "}'
-        method="POST"
-        content-type="application/json"
-        body='{{lifx_alert}}'>
-    </iron-ajax>
 
     <iron-ajax
         id="collaborators_ajax"

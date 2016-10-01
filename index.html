@@ -8,19 +8,19 @@
   <meta name="generator" content="Polytipe">
 
   <!-- Twitter card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@alejost848">
-  <meta name="twitter:creator" content="@alejost848">
-  <meta name="twitter:title" content="Polytipe">
-  <meta name="twitter:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código">
-  <meta name="twitter:image" content="http://polytipe.github.io/polytipe/app/images/cover.png">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@alejost848">
+	<meta name="twitter:creator" content="@alejost848">
+	<meta name="twitter:title" content="Polytipe">
+	<meta name="twitter:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código">
+	<meta name="twitter:image" content="http://polytipe.github.io/polytipe/images/cover.png">
 
   <!-- Facebook card -->
-  <meta property="og:title" content="Polytipe">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://polytipe.me">
-  <meta property="og:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código">
-  <meta property="og:image" content="http://polytipe.github.io/polytipe/app/images/cover.png">
+	<meta property="og:title" content="Polytipe">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://polytipe.me">
+	<meta property="og:description" content="Crea prototipos a partir de una interfaz gráfica, realiza pruebas de usabilidad y genera código">
+	<meta property="og:image" content="http://polytipe.github.io/polytipe/images/cover.png">
 
   <!-- No zooming! -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -34,6 +34,8 @@
 
   <!-- Web Application Manifest -->
   <link rel="manifest" href="manifest.json">
+
+  <foo-bar></foo-bar>
 
   <!-- Tile color for Win8/10 -->
   <meta name="msapplication-TileColor" content="#212121">
@@ -49,6 +51,7 @@
   <link rel="import" href="app/elements.vulcanized.html">
   <link rel="import" href="styles.html">
   <style is="custom-style" include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning"></style>
+  <script src="konami.js"></script>
 </head>
 
 <body class="fullbleed">
@@ -86,29 +89,29 @@
         </paper-menu>
       </paper-header-panel>
       <paper-header-panel main mode="seamed">
+        <paper-toolbar id="main_toolbar">
+          <a href="#home" onclick="resetSelected()">
+            <iron-icon id="main_logo" icon="polytipe-icons:logo"></iron-icon>
+          </a>
+          <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+          <span class="flex"></span>
+          <paper-tabs id="main_tabs" noink no-bar selected="{{selected_tab}}">
+            <paper-tab>
+              <a href="#features" class="link layout vertical center-center">Características</a>
+            </paper-tab>
+            <paper-tab>
+              <a href="#plans" class="link layout vertical center-center">Planes</a>
+            </paper-tab>
+            <paper-tab>
+              <a href="#contact" class="link layout vertical center-center">Contacto</a>
+            </paper-tab>
+          </paper-tabs>
+          <a href="app" class="link">
+            <paper-button id="editor_button_narrow" noink class="paper-font-button">Iniciar sesión</paper-button>
+            <paper-button id="editor_button" class="paper-font-button" raised>Iniciar sesión</paper-button>
+          </a>
+        </paper-toolbar>
         <section id="home" class="layout vertical center-center">
-          <paper-toolbar id="main_toolbar">
-            <a href="#home" onclick="resetSelected()">
-              <iron-icon id="main_logo" icon="polytipe-icons:logo"></iron-icon>
-            </a>
-            <paper-icon-button id="drawer_toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-            <span class="flex"></span>
-            <paper-tabs id="main_tabs" noink no-bar selected="{{selected_tab}}">
-              <paper-tab>
-                <a href="#features" class="link layout vertical center-center">Características</a>
-              </paper-tab>
-              <paper-tab>
-                <a href="#plans" class="link layout vertical center-center">Planes</a>
-              </paper-tab>
-              <paper-tab>
-                <a href="#contact" class="link layout vertical center-center">Contacto</a>
-              </paper-tab>
-            </paper-tabs>
-            <a href="app" class="link">
-              <paper-button id="editor_button_narrow" noink class="paper-font-button">Iniciar sesión</paper-button>
-              <paper-button id="editor_button" class="paper-font-button" raised>Iniciar sesión</paper-button>
-            </a>
-          </paper-toolbar>
           <div id="intro_wrapper" class="fullbleed layout vertical center-center">
             <google-youtube
               video-id="3rWnuuRp0lI"
@@ -249,7 +252,7 @@
                 Sin soporte
               </div>
               <a href="app" class="link">
-                <paper-button class="plan_button paper-font-button">Empezar</paper-button>
+                <paper-button id="free_button" class="plan_button paper-font-button">Empezar</paper-button>
               </a>
             </paper-material>
             <paper-material class="plan_box layout vertical center" elevation="1">
@@ -283,10 +286,10 @@
           </div>
 
         </section>
-        <section id="contact" class="layout vertical center">
+        <section id="contact" class="layout vertical center-center">
           <div id="contact_section_title">Contacto</div>
           <paper-material class="contact_box layout vertical center" elevation="1">
-            <form is="iron-form" action="https://formspree.io/hello@polytipe.me" id="form" method="POST">
+            <form is="iron-form" action="https://formspree.io/alejost848@gmail.com" id="form" method="POST">
               <paper-input id="input_name" name="name" required class="contact_input" label="Nombre"></paper-input>
               <paper-input id="input_mail" name="_replyto" type="email" required class="contact_input" label="Correo"></paper-input>
               <paper-textarea id="input_message" name="message" required rows="2" max-rows="2" class="contact_input" label="Mensaje"></paper-textarea>
@@ -300,7 +303,7 @@
           </paper-material>
           <a href="http://git.io/polytipe" target="_blank" class="link layout vertical center">
             <paper-icon-button class="social_icon" icon="polytipe-icons:github"></paper-icon-button>
-            <div id="github_link">Únete en Github</div>
+            <div id="github_link">Únete al proyecto en Github</div>
           </a>
         </section>
       </paper-header-panel>
