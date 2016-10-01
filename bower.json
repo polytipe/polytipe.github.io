@@ -1,20 +1,23 @@
 {
   "name": "polytipe",
+  "version": "0.1.0",
+  "description": "Polytipe is a prototyping tool for creating web applications, make usability tests, get analytics and feedback from users and generate code all in one place.",
   "authors": [
     "alejost848 <alejost848@gmail.com>",
     "andrecastan <andrecastan08@gmail.com>"
   ],
-  "description": "",
+  "keywords": [
+    "prototyping",
+    "web-components",
+    "polymer"
+  ],
   "main": "index.html",
   "moduleType": [],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://polytipe.me",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components"
-  ],
-  "dependencies": {
-
-  }
+  ]
 }
