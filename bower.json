@@ -14,7 +14,7 @@
   "main": "index.html",
   "moduleType": [],
   "license": "MIT",
-  "homepage": "https://polytipe.me",
+  "homepage": "https://polytipe.github.io",
   "ignore": [
     "**/.*",
     "node_modules",
